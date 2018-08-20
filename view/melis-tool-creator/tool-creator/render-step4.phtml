@@ -1,0 +1,90 @@
+<div id="<?php echo $this->id; ?>" class="steps-content">
+
+    <div class="row">
+
+        <div class="col-sm-12">
+            <h3><?php echo $this->translate('tr_melistoolcreator_table_cols_title') ?></h3>
+            <p><?php echo $this->translate('tr_melistoolcreator_table_cols_desc') ?></p>
+        </div>
+
+        <?php if ($this->hasError){ ?>
+            <div class="col-sm-12">
+                <div class="alert alert-danger">
+                    <p><?php echo $this->translate('tr_melistoolcreator_err_no_selected_col') ?></p>
+                </div>
+            </div>
+        <?php } ?>
+
+        <div class="col-sm-12">
+            <div class="melis-toolcreator-steps-tbl-cols">
+                <?php
+                $form = $this->step4Form;
+                echo $this->form()->openTag($form);
+                ?>
+                    <div class="widget-body list table-responsive">
+                        <table class="table table-striped table-primary">
+                            <thead>
+                                <tr>
+                                    <?php
+                                        $checkBoxIcon = "fa-check-square-o text-success";
+                                        if (isset($this->tblColumns)){
+                                            if (count($this->table) != count($this->tblColumns)){
+                                                $checkBoxIcon = "fa-square-o";
+                                            }
+                                        }
+                                    ?>
+                                    <th><i class="fa <?php echo $checkBoxIcon ?> fa-lg tcf-fa-checkbox tcf-fa-checkall"></i></th>
+                                    <th>#</th>
+                                    <th><?php echo $this->translate('tr_melistoolcreator_col_pk') ?></th>
+                                    <th><?php echo $this->translate('tr_melistoolcreator_col_name') ?></th>
+                                    <th><?php echo $this->translate('tr_melistoolcreator_col_type') ?></th>
+                                    <th><?php echo $this->translate('tr_melistoolcreator_col_null') ?></th>
+                                    <th><?php echo $this->translate('tr_melistoolcreator_col_default') ?></th>
+                                    <th><?php echo $this->translate('tr_melistoolcreator_col_extra') ?></th>
+                                </tr>
+                            </thead>
+                            <?php
+                                $ctr = 1;
+                                foreach ($this->table As $col){
+                                    $pk = in_array($col['Key'], array('PRI')) ? ' <i class="fa fa-key fa-lg fa-rotate-90"></i>': '';
+
+                                    $checkBox = $form->get('tcf-db-table-cols')->setCheckedValue($col['Field']);
+
+                                    $checkBoxIcon = "fa-check-square-o text-success";
+                                    $checkBox->setChecked(true);
+
+                                    if (!empty($this->tblColumns)){
+                                        if (!in_array($col['Field'], $this->tblColumns)){
+                                            $checkBox->setChecked(false);
+                                            $checkBoxIcon = "fa-square-o";
+                                        }
+                                    }
+
+                                    echo '<tr>
+                                            <td>
+                                                <i class="fa '.$checkBoxIcon.' fa-lg tcf-fa-checkbox tcf-fa-checkitem"></i>
+                                                '.$this->formElement($checkBox).'
+                                            </td>
+                                            <td>'.$ctr++.'</td>
+                                            <td>'.$pk.'</td>
+                                            <td><b>'.$col['Field'].'</b></td>
+                                            <td>'.$col['Type'].'</td>
+                                            <td>'.$col['Null'].'</td>
+                                            <td>'.$col['Default'].'</td>
+                                            <td>'.$col['Extra'].'</td>
+                                        </tr>';
+                                }
+                            ?>
+                        </table>
+                    </div>
+                <?php
+                    echo $this->form()->closeTag();
+                ?>
+            </div>
+        </div>
+    </div>
+
+
+    <button class="btn btn-default btn-steps" data-curstep="4" data-nxtstep="3"><?php echo $this->translate('tr_melistoolcreator_back') ?></button>
+    <button class="btn btn-default pull-right btn-steps tcf-validate" data-curstep="4" data-nxtstep="5"><?php echo $this->translate('tr_melistoolcreator_next') ?></button>
+</div>

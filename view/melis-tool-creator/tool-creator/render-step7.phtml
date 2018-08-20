@@ -1,0 +1,131 @@
+<div id="<?php echo $this->id; ?>" class="steps-content">
+    <?php foreach ($this->datas As $key => $step){  ?>
+        <div class="melis-tc-summary-item">
+            <h4>
+                <i class="fa <?php echo $this->steps['melistoolcreator_'.$key]['icon'] ?>"></i>
+                <?php echo $this->translate($this->steps['melistoolcreator_'.$key]['name']) ?>
+            </h4>
+            <div class="melis-tc-summary-item-content">
+                <?php if ($key == 'step1'){ ?>
+                    <h2><?php echo $step['tcf-name'] ?></h2>
+                <?php } elseif ($key == 'step2') { ?>
+                    <table class="table table-striped">
+                        <tr>
+                            <th><?php $this->translate('tr_melistoolcreator_texts_title') ?></th>
+                            <?php
+                            foreach ($this->languages As $lang){
+                                if (!empty($step[$lang['lang_locale']])) {
+                                    echo '<th>' . $lang['lang_name'] . '</th>';
+                                }
+                            }
+                            ?>
+                        </tr>
+                        <?php
+                        $cols = array('tcf-title', 'tcf-desc');
+
+                        foreach ($cols As $col){
+                            echo '<tr>';
+                            echo '<td>' . $this->translate('tr_melistoolcreator_' . $col) . '</td>';
+
+                            foreach ($this->languages As $lang){
+
+                                if (!empty($step[$lang['lang_locale']])){
+
+                                    $langTrans = '';
+                                    if (!empty($step[$lang['lang_locale']][$col])){
+                                        $langTrans = $step[$lang['lang_locale']][$col];
+                                    }
+
+                                    echo '<td>' . $langTrans . '</td>';
+                                }
+                            }
+
+                            echo '</tr>';
+                        }
+                        ?>
+                    </table>
+                <?php } elseif ($key == 'step3') { ?>
+                    <p><?php echo $step['tcf-db-table'] ?></p>
+                <?php } elseif ($key == 'step4') {?>
+                    <?php
+                        foreach ($step['tcf-db-table-cols'] As $col){
+                            echo '<p>' . $col . '</p>';
+                        }
+                    ?>
+                <?php } elseif ($key == 'step5') { ?>
+                    <table class="table table-striped">
+                        <tr>
+                            <th><?php echo $this->translate('tr_melistoolcreator_columns') ?></th>
+                            <th><?php echo $this->translate('tr_melistoolcreator_col_mandatory') ?></th>
+                            <th><?php echo $this->translate('tr_melistoolcreator_col_field_type') ?></th>
+                        </tr>
+                        <?php
+                            $editable = $step['tcf-db-table-col-editable'];
+                            $required = $step['tcf-db-table-col-required'];
+                            $fieldType = $step['tcf-db-table-col-type'];
+
+                            foreach ($editable As $cKey => $cVol){
+
+                                $isRequired = in_array($cVol, $required) ? '<i class="fa fa-check fa-lg text-success"></i>' : '';
+                                echo '<tr>';
+                                echo '<td>' . $cVol . '</td>';
+                                echo '<td>' . $isRequired . '</td>';
+                                echo '<td>' . $fieldType[$cKey] . '</td>';
+                                echo '</tr>';
+                            }
+                        ?>
+                    </table>
+                <?php } elseif ($key == 'step6') { ?>
+                    <table class="table table-striped">
+                        <tr>
+                            <th>Columns</th>
+                            <?php
+                                foreach ($this->languages As $lang){
+                                    if (!empty($step[$lang['lang_locale']])) {
+                                        echo '<th>' . $lang['lang_name'] . '</th>';
+                                    }
+                                }
+                            ?>
+                        </tr>
+                        <?php
+                            $cols = array();
+                            foreach ($this->languages As $lang){
+                                if (!empty($step[$lang['lang_locale']])){
+                                    foreach ($step[$lang['lang_locale']] As $cKey => $cVal){
+                                        if (!in_array($cKey, $cols)){
+                                            if ($cKey  != 'tcf-lang-local'){
+                                                array_push($cols, $cKey);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                            foreach ($cols As $col){
+                                echo '<tr>';
+                                echo '<td>' . $col . '</td>';
+
+                                foreach ($this->languages As $lang){
+
+                                    if (!empty($step[$lang['lang_locale']])){
+
+                                        $langTrans = '';
+                                        if (!empty($step[$lang['lang_locale']][$col])){
+                                            $langTrans = $step[$lang['lang_locale']][$col];
+                                        }
+
+                                        echo '<td>' . $langTrans . '</td>';
+                                    }
+                                }
+
+                                echo '</tr>';
+                            }
+                        ?>
+                    </table>
+                <?php } ?>
+            </div>
+        </div>
+    <?php } ?>
+    <button class="btn btn-default btn-steps" data-curstep="7" data-nxtstep="6"><?php echo $this->translate('tr_melistoolcreator_back') ?></button>
+    <button class="btn btn-default pull-right btn-steps tcf-validate" data-curstep="7" data-nxtstep="8"><?php echo $this->translate('tr_melistoolcreator_next') ?></button>
+</div>

@@ -1,0 +1,61 @@
+<div id="<?php echo $this->id; ?>" class="steps-content">
+    <div class="row">
+
+        <div class="col-sm-12">
+            <h3><?php echo $this->translate('tr_melistoolcreator_database_title') ?></h3>
+            <p><?php echo $this->translate('tr_melistoolcreator_database_desc') ?></p>
+        </div>
+
+        <?php if ($this->hasError){ ?>
+            <div class="col-sm-12">
+                <div class="alert alert-danger">
+                    <p><?php echo $this->translate('tr_melistoolcreator_err_no_selected_db') ?></p>
+                </div>
+            </div>
+        <?php } ?>
+
+        <div class="col-sm-6">
+            <div class="widget widget-inverse">
+                <div class="widget-head">
+                    <h4 class="heading"><i class="fa fa-table"></i> <?php echo $this->translate('tr_melistoolcreator_db_tables') ?></h4>
+                </div>
+                <div class="widget-body list melis-toolcreator-steps-table-list">
+                    <ul>
+                        <?php
+                            foreach ($this->tables As $tbl){
+                                $icon = 'fa-square-o';
+                                if ($tbl->getName() == $this->selectedTbl){
+                                    $icon = 'fa-check-square-o text-success';
+                                }
+
+                                echo '<li data-table-name="'.$tbl->getName().'">
+                                        <span><i class="fa '.$icon.' fa-lg"></i> '.$tbl->getName().'</span>
+                                    </li>';
+                            }
+                        ?>
+                    </ul>
+                    <?php
+                        $form = $this->step3Form;
+                        echo $this->form()->openTag($form);
+                        echo $this->formCollection($form);
+                        echo $this->form()->closeTag();
+                    ?>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="widget widget-inverse <?php echo ($this->tblCols) ? '': 'hidden' ?>">
+                <div class="widget-head">
+                    <h4 class="heading"><i class="fa fa-reorder"></i> <?php echo $this->translate('tr_melistoolcreator_db_tables_cols') ?></h4>
+                </div>
+                <div class="widget-body list melis-toolcreator-steps-table-columns table-responsive">
+                    <?php echo $this->tblCols ?>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button class="btn btn-default btn-steps" data-curstep="3" data-nxtstep="2"><?php echo $this->translate('tr_melistoolcreator_back') ?></button>
+    <button class="btn btn-default pull-right btn-steps tcf-validate" data-curstep="3" data-nxtstep="4"><?php echo $this->translate('tr_melistoolcreator_next') ?></button>
+</div>
+

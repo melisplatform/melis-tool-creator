@@ -1,0 +1,5 @@
+                $moduleTplTable = $this->getServiceLocator()->get('ModuleTplTable');
+                $moduleTplTable->getTableGateway()->insert($formData);
+
+                $success = true;
+                $textMessage = $translator->translate('tr_moduletpl_save_success');

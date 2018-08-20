@@ -1,0 +1,95 @@
+<div id="<?php echo $this->id; ?>" class="steps-content">
+    <h3><?php echo $this->translate('tr_melistoolcreator_module') ?></h3>
+    <p><?php echo $this->translate('tr_melistoolcreator_module_desc') ?></p>
+    <p><?php echo $this->translate('tr_melistoolcreator_module_note') ?></p>
+    <div class="row">
+        <div class="col-md-12">
+            <?php
+                $form = $this->step1Form;
+                echo $this->form()->openTag($form);
+            ?>
+            <div class="form-group">
+                <?php
+                    $moduleField = $form->get('tcf-name');
+                    $moduleField->setLabelOptions(array('disable_html_escape' => true));
+                    $label = $moduleField->getLabel().'<i class="fa fa-info-circle fa-lg pull-right tip-info" data-toggle="tooltip" data-placement="left" title="" data-original-title="'.$moduleField->getOption('tooltip').'"></i>';
+                    $moduleField->setLabel($label);
+                    echo $this->formLabel($moduleField);
+                    echo $this->formElement($moduleField);
+                    echo $this->formElementErrors($moduleField, array('class' => 'text-danger'));
+                ?>
+            </div>
+            <!--<div class="form-group">
+                <div id="tc-toolstree-selection">-->
+                    <?php
+                        /*$toolsTreeField = $form->get('tcf-module-toolstree');
+
+                        $toolsTreeFieldVal = $toolsTreeField->getValue();
+                        $iconCheck = 'fa-square-o';
+                        if (empty($toolsTreeFieldVal) || $toolsTreeFieldVal == 'meliscore_toolstree')
+                        {
+                            $toolsTreeField->setValue('meliscore_toolstree');
+                            $iconCheck = 'fa-check-square-o text-success';
+                        }
+
+                        echo $this->formLabel($toolsTreeField);
+                        echo $this->formElement($toolsTreeField);*/
+                    ?>
+                    <!--<ul>
+                        <li class="expanded">-->
+                            <?php
+                                // echo '<i class="fa '.$iconCheck.' fa-lg" data-toolstree="meliscore_toolstree"></i> '.$this->translate('tr_meliscore_menu_toolstree_Name');
+                            ?>
+                            <!--<ul>-->
+                                <?php
+                                    /*foreach ($this->leftMenuConfig['interface'] As $key => $val)
+                                    {
+                                        if ($key == 'meliscore_toolstree')
+                                        {
+                                            foreach ($val['interface'] As $iKey => $iVal)
+                                            {
+                                                $iconCheck = 'fa-square-o';
+                                                if ($toolsTreeFieldVal == $iKey)
+                                                {
+                                                    $iconCheck = 'fa-check-square-o text-success';
+                                                }
+
+                                                echo '<li><i class="fa '.$iconCheck.' fa-lg" data-toolstree="'.$iKey.'"></i> '.$iVal['conf']['name'];
+
+                                                if (!empty($iVal['interface'])){
+                                                    echo '<ul>';
+                                                    foreach ($iVal['interface'] As $siKey => $siVal){
+                                                        echo '<li>'.$siVal['conf']['name'].'</li>';
+                                                    }
+                                                    echo '</ul>';
+                                                }
+                                                echo '</li>';
+                                            }
+                                        }
+                                    }*/
+                                ?>
+                            <!--</ul>
+                        </li>
+                    </ul>-->
+                    <?php
+                        // echo $this->formElementErrors($toolsTreeField, array('class' => 'text-danger'));
+                    ?>
+            <!--</div>
+            </div>-->
+            <?php
+                echo $this->form()->closeTag();
+            ?>
+        </div>
+    </div>
+
+    <div style="text-align: right;">
+        <button class="btn btn-default btn-steps tcf-validate" data-curstep="1" data-nxtstep="2" data-validate="true"><?php echo $this->translate('tr_melistoolcreator_next') ?></button>
+    </div>
+    <script>
+        /*$("#tc-toolstree-selection").fancytree({
+            icon: false,
+        });
+        // Removing hidden source of fancy tree
+        $("#tc-toolstree-selection .ui-fancytree-source").remove();*/
+    </script>
+</div>

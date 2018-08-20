@@ -1,0 +1,61 @@
+<div id="<?php echo $this->id; ?>" class="steps-content">
+    <div class="row">
+        <div class="col-sm-12">
+            <h3><?php echo $this->translate('tr_melistoolcreator_texts_title') ?></h3>
+            <p><?php echo $this->translate('tr_melistoolcreator_texts_desc') ?></p>
+        </div>
+        <div class="col-xs-12 col-md-3">
+            <div class="product-text-tab-container">
+                <ul class="nav-tabs product-text-tab">
+                    <?php $ctr = 0; foreach ($this->languages As $key => $val):?>
+                        <li class="<?php echo ($ctr++) ?: 'active'?>">
+                            <a class="clearfix" data-toggle="tab" href="#toolcreator-text-transaltions-<?php echo $val['lang_locale']?>" aria-expanded="false">
+                                <span><?php echo $val['lang_name']?></span>
+                            </a>
+                        </li>
+                    <?php endforeach;?>
+                </ul>
+            </div>
+        </div>
+        <div class="col-xs-12 col-md-9">
+            <div class="tab-content">
+                <?php $ctr = 0; foreach ($this->step2Form As $key => $form):?>
+                    <div id="toolcreator-text-transaltions-<?php echo $key ?>" class="tab-pane <?php echo ($ctr++) ? '': 'active'?>">
+                        <?php
+                            $form->prepare();
+
+                            echo $this->form()->openTag($form);
+
+                            foreach ($form->getElements() As $key => $val){
+
+                                if ($val->getLabel()){
+
+                                    if(!empty($val->getOption('tooltip'))){
+                                        $val->setLabelOptions(array('disable_html_escape' => true));
+                                        $label = $val->getLabel().'<i class="fa fa-info-circle fa-lg pull-right tip-info" data-toggle="tooltip" data-placement="left" title="" data-original-title="'.$val->getOption('tooltip').'"></i>';
+                                        $val->setLabel($label);
+                                    }
+
+                                    echo '<div class="form-group">';
+                                    echo $this->formLabel($val);
+                                }
+
+                                echo $this->formElement($val);
+
+                                if ($val->getLabel()){
+                                    echo $this->formElementErrors($val, array('class' => 'text-danger'));
+                                    echo '</div>';
+                                }
+                            }
+
+                            echo $this->form()->closeTag();
+                        ?>
+                    </div>
+                <?php endforeach;?>
+            </div>
+        </div>
+    </div>
+
+    <button class="btn btn-default btn-steps" data-curstep="2" data-nxtstep="1"><?php echo $this->translate('tr_melistoolcreator_back') ?></button>
+    <button class="btn btn-default pull-right btn-steps tcf-validate" data-curstep="2" data-nxtstep="3"><?php echo $this->translate('tr_melistoolcreator_next') ?></button>
+</div>

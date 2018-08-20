@@ -1,0 +1,11 @@
+        $id = $this->params()->fromQuery('id', null);
+        $view->id = $id;
+
+        if (is_null($id)){
+            $moduleTplForm->get('#TCKEY')->setAttribute("disabled", "disabled");
+        }else{
+            $moduleTplForm->get('#TCKEY')->setAttribute("readonly", "readonly");
+            $moduleTplTable = $this->getServiceLocator()->get('ModuleTplTable');
+            $data = $moduleTplTable->getEntryById($id)->current();
+            $moduleTplForm->bind($data);
+        }

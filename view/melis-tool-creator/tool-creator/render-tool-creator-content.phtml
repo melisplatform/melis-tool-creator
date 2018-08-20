@@ -1,0 +1,40 @@
+<?php
+    $id = $this->zoneconfig['conf']['id'];
+    $melisKey = $this->zoneconfig['conf']['melisKey'];
+?>
+<div class="innerAll spacing-x2 melis-tool-creator" id="<?php echo $id; ?>" data-melisKey="<?php echo $melisKey; ?>">
+    <div class="innerAll spacing-x2">
+        <div class="row">
+            <div class="wizard wizard-design">
+                <!-- Wizard heading -->
+                <div class="wizard-head melis-toolcreator-steps">
+                    <ul class="bwizard-steps">
+                        <?php
+                            if(!empty($this->stepsConfig))
+                            {
+                                $ctr = 0;
+                                foreach($this->stepsConfig as $key => $config)
+                                {
+                                    $clss = !$ctr++ ? 'class="active"' : '';
+                                    echo '<li '.$clss.' id="tc_'.$key.'"><span><i class="fa '.$config['icon'].' fa-lg" aria-hidden="true"></i> '.$this->translate($config['name']).'</span></li>';
+                                }
+                            }
+                        ?>
+                    </ul>
+                </div>
+                <!-- // Wizard heading END -->
+                <div class="widget">
+                    <div class="widget-body">
+                        <div class="tab-content">
+                            <div class="tab-pane active" id="tab1">
+                                <?php
+                                    echo $this->melistoolcreator_steps;
+                                ?>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

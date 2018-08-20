@@ -1,0 +1,11 @@
+                                '#TCKEY' => array(
+                                    'name'     => '#TCKEY',
+                                    'required' => #TCISREQUIRED,
+                                    'validators' => array(
+#TCVALIDATORS
+                                    ),
+                                    'filters'  => array(
+                                        array('name' => 'StripTags'),
+                                        array('name' => 'StringTrim'),
+                                    ),
+                                )

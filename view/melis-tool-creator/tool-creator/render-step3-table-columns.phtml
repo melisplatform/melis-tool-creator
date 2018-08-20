@@ -1,0 +1,26 @@
+<table class="table table-striped">
+    <tr>
+        <th>#</th>
+        <th><?php echo $this->translate('tr_melistoolcreator_col_pk') ?></th>
+        <th><?php echo $this->translate('tr_melistoolcreator_col_name') ?></th>
+        <th><?php echo $this->translate('tr_melistoolcreator_col_type') ?></th>
+        <th><?php echo $this->translate('tr_melistoolcreator_col_null') ?></th>
+        <th><?php echo $this->translate('tr_melistoolcreator_col_default') ?></th>
+        <th><?php echo $this->translate('tr_melistoolcreator_col_extra') ?></th>
+    </tr>
+    <?php
+        $ctr = 1;
+        foreach ($this->table As $col){
+            $pk = in_array($col['Key'], array('PRI')) ? ' <i class="fa fa-key fa-lg fa-rotate-90"></i>': '';
+            echo '<tr>
+                    <td>'.$ctr++.'</td>
+                    <td>'.$pk.'</td>
+                    <td><b>'.$col['Field'].'</b></td>
+                    <td>'.$col['Type'].'</td>
+                    <td>'.$col['Null'].'</td>
+                    <td>'.$col['Default'].'</td>
+                    <td>'.$col['Extra'].'</td>
+                </tr>';
+        }
+    ?>
+</table>

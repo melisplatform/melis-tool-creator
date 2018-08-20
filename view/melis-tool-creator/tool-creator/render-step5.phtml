@@ -1,0 +1,95 @@
+<div id="<?php echo $this->id; ?>" class="steps-content">
+    <div class="row">
+
+        <div class="col-sm-12">
+            <h3><?php echo $this->translate('tr_melistoolcreator_add_update_form_title') ?></h3>
+            <p><?php echo $this->translate('tr_melistoolcreator_add_update_form_desc') ?></p>
+        </div>
+
+        <div class="col-sm-12">
+            <div class="melis-toolcreator-steps-tbl-cols">
+                <?php
+                    $form = $this->step5Form;
+                    echo $this->form()->openTag($form);
+                ?>
+                <div class="widget-body list table-responsive">
+                    <table class="table table-striped table-primary">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th><?php echo $this->translate('tr_melistoolcreator_col_pk') ?></th>
+                                <th><?php echo $this->translate('tr_melistoolcreator_col_name') ?></th>
+                                <th><?php echo $this->translate('tr_melistoolcreator_col_type') ?></th>
+                                <th class="text-center"><?php echo $this->translate('tr_melistoolcreator_col_null') ?></th>
+                                <th class="text-center"><?php echo $this->translate('tr_melistoolcreator_col_extra') ?></th>
+                                <th class="text-center"><?php echo $this->translate('tr_melistoolcreator_col_editable') ?></th>
+                                <th class="text-center"><?php echo $this->translate('tr_melistoolcreator_col_mandatory') ?></th>
+                                <th class="text-center"><?php echo $this->translate('tr_melistoolcreator_col_field_type') ?></th>
+                            </tr>
+                        </thead>
+                        <?php
+                            $ctr = 1;
+                            foreach ($this->tableCols As $col){
+
+                                $editableCheckBox = $form->get('tcf-db-table-col-editable')->setCheckedValue($col['Field']);
+                                $requiredCheckBox = $form->get('tcf-db-table-col-required')->setCheckedValue($col['Field']);
+                                $fieldType = clone $form->get('tcf-db-table-col-type');
+
+                                $pk = in_array($col['Key'], array('PRI')) ? ' <i class="fa fa-key fa-lg fa-rotate-90"></i>': '';
+
+                                $editableIcon = $col['editable'];
+                                $requiredIcon = $col['required'];
+
+                                $editableCheckBox->setChecked($col['editableIsChecked']);
+                                $requiredCheckBox->setChecked($col['requiredIsChecked']);
+
+                                $extraCol = '-';
+                                if (!empty($col['Extra'])){
+                                    $extraCol = $col['Extra'];
+                                }
+
+                                if (!is_null($col['fieldType'])){
+                                    $fieldType->setValue($col['fieldType']);
+                                }else{
+                                    if (!$col['editableIsChecked']){
+                                        $fieldType->setAttribute('disabled', 'disabled');
+                                    }
+                                }
+
+                                if ($editableIcon === 'AUTO_INCREMENT'){
+                                    $fieldType->setAttribute('class', 'hidden');
+                                }
+
+                                echo '<tr>
+                                        <td>'.$ctr++.'</td>
+                                        <td>'.$pk.'</td>
+                                        <td><b>'.$col['Field'].'</b></td>
+                                        <td>'.$col['Type'].'</td>
+                                        <td class="text-center">'.$col['Null'].'</td>
+                                        <td class="text-center">'.$extraCol.'</td>
+                                        <td class="text-center">
+                                            '.$editableIcon.'
+                                            '.$this->formElement($editableCheckBox).'
+                                        </td>
+                                        <td class="text-center">
+                                            '.$requiredIcon.'
+                                            '.$this->formElement($requiredCheckBox).'
+                                        </td>
+                                        <td class="text-center">
+                                            '.$this->formElement($fieldType).'
+                                        </td>
+                                    </tr>';
+                            }
+                        ?>
+                    </table>
+                </div>
+                <?php
+                    echo $this->form()->closeTag();
+                ?>
+            </div>
+        </div>
+    </div>
+
+    <button class="btn btn-default btn-steps" data-curstep="5" data-nxtstep="4"><?php echo $this->translate('tr_melistoolcreator_back') ?></button>
+    <button class="btn btn-default pull-right btn-steps tcf-validate" data-curstep="5" data-nxtstep="6"><?php echo $this->translate('tr_melistoolcreator_next') ?></button>
+</div>

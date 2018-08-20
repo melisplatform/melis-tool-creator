@@ -1,0 +1,130 @@
+<?php
+
+/**
+ * Melis Technology (http://www.melistechnology.com)
+ *
+ * @copyright Copyright (c) 2015 Melis Technology (http://www.melistechnology.com)
+ *
+ */
+
+return array(
+    'router' => array(
+        'routes' => array(
+        	'melis-backoffice' => array(
+                'child_routes' => array(
+                    'application-MelisToolCreator' => array(
+                        'type'    => 'Literal',
+                        'options' => array(
+                            'route'    => 'MelisToolCreator',
+                            'defaults' => array(
+                                '__NAMESPACE__' => 'MelisToolCreator\Controller',
+                                'controller'    => 'Index',
+                                'action'        => 'index',
+                            ),
+                        ),
+                        'may_terminate' => true,
+                        'child_routes' => array(
+                            'default' => array(
+                                'type'    => 'Segment',
+                                'options' => array(
+                                    'route'    => '/[:controller[/:action]]',
+                                    'constraints' => array(
+                                        'controller' => '[a-zA-Z][a-zA-Z0-9_-]*',
+                                        'action'     => '[a-zA-Z][a-zA-Z0-9_-]*',
+                                    ),
+                                    'defaults' => array(
+                                    ),
+                                ),
+                            ),
+                        ),
+                    ),
+                    'tool-creator-get-tbl-cols' => array(
+                        'type' => 'Segment',
+                        'options' => array(
+                            'route' => 'tool-creator-get-tbl-cols',
+                            'defaults' => array(
+                                'controller' => 'MelisToolCreator\Controller\ToolCreator',
+                                'action' => 'renderStep3TableColumns',
+                            ),
+                        ),
+                    ),
+                ),    
+        	),
+            /*
+            * This route will handle the
+            * alone setup of a module
+            */
+            /*'setup-melis-calendar' => array(
+                'type'    => 'Literal',
+                'options' => array(
+                    'route'    => '/MelisCalendar',
+                    'defaults' => array(
+                        '__NAMESPACE__' => 'MelisCalendar\Controller',
+                        'controller'    => '',
+                        'action'        => '',
+                    ),
+                ),
+                'may_terminate' => true,
+                'child_routes' => array(
+                    'default' => array(
+                        'type'    => 'Segment',
+                        'options' => array(
+                            'route'    => '/[:controller[/:action]]',
+                            'constraints' => array(
+                                'controller' => '[a-zA-Z][a-zA-Z0-9_-]*',
+                                'action'     => '[a-zA-Z][a-zA-Z0-9_-]*',
+                            ),
+                            'defaults' => array(
+                            ),
+                        ),
+                    ),
+                    'setup' => array(
+                        'type' => 'Segment',
+                        'options' => array(
+                            'route' => '/setup',
+                            'defaults' => array(
+                                'controller' => 'MelisCalendar\Controller\MelisSetup',
+                                'action' => 'setup-form',
+                            ),
+                        ),
+                    ),
+                ),
+            ),*/
+        ),
+    ),
+    'translator' => array(
+        'locale' => 'en_EN',
+    ),
+    'service_manager' => array(
+        'aliases' => array(
+            'translator' => 'MvcTranslator',
+        ),
+    ),
+    'controllers' => array(
+        'invokables' => array(
+            'MelisToolCreator\Controller\ToolCreator' => 'MelisToolCreator\Controller\ToolCreatorController',
+        ),
+    ),
+    'view_manager' => array(
+        'display_not_found_reason' => true,
+        'display_exceptions'       => true,
+        'doctype'                  => 'HTML5',
+        'template_map' => array(
+            'melis-tool-creator/step1'          => __DIR__ . '/../view/melis-tool-creator/tool-creator/render-step1.phtml',
+            'melis-tool-creator/step2'          => __DIR__ . '/../view/melis-tool-creator/tool-creator/render-step2.phtml',
+            'melis-tool-creator/step3'          => __DIR__ . '/../view/melis-tool-creator/tool-creator/render-step3.phtml',
+            'melis-tool-creator/step3-tbl-col'  => __DIR__ . '/../view/melis-tool-creator/tool-creator/render-step3-table-columns.phtml',
+            'melis-tool-creator/step4'          => __DIR__ . '/../view/melis-tool-creator/tool-creator/render-step4.phtml',
+            'melis-tool-creator/step5'          => __DIR__ . '/../view/melis-tool-creator/tool-creator/render-step5.phtml',
+            'melis-tool-creator/step6'          => __DIR__ . '/../view/melis-tool-creator/tool-creator/render-step6.phtml',
+            'melis-tool-creator/step7'          => __DIR__ . '/../view/melis-tool-creator/tool-creator/render-step7.phtml',
+            'melis-tool-creator/step8'          => __DIR__ . '/../view/melis-tool-creator/tool-creator/render-step8.phtml',
+        ),
+        'template_path_stack' => array(
+            __DIR__ . '/../view',
+        ),
+        'strategies' => array(
+            'ViewJsonStrategy',
+        ),
+    ),
+);

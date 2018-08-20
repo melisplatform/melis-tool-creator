@@ -1,0 +1,17 @@
+                    'forms' => array(
+                        'moduletpl_generic_form' => array(
+                            'attributes' => array(
+                                'name' => 'moduleTplForm',
+                                'id' => 'moduleTplForm',
+                                'method' => 'POST',
+                                'action' => '',
+                            ),
+                            'hydrator'  => 'Zend\Stdlib\Hydrator\ArraySerializable',
+                            'elements' => array(
+#FORMINPUTS
+                            ),
+                            'input_filter' => array(
+#FORMINPUTFILTERS
+                            )
+                        )
+                    )

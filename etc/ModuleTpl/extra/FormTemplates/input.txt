@@ -1,0 +1,14 @@
+                                array(
+                                    'spec' => array(
+                                        'name' => '#TCKEY',
+                                        'type' => '#TCINPUTTYPE',
+                                        'options' => array(
+                                            'label' => 'tr_moduletpl_#TCKEY',
+                                            'tooltip' => 'tr_moduletpl_#TCKEY',
+                                        ),
+                                        'attributes' => array(
+                                            'id' => '#TCKEY',
+                                            'class' => 'form-control'
+                                        ),
+                                    ),
+                                )

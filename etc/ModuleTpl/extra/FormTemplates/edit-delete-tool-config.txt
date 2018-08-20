@@ -1,0 +1,10 @@
+                            'edit' => array(
+                                  'module' => 'ModuleTpl',
+                                  'controller' => 'Index',
+                                  'action' => 'render-table-action-edit',
+                            ),
+                            'delete' => array(
+                                'module' => 'ModuleTpl',
+                                'controller' => 'Index',
+                                'action' => 'render-table-action-delete',
+                            ),
