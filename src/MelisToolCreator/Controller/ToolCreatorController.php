@@ -1371,11 +1371,6 @@ class ToolCreatorController extends AbstractActionController
      */
     public function sessAction()
     {
-
-        $tbl = $this->getServiceLocator()->get('MelisCalendarTable');
-        $test = $tbl->deleteByField('cal_id', array(3, 4));
-
-        var_dump($test);
         // Tool creator session container
         $container = new Container('melistoolcreator');
         $tcSteps = $container['melis-toolcreator'];
