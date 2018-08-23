@@ -70,6 +70,9 @@ $(function(){
                var targetId = $("#id_melistoolcreator_steps .steps-content").attr("id");
                $("#tc_"+targetId).addClass("active");
            }, 500);
+       }).error(function(xhr, textStatus, errorThrown){
+           // alert( translations.tr_meliscore_error_message );
+           alert(xhr.responseText);
        });
    });
 
