@@ -16,7 +16,7 @@ return array(
     // Steps
     'tr_melistoolcreator_module' => 'Tool',
     'tr_melistoolcreator_tcf-name tooltip' => 'Alphanumeric and underscore are the only valid characters allowed and can\'t start with numeric for naming a tool name',
-    'tr_melistoolcreator_module_desc' => 'Enter the name of the Module you want to create',
+    'tr_melistoolcreator_module_desc' => 'Enter the name of the tool you want to create',
     'tr_melistoolcreator_texts' => 'Texts',
     'tr_melistoolcreator_texts_title' => 'Module text translations',
     'tr_melistoolcreator_texts_desc' => 'Enter the text translations in different language, atleast one language fieldset should be filled up',
