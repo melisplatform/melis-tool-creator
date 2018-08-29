@@ -1,7 +1,6 @@
 <div id="<?php echo $this->id; ?>" class="steps-content">
     <div class="row">
-        <div class="col-md-3"></div>
-        <div class="col-md-6">
+        <div class="col-md-12">
             <?php
                 if (!$this->finalized) {
                     $form = $this->form;
@@ -31,7 +30,6 @@
                 </div>
             <?php } ?>
         </div>
-        <div class="col-md-3"></div>
     </div>
 
     <?php if (!$this->finalized){ ?>
