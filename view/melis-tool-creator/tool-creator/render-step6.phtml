@@ -30,6 +30,10 @@
                             {
                                 if ($val->getLabel())
                                 {
+                                    if (!empty($this->formElementErrors($val))){
+                                        $val->setLabelAttributes(array('class' => 'text-danger'));
+                                    }
+
                                     echo '<div class="form-group">';
                                     echo $this->formLabel($val);
                                 }

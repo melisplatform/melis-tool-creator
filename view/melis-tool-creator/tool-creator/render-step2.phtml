@@ -31,9 +31,16 @@
                                 if ($val->getLabel()){
 
                                     if(!empty($val->getOption('tooltip'))){
+
                                         $val->setLabelOptions(array('disable_html_escape' => true));
-                                        $label = $val->getLabel().'<i class="fa fa-info-circle fa-lg pull-right tip-info" data-toggle="tooltip" data-placement="left" title="" data-original-title="'.$val->getOption('tooltip').'"></i>';
+                                        $required = $val->getAttribute('required') ? ' *' : '';
+                                        $label = $val->getLabel().$required.'<i class="fa fa-info-circle fa-lg pull-right tip-info" data-toggle="tooltip" data-placement="left" title="" data-original-title="'.$val->getOption('tooltip').'"></i>';
+
                                         $val->setLabel($label);
+
+                                        if (!empty($this->formElementErrors($val))){
+                                            $val->setLabelAttributes(array('class' => 'text-danger'));
+                                        }
                                     }
 
                                     echo '<div class="form-group">';
