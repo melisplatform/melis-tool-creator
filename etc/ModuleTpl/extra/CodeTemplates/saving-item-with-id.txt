@@ -8,6 +8,6 @@
                 $id = $moduleTplTable->save($formData, $pk);
 
                 if ($id){
-                    $success = true;
+                    $success = 1;
                     $textMessage = $translator->translate('tr_moduletpl_save_success');
                 }

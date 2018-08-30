@@ -132,7 +132,7 @@ class IndexController extends AbstractActionController
     {
         $translator = $this->getServiceLocator()->get('translator');
 
-        $success = false;
+        $success = 0;
         $textTitle = $translator->translate('tr_moduletpl_title');
         $textMessage = $translator->translate('tr_moduletpl_unable_to_save');
         $errors = array();
