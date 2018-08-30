@@ -1046,10 +1046,8 @@ class ToolCreatorController extends AbstractActionController
             $formInputsTplContent = file_get_contents($formInputsTpl);
             $formInputsTplContent = str_replace('#TCKEY', $col, $formInputsTplContent);
             $formInputsTplContent = str_replace('#TCINPUTTYPE', $tcSteps['step5']['tcf-db-table-col-type'][$key], $formInputsTplContent);
-            array_push($formInputs, $formInputsTplContent);
 
             $skipValidator = false;
-
             if (!empty($pk)){
                 // If a column is AUTO_INCREMENT
                 // This column will skip for having validator
@@ -1059,21 +1057,24 @@ class ToolCreatorController extends AbstractActionController
             }
 
             // Generating input validators and filters
+            $inputIsRequired = 'false';
             if (!$skipValidator){
-                $inputIsRequired = 'false';
                 $formInputFilterTplContent = file_get_contents($formInputFiltersTpl);
                 $formInputFilterTplContent = str_replace('#TCKEY', $col, $formInputFilterTplContent);
 
-                if (in_array($col, $tcSteps['step5']['tcf-db-table-col-editable'])){
+                if (in_array($col, $tcSteps['step5']['tcf-db-table-col-required'])){
                     $inputIsRequired = 'true';
                     $formInputNotEmptyTplTplContent = file_get_contents($formInputNotEmptyTplTpl);
                     $formInputFilterTplContent = str_replace('#TCVALIDATORS', $formInputNotEmptyTplTplContent, $formInputFilterTplContent);
                 }
 
                 $formInputFilterTplContent = str_replace('#TCISREQUIRED', $inputIsRequired, $formInputFilterTplContent);
-
                 array_push($formInputFilters, $formInputFilterTplContent);
             }
+
+            // input required attribute
+            $formInputsTplContent = str_replace('#TCINPUTREQUIRED', $inputIsRequired, $formInputsTplContent);
+            array_push($formInputs, $formInputsTplContent);
         }
 
         $moduleForm = str_replace('#FORMINPUTS', implode(','."\n", $formInputs), $moduleFormContent);
