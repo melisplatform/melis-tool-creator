@@ -219,7 +219,7 @@ class ToolCreatorController extends AbstractActionController
         $hasErrorForm = false;
         $hasValidForm = false;
 
-        foreach ($languages As $lang){
+        foreach ($languages As $key => $lang){
             // Generating form for each language
             $step2Formtmp = $factory->createForm($appConfigForm);
 
@@ -253,13 +253,14 @@ class ToolCreatorController extends AbstractActionController
 
             // Adding language form
             $step2Form[$lang['lang_locale']] = $step2Formtmp;
+
+            // Language label
+            $languages[$key]['lang_label'] = $this->langLabel($lang['lang_locale'], $lang['lang_name']);
         }
 
+        // adding a variable to viewmodel to flag an error
         if ($hasErrorForm&&!$hasValidForm)
-        {
-            // adding a variable to viewmodel to flag an error
             $viewStp->hasError = true;
-        }
 
         $viewStp->step2Form = $step2Form;
         $viewStp->languages = $languages;
@@ -637,7 +638,7 @@ class ToolCreatorController extends AbstractActionController
 
         $step6Form = array();
 
-        foreach ($languages As $lang){
+        foreach ($languages As $key => $lang){
             $step6FormTmp = $factory->createForm($appConfigForm);
 
             $step6FormTmp->get('tcf-lang-local')->setValue($lang['lang_locale']);
@@ -706,12 +707,14 @@ class ToolCreatorController extends AbstractActionController
             }
 
             $step6Form[$lang['lang_locale']] = $step6FormTmp;
+
+            // Language label
+            $languages[$key]['lang_label'] = $this->langLabel($lang['lang_locale'], $lang['lang_name']);
         }
 
-        if ($hasErrorForm && !$hasValidForm){
-            // adding a variable to viewmodel to flag an error
+        // adding a variable to viewmodel to flag an error
+        if ($hasErrorForm && !$hasValidForm)
             $viewStp->hasError = true;
-        }
 
         $viewStp->columns = $selectedColumns;
         $viewStp->languages = $languages;
@@ -1376,5 +1379,17 @@ class ToolCreatorController extends AbstractActionController
         $tcSteps = $container['melis-toolcreator'];
         print_r($tcSteps);
         die();
+    }
+
+    private function langLabel($locale, $langName)
+    {
+        $langLabel = $langName;
+
+        $langLocale = explode('_', $locale)[0];
+        $moduleSvc = $this->getServiceLocator()->get('ModulesService');
+        if (file_exists($moduleSvc->getModulePath('MelisCore').'/public/assets/images/lang/'.$langLocale.'.png'))
+            $langLabel = '<img src="/MelisCore/assets/images/lang/'.$langLocale.'.png"> '.$langName;
+
+        return $langLabel;
     }
 }
