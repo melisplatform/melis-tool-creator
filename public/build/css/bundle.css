@@ -3,6 +3,10 @@
     font-size: 1.1em;
 }
 
+#id_melistoolcreator_content .tooltip .tooltip-inner {
+    word-break: normal;
+}
+
 #id_melistoolcreator_steps .fa-key{
     color: #ffa700;
 }

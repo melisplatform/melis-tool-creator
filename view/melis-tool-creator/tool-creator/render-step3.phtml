@@ -6,7 +6,7 @@
             <p><?php echo $this->translate('tr_melistoolcreator_database_desc') ?></p>
         </div>
         <div class="col-sm-12">
-            <p align="right"> <button class="btn btn-success tc-reload-dbtbl-cached"><?php echo $this->translate('tr_melistoolcreator_database_reload_cached') ?> <i class="fa fa-refresh"></i></button></p>
+            <p align="right"> <button class="btn btn-success tc-reload-dbtbl-cached" data-toggle="tooltip" data-placement="left" title="Refreshing database tables list might take a few minutes"><?php echo $this->translate('tr_melistoolcreator_database_reload_cached') ?> <i class="fa fa-refresh"></i></button></p>
         </div>
 
         <?php if ($this->hasError){ ?>

@@ -24,6 +24,7 @@ return array(
     'tr_melistoolcreator_database_title' => 'Table de base de données du module',
     'tr_melistoolcreator_database_desc' => 'Sélectionnez une table de base de données qui utilisera le module generate',
     'tr_melistoolcreator_database_reload_cached' => 'Actualiser la liste des tables de base de donnée',
+    'tr_melistoolcreator_database_reload_cached_tooltip' => 'Actualiser la liste des tables de base de données peut prendre quelques minutes',
     'tr_melistoolcreator_table_cols' => 'Colonnes de table',
     'tr_melistoolcreator_table_cols_title' => 'Colonnes de la table de base de données',
     'tr_melistoolcreator_table_cols_desc' => 'Veuillez sélectionner la ou les colonnes à afficher dans la liste des tables d\'outils générées',
