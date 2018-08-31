@@ -23,6 +23,7 @@ return array(
     'tr_melistoolcreator_database' => 'Database',
     'tr_melistoolcreator_database_title' => 'Module database table',
     'tr_melistoolcreator_database_desc' => 'Select a database table that will use by the generate module',
+    'tr_melistoolcreator_database_reload_cached' => 'Refresh database tables list',
     'tr_melistoolcreator_table_cols' => 'Table columns',
     'tr_melistoolcreator_table_cols_title' => 'Database table columns',
     'tr_melistoolcreator_table_cols_desc' => 'Please select column(s) to be displayed on the generated tool table list',

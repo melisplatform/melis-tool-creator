@@ -23,6 +23,8 @@ use Zend\Db\Metadata\Metadata;
 class ToolCreatorController extends AbstractActionController
 {
     private $moduleTplDir;
+    private $cacheKey = 'toolcreator_database_tables';
+    private $cacheConfig = 'toolcreator_database';
 
     public function __construct()
     {
@@ -40,6 +42,8 @@ class ToolCreatorController extends AbstractActionController
         // Initializing the Tool creator session container
         $container = new Container('melistoolcreator');
         $container['melis-toolcreator'] = array();
+
+        $this->getDBTablesCached();
 
         return $view;
     }
@@ -281,19 +285,8 @@ class ToolCreatorController extends AbstractActionController
         // Tool creator session container
         $container = new Container('melistoolcreator');
 
-        // Step form fields
-        $melisMelisCoreConfig = $this->getServiceLocator()->get('MelisCoreConfig');
-        $appConfigForm = $melisMelisCoreConfig->getFormMergedAndOrdered('melistoolcreator/forms/melistoolcreator_step3_form', 'melistoolcreator_step3_form');
-        $factory = new \Zend\Form\Factory();
-        $formElements = $this->getServiceLocator()->get('FormElementManager');
-        $factory->setFormElementManager($formElements);
-        $step3Form = $factory->createForm($appConfigForm);
-
-        $request = $this->getRequest();
-
+        $tcfDbTbl = null;
         if (!empty($container['melis-toolcreator']['step3'])){
-            $step3Form->setData($container['melis-toolcreator']['step3']);
-
             $tcfDbTbl = $container['melis-toolcreator']['step3']['tcf-db-table'];
 
             /**
@@ -309,20 +302,67 @@ class ToolCreatorController extends AbstractActionController
                 )
             )->getVariables();
 
-            $viewStp->selectedTbl = $tcfDbTbl;
             $viewStp->tblCols = $tblColsHtml['html'];
         }
 
-        $hasError = false;
-        if ($validate){
-            $formData = $request->getPost()->toArray();
+        $dbTablesHtml = $this->forward()->dispatch(
+            'MelisToolCreator\Controller\ToolCreator',
+            array(
+                'action' => 'renderStep3DbTables',
+                'selectedTbl' => $tcfDbTbl,
+                'validate' => $validate,
+            )
+        )->getVariables();
 
+        if (isset($dbTablesHtml['hasError'])){
+            $viewStp->hasError = true;
+        }
+
+        $viewStp->dbTables = $dbTablesHtml['html'];
+
+        return $viewStp;
+    }
+
+    public function renderStep3DbTablesAction()
+    {
+        $results = array();
+
+        // Tool creator session container
+        $container = new Container('melistoolcreator');
+
+        $view = new ViewModel();
+        $view->setTemplate('melis-tool-creator/step3-db_tble');
+
+        $tcfDbTbl = null;
+        if (!empty($container['melis-toolcreator']['step3']))
+            $tcfDbTbl = $container['melis-toolcreator']['step3']['tcf-db-table'];
+
+        $validate = $this->params()->fromRoute('validate', false);
+        $selectedTbl = $this->params()->fromRoute('selectedTbl', $this->params()->fromPost('selectedTbl', $tcfDbTbl));
+        $reloadDbCache = $this->params()->fromPost('reloadDbTblCached', false);
+
+        // Step form fields
+        $melisCoreConfig = $this->getServiceLocator()->get('MelisCoreConfig');
+        $appConfigForm = $melisCoreConfig->getFormMergedAndOrdered('melistoolcreator/forms/melistoolcreator_step3_form', 'melistoolcreator_step3_form');
+        $factory = new \Zend\Form\Factory();
+        $formElements = $this->getServiceLocator()->get('FormElementManager');
+        $factory->setFormElementManager($formElements);
+        $step3Form = $factory->createForm($appConfigForm);
+
+        if (!empty($container['melis-toolcreator']['step3'])) {
+            $step3Form->setData($container['melis-toolcreator']['step3']);
+        }elseif (!empty($selectedTbl)){
+            $step3Form->get('tcf-db-table')->setValue($selectedTbl);
+        }
+
+        if ($validate){
+            $request = $this->getRequest();
+            $formData = $request->getPost()->toArray();
             $step3Form->setData($formData['step-form']);
 
             if(!$step3Form->isValid()){
                 // adding a variable to viewmodel to flag an error
-                $viewStp->hasError = true;
-                $hasError = true;
+                $results['hasError'] = true;
             }else{
                 $formData = $step3Form->getData();
                 if (!empty($container['melis-toolcreator']['step3'])){
@@ -343,21 +383,24 @@ class ToolCreatorController extends AbstractActionController
             }
         }
 
-        $viewStp->step3Form = $step3Form;
-
-        /**
-         * This part will only execute if the action if only for this step
-         * this will avoid database query executing by passing this step
-         */
-        if ((!$validate && $this->params()->fromPost('nxtStep') == 3) || $hasError){
-            $adapter = $this->getServiceLocator()->get('Zend\Db\Adapter\Adapter');
-            $metadata = new Metadata($adapter);
-            $tables = $metadata->getTables();
-            $viewStp->tables = $tables;
+        // Re-caching database tables
+        if ($reloadDbCache){
+            $this->getDBTablesCached(true);
         }
 
+        if ($selectedTbl){
+            $view->selectedTbl = $selectedTbl;
+        }
 
-        return $viewStp;
+        $view->step3Form = $step3Form;
+        $view->tables = $this->getDBTablesCached();
+
+        // Rendering the ViewModel to return html string
+        $viewRenderer = $this->getServiceLocator()->get('ViewRenderer');
+        $html = $viewRenderer->render($view);
+
+        $results['html'] = $html;
+        return new JsonModel($results);
     }
 
     /**
@@ -1382,6 +1425,14 @@ class ToolCreatorController extends AbstractActionController
         die();
     }
 
+    /**
+     * This method return the language name with flag image
+     * if exist
+     *
+     * @param $locale
+     * @param $langName
+     * @return string
+     */
     private function langLabel($locale, $langName)
     {
         $langLabel = $langName;
@@ -1392,5 +1443,30 @@ class ToolCreatorController extends AbstractActionController
             $langLabel = '<img src="/MelisCore/assets/images/lang/'.$langLocale.'.png"> '.$langName;
 
         return $langLabel;
+    }
+
+    /**
+     * This method setting and retrieving database table cached file
+     *
+     * @param $reloadCached
+     * @return \Zend\Db\Metadata\Object\TableObject[]
+     */
+    private function getDBTablesCached($reloadCached = false)
+    {
+        /**
+         * Caching Database tables to file cache
+         * to avoid slow request for step 2
+         */
+        $melisEngineCacheSystem = $this->serviceLocator->get('MelisEngineCacheSystem');
+        $results = $melisEngineCacheSystem->getCacheByKey($this->cacheKey, $this->cacheConfig, true);
+        if (!$results || $reloadCached){
+            $adapter = $this->getServiceLocator()->get('Zend\Db\Adapter\Adapter');
+            $metadata = new Metadata($adapter);
+            $tables = $metadata->getTables();
+            $melisEngineCacheSystem->setCacheByKey($this->cacheKey, $this->cacheConfig, $tables, true);
+            $results = $tables;
+        }
+
+        return $results;
     }
 }

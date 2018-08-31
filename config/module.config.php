@@ -48,6 +48,16 @@ return array(
                             ),
                         ),
                     ),
+                    'tool-creator-reload-dbtbl-cached' => array(
+                        'type' => 'Segment',
+                        'options' => array(
+                            'route' => 'tool-creator-reload-dbtbl-cached',
+                            'defaults' => array(
+                                'controller' => 'MelisToolCreator\Controller\ToolCreator',
+                                'action' => 'renderStep3DbTables',
+                            ),
+                        ),
+                    ),
                 ),    
         	),
             /*
@@ -113,6 +123,7 @@ return array(
             'melis-tool-creator/step1'          => __DIR__ . '/../view/melis-tool-creator/tool-creator/render-step1.phtml',
             'melis-tool-creator/step2'          => __DIR__ . '/../view/melis-tool-creator/tool-creator/render-step2.phtml',
             'melis-tool-creator/step3'          => __DIR__ . '/../view/melis-tool-creator/tool-creator/render-step3.phtml',
+            'melis-tool-creator/step3-db_tble'  => __DIR__ . '/../view/melis-tool-creator/tool-creator/render-step3-db-tables.phtml',
             'melis-tool-creator/step3-tbl-col'  => __DIR__ . '/../view/melis-tool-creator/tool-creator/render-step3-table-columns.phtml',
             'melis-tool-creator/step4'          => __DIR__ . '/../view/melis-tool-creator/tool-creator/render-step4.phtml',
             'melis-tool-creator/step5'          => __DIR__ . '/../view/melis-tool-creator/tool-creator/render-step5.phtml',
@@ -127,4 +138,21 @@ return array(
             'ViewJsonStrategy',
         ),
     ),
+    'caches' => array(
+        'toolcreator_database' => array(
+            'active' => true, // activate or deactivate Melis Cache for this conf
+            'adapter' => array(
+                'name'    => 'Filesystem',
+                'options' => array(
+                    'ttl' => 0, // 24hrs
+                    'namespace' => 'melistoolcreator',
+                    'cache_dir' => $_SERVER['DOCUMENT_ROOT'] . '/../cache'
+                ),
+            ),
+            'plugins' => array(
+                'exception_handler' => array('throw_exceptions' => false),
+                'Serializer'
+            ),
+        ),
+    )
 );

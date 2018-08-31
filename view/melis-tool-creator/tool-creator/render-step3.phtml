@@ -5,6 +5,9 @@
             <h3><?php echo $this->translate('tr_melistoolcreator_database_title') ?></h3>
             <p><?php echo $this->translate('tr_melistoolcreator_database_desc') ?></p>
         </div>
+        <div class="col-sm-12">
+            <p align="right"> <button class="btn btn-success tc-reload-dbtbl-cached"><?php echo $this->translate('tr_melistoolcreator_database_reload_cached') ?> <i class="fa fa-refresh"></i></button></p>
+        </div>
 
         <?php if ($this->hasError){ ?>
             <div class="col-sm-12">
@@ -20,26 +23,7 @@
                     <h4 class="heading"><i class="fa fa-table"></i> <?php echo $this->translate('tr_melistoolcreator_db_tables') ?></h4>
                 </div>
                 <div class="widget-body list melis-toolcreator-steps-table-list">
-                    <ul>
-                        <?php
-                            foreach ($this->tables As $tbl){
-                                $icon = 'fa-square-o';
-                                if ($tbl->getName() == $this->selectedTbl){
-                                    $icon = 'fa-check-square-o text-success';
-                                }
-
-                                echo '<li data-table-name="'.$tbl->getName().'">
-                                        <span><i class="fa '.$icon.' fa-lg"></i> '.$tbl->getName().'</span>
-                                    </li>';
-                            }
-                        ?>
-                    </ul>
-                    <?php
-                        $form = $this->step3Form;
-                        echo $this->form()->openTag($form);
-                        echo $this->formCollection($form);
-                        echo $this->form()->closeTag();
-                    ?>
+                    <?php echo $this->dbTables ?>
                 </div>
             </div>
         </div>

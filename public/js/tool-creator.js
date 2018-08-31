@@ -76,6 +76,28 @@ $(function(){
        });
    });
 
+   $body.on("click", ".tc-reload-dbtbl-cached", function(){
+       var reloadBtn = $(this);
+       reloadBtn.attr("disabled", true);
+
+       $(".melis-toolcreator-steps-table-list").append(loader);
+
+       $.post('/melis/tool-creator-reload-dbtbl-cached', {reloadDbTblCached : true, selectedTbl: $(".melis-toolcreator-steps-table-list input[name='tcf-db-table']").val()}).done(function(res){
+
+           reloadBtn.attr("disabled", false);
+
+           $(".melis-toolcreator-steps-table-list #loader img").removeClass('spinning-cog').addClass('shrinking-cog');
+
+           setTimeout(function(){
+
+               $(".melis-toolcreator-steps-table-list #loader").remove();
+
+               $(".melis-toolcreator-steps-table-list").html(res.html);
+
+           }, 500);
+        });
+   });
+
    $body.on("click", ".melis-toolcreator-steps-table-list li", function(){
 
        $(".melis-toolcreator-steps-table-list li .fa").removeClass("fa-check-square-o");

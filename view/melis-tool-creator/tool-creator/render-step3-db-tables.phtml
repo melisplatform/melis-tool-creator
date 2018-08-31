@@ -1,0 +1,19 @@
+<ul>
+    <?php
+    foreach ($this->tables As $tbl){
+        $icon = 'fa-square-o';
+        if ($tbl->getName() == $this->selectedTbl){
+            $icon = 'fa-check-square-o text-success';
+        }
+
+        echo '<li data-table-name="'.$tbl->getName().'">
+                <span><i class="fa '.$icon.' fa-lg"></i> '.$tbl->getName().'</span>
+            </li>';
+    }
+    ?>
+</ul>
+<?php
+    $form = $this->step3Form;
+    echo $this->form()->openTag($form);
+    echo $this->formCollection($form);
+    echo $this->form()->closeTag();
