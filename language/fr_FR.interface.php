@@ -13,6 +13,14 @@ return array(
     'tr_melistoolcreator_back' => 'Retour',
     'tr_melistoolcreator_finish' => 'Terminer et créer l\'outil',
 
+    // Warnings
+    'tr_melistoolcreator_fp_title' => 'File permission denied',
+    'tr_melistoolcreator_fp_msg' => 'In-order to create tool(s) using this tool, please grant this to write to the following file directory below or contact the administrator if the problem persists.',
+    'tr_melistoolcreator_fp_config' => '<b>/config/melis.module.load.php</b> - this file use to activate the tool(s) after creation',
+    'tr_melistoolcreator_fp_cache' => '<b>/cache</b> - the directory where the database tables list cache file stored, this procedure will avoid slow process during setup of the tool',
+    'tr_melistoolcreator_fp_module' => '<b>/module</b> - the directory where the new tool(s) created are stored',
+
+
     // Steps
     'tr_melistoolcreator_module' => 'Outil',
     'tr_melistoolcreator_tcf-name tooltip' => 'Les caractères alphanumériques et les traits de soulignement sont les seuls caractères valides autorisés et ne peuvent pas commencer par un nom numérique pour nommer un nom d\'outil',

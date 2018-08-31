@@ -43,8 +43,6 @@ class ToolCreatorController extends AbstractActionController
         $container = new Container('melistoolcreator');
         $container['melis-toolcreator'] = array();
 
-        $this->getDBTablesCached();
-
         return $view;
     }
 
@@ -64,12 +62,35 @@ class ToolCreatorController extends AbstractActionController
      */
     public function renderToolCreatorContentAction()
     {
+        $view = new ViewModel();
+
+        /**
+         * Checking file permission to file and directories needed to create and activate the tool
+         */
+        $filePermissionErr = array();
+        if (!is_writable($_SERVER['DOCUMENT_ROOT'] . '/../config/melis.module.load.php'))
+            $filePermissionErr[] = 'tr_melistoolcreator_fp_config';
+
+        if (!is_writable($_SERVER['DOCUMENT_ROOT'] . '/../cache'))
+            $filePermissionErr[] = 'tr_melistoolcreator_fp_cache';
+
+        if (!is_writable($_SERVER['DOCUMENT_ROOT'] . '/../module'))
+            $filePermissionErr[] = 'tr_melistoolcreator_fp_module';
+
+        if (!empty($filePermissionErr)){
+            $view->fPErr = $filePermissionErr;
+            return $view;
+        }
+
+        // Database table caching
+        $this->getDBTablesCached();
+
         $config = $this->getServiceLocator()->get('config');
 
         // Retrieving steps form config
         $stepsConfig = $config['plugins']['melistoolcreator']['datas']['steps'];
 
-        $view = new ViewModel();
+
         $view->stepsConfig = $stepsConfig;
         return $view;
     }
@@ -82,6 +103,8 @@ class ToolCreatorController extends AbstractActionController
     public function renderToolCreatorStepsAction()
     {
         $view = new ViewModel();
+
+
 
         // The steps requested
         $curStep = $this->params()->fromPost('curStep', 1);
@@ -106,7 +129,6 @@ class ToolCreatorController extends AbstractActionController
          * else this will call the next step and return to render
          */
         if (!isset($viewVars->hasError)){
-
             $viewStp->id = 'melistoolcreator_step'.$nxtStep;
             $viewStp->setTemplate('melis-tool-creator/step'.$nxtStep);
             $stpFunction = 'renderStep'.$nxtStep;

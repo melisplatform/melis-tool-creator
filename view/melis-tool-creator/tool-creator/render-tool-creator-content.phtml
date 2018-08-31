@@ -4,17 +4,15 @@
 ?>
 <div class="innerAll spacing-x2 melis-tool-creator" id="<?php echo $id; ?>" data-melisKey="<?php echo $melisKey; ?>">
     <div class="innerAll spacing-x2">
-        <div class="row">
+        <?php if (empty($this->fPErr)){ ?>
             <div class="wizard wizard-design">
                 <!-- Wizard heading -->
                 <div class="wizard-head melis-toolcreator-steps">
                     <ul class="bwizard-steps">
                         <?php
-                            if(!empty($this->stepsConfig))
-                            {
+                            if(!empty($this->stepsConfig)){
                                 $ctr = 0;
-                                foreach($this->stepsConfig as $key => $config)
-                                {
+                                foreach($this->stepsConfig as $key => $config){
                                     $clss = !$ctr++ ? 'class="active"' : '';
                                     echo '<li '.$clss.' id="tc_'.$key.'"><span><i class="fa '.$config['icon'].' fa-lg" aria-hidden="true"></i> '.$this->translate($config['name']).'</span></li>';
                                 }
@@ -35,6 +33,15 @@
                     </div>
                 </div>
             </div>
-        </div>
+        <?php }else{ ?>
+            <div class="alert alert-warning">
+                <h3><?php echo $this->translate('tr_melistoolcreator_fp_title') ?></h3>
+                <p><?php echo $this->translate('tr_melistoolcreator_fp_msg') ?></p>
+                <br>
+                <?php foreach ($this->fPErr as $err) { ?>
+                    <p style="display: list-item;list-style-type: disc;list-style-position: inside;"><?php echo $this->translate($err) ?></p>
+                <?php } ?>
+            </div>
+        <?php } ?>
     </div>
 </div>
