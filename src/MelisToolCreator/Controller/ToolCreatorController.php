@@ -482,27 +482,21 @@ class ToolCreatorController extends AbstractActionController
         $viewStp->step4Form = $step4Form;
 
         $request = $this->getRequest();
-        if ($validate)
-        {
+        if ($validate){
             unset($container['melis-toolcreator']['step4']);
 
             $formData = get_object_vars($request->getPost());
 
-            if(empty($formData['step-form']))
-            {
+            if(empty($formData['step-form'])){
                 // adding a variable to viewmodel to flag an error
                 $viewStp->hasError = true;
-            }
-            else
-            {
+            }else{
                 $container['melis-toolcreator']['step4'] = $formData['step-form'];
             }
         }
 
-        if (!empty($container['melis-toolcreator']['step4']))
-        {
-            if (!empty($container['melis-toolcreator']['step4']['tcf-db-table-cols']))
-            {
+        if (!empty($container['melis-toolcreator']['step4'])){
+            if (!empty($container['melis-toolcreator']['step4']['tcf-db-table-cols'])){
                 $viewStp->tblColumns = $container['melis-toolcreator']['step4']['tcf-db-table-cols'];
             }
         }
@@ -579,43 +573,33 @@ class ToolCreatorController extends AbstractActionController
             $tableCols[$key]['editableIsChecked'] = false;
             $tableCols[$key]['requiredIsChecked'] = false;
 
-            if ($val['Key'] == 'PRI' && $val['Extra'] == 'auto_increment')
-            {
+            if ($val['Key'] == 'PRI' && $val['Extra'] == 'auto_increment'){
                 $tableCols[$key]['editable'] = 'AUTO_INCREMENT';
                 $tableCols[$key]['required'] = 'AUTO_INCREMENT';
                 $tableCols[$key]['editableIsChecked'] = true;
                 $tableCols[$key]['requiredIsChecked'] = true;
-            }
-            elseif ($val['Key'] == 'PRI' || $val['Null'] == 'NO')
-            {
+            }elseif ($val['Key'] == 'PRI' || $val['Null'] == 'NO'){
                 $tableCols[$key]['editable'] = sprintf($iconTag, implode(' ', array($editableIcon, $checkedIcon)));
                 $tableCols[$key]['required'] = sprintf($iconTag, implode(' ', array($requiredIcon, $checkedIcon)));
                 $tableCols[$key]['editableIsChecked'] = true;
                 $tableCols[$key]['requiredIsChecked'] = true;
-            }
-            else
-            {
+            }else{
                 $tableCols[$key]['editable'] = sprintf($iconTag, implode(' ', array($editableIcon, $unCheckedIcon, $activeCheckIcon)));
                 $tableCols[$key]['required'] = sprintf($iconTag, implode(' ', array($requiredIcon, $unCheckedIcon, $activeCheckIcon)));
                 $tableCols[$key]['isChecked'] = false;
 
-                if (!empty($container['melis-toolcreator']['step5']))
-                {
+                if (!empty($container['melis-toolcreator']['step5'])){
                     // Checking editable column checkbox
-                    if ($container['melis-toolcreator']['step5']['tcf-db-table-col-editable'])
-                    {
-                        if (in_array($val['Field'], $container['melis-toolcreator']['step5']['tcf-db-table-col-editable']))
-                        {
+                    if ($container['melis-toolcreator']['step5']['tcf-db-table-col-editable']){
+                        if (in_array($val['Field'], $container['melis-toolcreator']['step5']['tcf-db-table-col-editable'])){
                             $tableCols[$key]['editable'] = sprintf($iconTag, implode(' ', array($editableIcon, $checkedIcon, $checkedColorIcon, $activeCheckIcon)));
                             $tableCols[$key]['editableIsChecked'] = true;
                         }
                     }
 
                     // Checking required column checkbox
-                    if ($container['melis-toolcreator']['step5']['tcf-db-table-col-required'])
-                    {
-                        if (in_array($val['Field'], $container['melis-toolcreator']['step5']['tcf-db-table-col-required']))
-                        {
+                    if ($container['melis-toolcreator']['step5']['tcf-db-table-col-required']){
+                        if (in_array($val['Field'], $container['melis-toolcreator']['step5']['tcf-db-table-col-required'])){
                             $tableCols[$key]['required'] = sprintf($iconTag, implode(' ', array($requiredIcon, $checkedIcon, $checkedColorIcon, $activeCheckIcon)));
                             $tableCols[$key]['requiredIsChecked'] = true;
                         }
@@ -719,10 +703,24 @@ class ToolCreatorController extends AbstractActionController
                     'name' => $col,
                     'type' => 'MelisText',
                     'options' => array(
-                        'label' => $col.' *'
+                        'label' => $col.' *',
+                        'col-name' => true,
                     ),
                     'attributes' => array(
-                        'required' => 'required'
+                        'required' => 'required',
+                        'placeholder' => 'Name'
+                    ),
+                ));
+
+                $step6FormTmp->add(array(
+                    'name' => $col.'_tcinputdesc',
+                    'type' => 'MelisText',
+                    'options' => array(
+                        'col-desc' => true,
+                    ),
+                    'attributes' => array(
+                        'required' => 'required',
+                        'placeholder' => 'Description',
                     ),
                 ));
 
@@ -1315,11 +1313,22 @@ class ToolCreatorController extends AbstractActionController
         $translations = array();
         $textFields = array();
 
+        // Default value setter
         foreach ($languages As $lang){
             $translations[$lang['lang_locale']] = array();
             if (!empty($stepTexts[$lang['lang_locale']])){
                 foreach($stepTexts[$lang['lang_locale']] As $key => $text){
                     if ($key != 'tcf-lang-local'){
+
+                        if (strpos($key, 'tcinputdesc')){
+
+                            if (empty($text)){
+                                $text = $stepTexts[$lang['lang_locale']][str_replace('_tcinputdesc', '', $key)];
+                            }
+
+                            $key = str_replace('tcinputdesc', 'tooltip', $key);
+                        }
+
                         $translations[$lang['lang_locale']][$key] = $text;
 
                         // Getting fields that has a value

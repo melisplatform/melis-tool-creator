@@ -1,3 +1,8 @@
+<style>
+    .tcf-lbl-balance{
+        height: 14px;
+    }
+</style>
 <div id="<?php echo $this->id; ?>" class="steps-content">
     <div class="row">
         <div class="col-sm-12">
@@ -26,12 +31,23 @@
 
                             echo $this->form()->openTag($form);
 
-                            foreach ($form->getElements() As $key => $val)
-                            {
-                                if ($val->getLabel())
-                                {
+                            foreach ($form->getElements() As $key => $val){
+
+                                if ($val->getOption('col-name'))
+                                    echo '<div class="row">';
+
+                                if ($val->getLabel() || $val->getOption('col-desc')){
                                     if (!empty($this->formElementErrors($val))){
                                         $val->setLabelAttributes(array('class' => 'text-danger'));
+                                    }
+
+                                    if ($val->getOption('col-name'))
+                                        echo '<div class="col-md-4">';
+
+                                    if ($val->getOption('col-desc')){
+                                        $val->setLabel(' ');
+                                        $val->setLabelAttributes(array('class' => 'tcf-lbl-balance'));
+                                        echo '<div class="col-md-8">';
                                     }
 
                                     echo '<div class="form-group">';
@@ -40,11 +56,13 @@
 
                                 echo $this->formElement($val);
 
-                                if ($val->getLabel())
-                                {
+                                if ($val->getLabel() || $val->getOption('col-desc')){
                                     echo $this->formElementErrors($val, array('class' => 'text-danger'));
-                                    echo '</div>';
+                                    echo '</div></div>';
                                 }
+
+                                if ($val->getOption('col-desc'))
+                                    echo '</div>';
                             }
 
                             echo $this->form()->closeTag();

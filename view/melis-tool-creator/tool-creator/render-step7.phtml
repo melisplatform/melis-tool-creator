@@ -101,9 +101,23 @@
                                 }
                             }
 
+                            $colDescFlag = true;
                             foreach ($cols As $col){
+
+                                $colName = $col;
+                                if (strpos($col, 'tcinputdesc') && $colDescFlag){
+                                    echo '<tr>';
+                                    echo '<th colspan="3">Columns description</th>';
+                                    echo '</tr>';
+                                    $colDescFlag = false;
+                                }
+
+                                if (strpos($col, 'tcinputdesc')){
+                                    $colName = str_replace('_tcinputdesc', '', $col);
+                                }
+
                                 echo '<tr>';
-                                echo '<td>' . $col . '</td>';
+                                echo '<td>' . $colName . '</td>';
 
                                 foreach ($this->languages As $lang){
 
