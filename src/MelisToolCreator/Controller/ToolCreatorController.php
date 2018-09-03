@@ -9,13 +9,11 @@
 
 namespace MelisToolCreator\Controller;
 
-use MelisCore\MelisModuleManager;
-use MelisCore\Module;
-use Zend\Form\Element\Text;
 use Zend\InputFilter\Input;
 use Zend\InputFilter\InputFilter;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\Session\Container;
+use Zend\Stdlib\ArrayUtils;
 use Zend\View\Model\JsonModel;
 use Zend\View\Model\ViewModel;
 use Zend\Db\Metadata\Metadata;
@@ -104,8 +102,6 @@ class ToolCreatorController extends AbstractActionController
     {
         $view = new ViewModel();
 
-
-
         // The steps requested
         $curStep = $this->params()->fromPost('curStep', 1);
         $nxtStep = $this->params()->fromPost('nxtStep', 1);
@@ -136,8 +132,39 @@ class ToolCreatorController extends AbstractActionController
             $viewStp = $this->$stpFunction($viewStp);
         }
 
-        // Rendering the result view and attach to the container
+
         $viewRender = $this->getServiceLocator()->get('ViewRenderer');
+
+        if ($validate || ( $curStep > $nxtStep) ){
+
+            // Retrieving steps form config
+            $config = $this->getServiceLocator()->get('config');
+            $stepsConfig = $config['plugins']['melistoolcreator']['datas']['steps'];
+
+            // translating error modal title
+            $translator = $this->getServiceLocator()->get('translator');
+
+            $results = array(
+                'textTitle' => $translator->translate($stepsConfig['melistoolcreator_step'.$curStep]['name']),
+                'html' => $viewRender->render($viewStp) // Sending the step view without container
+            );
+
+            if (isset($viewVars->hasError) && !isset($viewVars->skipErrModal)){
+                $results['errors'] = $translator->translate($stepsConfig['melistoolcreator_step'.$nxtStep]['name']);
+
+                // Translating error input name
+                $stepErrors = array();
+                foreach ($viewVars->hasError As $key => $val)
+                    $stepErrors[$translator->translate('tr_melistoolcreator_'.$key)] = $val;
+
+                $results['errors'] = $stepErrors;
+                $results['textMessage'] = $translator->translate('tr_melistoolcreator_err_message');
+            }
+
+            return new JsonModel($results);
+        }
+
+        // Rendering the result view and attach to the container
         $view->step = $viewRender->render($viewStp);
 
         return $view;
@@ -178,7 +205,7 @@ class ToolCreatorController extends AbstractActionController
 
             if(!$step1Form->isValid()){
                 // adding a variable to viewmodel to flag an error
-                $viewStp->hasError = true;
+                $viewStp->hasError = $step1Form->getMessages();
             }else{
                 /**
                  * Validating the module entered if its already existing on the platform
@@ -187,14 +214,15 @@ class ToolCreatorController extends AbstractActionController
                 $existingModules = array_merge($modulesSvc->getModulePlugins(), \MelisCore\MelisModuleManager::getModules());
 
                 if (in_array($formData['step-form']['tcf-name'], $existingModules)){
-                    // adding a variable to viewmodel to flag an error
-                    $viewStp->hasError = true;
 
                     // Adding error message to module input
                     $translator = $this->getServiceLocator()->get('translator');
                     $step1Form->get('tcf-name')->setMessages(array(
                         'ModuleExist' => sprintf($translator->translate('tr_melistoolcreator_err_module_exist'), $formData['step-form']['tcf-name'])
                     ));
+
+                    // adding a variable to viewmodel to flag an error
+                    $viewStp->hasError = $step1Form->getMessages();
                 }else{
                     $container['melis-toolcreator']['step1'] = $step1Form->getData();
                 }
@@ -242,8 +270,9 @@ class ToolCreatorController extends AbstractActionController
 
         $step2Form = array();
 
-        $hasErrorForm = false;
+        $hasErrorForm = array();
         $hasValidForm = false;
+        $inputHasValue = array();
 
         foreach ($languages As $key => $lang){
             // Generating form for each language
@@ -270,8 +299,18 @@ class ToolCreatorController extends AbstractActionController
                  */
                 if($step2Formtmp->isValid()){
                     $hasValidForm = true;
+
                 }else{
-                    $hasErrorForm = true;
+                    if (empty($step2Formtmp))
+                        $hasErrorForm = $step2Formtmp->getMessages();
+                    else
+                        $hasErrorForm = ArrayUtils::merge($hasErrorForm, $step2Formtmp->getMessages());
+                }
+
+                // Getting input with data for Error preparation
+                foreach ($step2Formtmp->getData() As $key => $kVal){
+                    if (!empty($kVal) && !in_array($key, $inputHasValue))
+                        array_push($inputHasValue, $key);
                 }
 
                 $container['melis-toolcreator']['step2'][$lang['lang_locale']] = $step2Formtmp->getData();
@@ -284,9 +323,16 @@ class ToolCreatorController extends AbstractActionController
             $languages[$key]['lang_label'] = $this->langLabel($lang['lang_locale'], $lang['lang_name']);
         }
 
+        // Removing input with data on any Form fieldset
+        if (!empty($inputHasValue)){
+            foreach ($inputHasValue As $key => $val)
+                if (isset($hasErrorForm[$val]))
+                    unset($hasErrorForm[$val]);
+        }
+
         // adding a variable to viewmodel to flag an error
-        if ($hasErrorForm&&!$hasValidForm)
-            $viewStp->hasError = true;
+        if (!empty($hasErrorForm)&&!$hasValidForm)
+            $viewStp->hasError = $hasErrorForm;
 
         $viewStp->step2Form = $step2Form;
         $viewStp->languages = $languages;
@@ -338,6 +384,7 @@ class ToolCreatorController extends AbstractActionController
 
         if (isset($dbTablesHtml['hasError'])){
             $viewStp->hasError = true;
+            $viewStp->skipErrModal = true;
         }
 
         $viewStp->dbTables = $dbTablesHtml['html'];
@@ -490,6 +537,7 @@ class ToolCreatorController extends AbstractActionController
             if(empty($formData['step-form'])){
                 // adding a variable to viewmodel to flag an error
                 $viewStp->hasError = true;
+                $viewStp->skipErrModal = true;
             }else{
                 $container['melis-toolcreator']['step4'] = $formData['step-form'];
             }
@@ -536,6 +584,7 @@ class ToolCreatorController extends AbstractActionController
             if(empty($formData['step-form'])){
                 // adding a variable to viewmodel to flag an error
                 $viewStp->hasError = true;
+                $viewStp->skipErrModal = true;
             }else{
                 $container['melis-toolcreator']['step5'] = $formData['step-form'];
             }
@@ -681,7 +730,8 @@ class ToolCreatorController extends AbstractActionController
         $factory->setFormElementManager($formElements);
 
         $hasValidForm = false;
-        $hasErrorForm = false;
+        $hasErrorForm = array();
+        $inputHasValue = array();
 
         $request = $this->getRequest();
 
@@ -763,7 +813,16 @@ class ToolCreatorController extends AbstractActionController
                 if($step6FormTmp->isValid()){
                     $hasValidForm = true;
                 }else{
-                    $hasErrorForm = true;
+                    if (empty($step6FormTmp))
+                        $hasErrorForm = $step6FormTmp->getMessages();
+                    else
+                        $hasErrorForm = ArrayUtils::merge($hasErrorForm, $step6FormTmp->getMessages());
+                }
+
+                // Getting input with data for Error preparation
+                foreach ($step6FormTmp->getData() As $key => $kVal){
+                    if (!empty($kVal) && !in_array($key, $inputHasValue))
+                        array_push($inputHasValue, $key);
                 }
 
                 $container['melis-toolcreator']['step6'][$lang['lang_locale']] = $step6FormTmp->getData();
@@ -775,9 +834,23 @@ class ToolCreatorController extends AbstractActionController
             $languages[$key]['lang_label'] = $this->langLabel($lang['lang_locale'], $lang['lang_name']);
         }
 
+        // Removing input with data on any Form fieldset
+        if (!empty($inputHasValue)) {
+            foreach ($inputHasValue As $key => $val)
+                if (isset($hasErrorForm[$val]))
+                    unset($hasErrorForm[$val]);
+        }
+
         // adding a variable to viewmodel to flag an error
-        if ($hasErrorForm && !$hasValidForm)
-            $viewStp->hasError = true;
+        if ($hasErrorForm && !$hasValidForm){
+            $translator = $this->getServiceLocator()->get('translator');
+            foreach ($hasErrorForm As $key => $errs){
+                foreach ($errs As $eKey => $txt)
+                    $hasErrorForm[$key][$eKey] = $translator->translate($txt);
+            }
+            $viewStp->hasError = $hasErrorForm;
+        }
+
 
         $viewStp->columns = $selectedColumns;
         $viewStp->languages = $languages;

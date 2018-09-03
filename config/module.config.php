@@ -38,6 +38,16 @@ return array(
                             ),
                         ),
                     ),
+                    'tool-creator-validate-cur-step' => array(
+                        'type' => 'Segment',
+                        'options' => array(
+                            'route' => 'tool-creator-validate-cur-step',
+                            'defaults' => array(
+                                'controller' => 'MelisToolCreator\Controller\ToolCreator',
+                                'action' => 'renderToolCreatorSteps',
+                            ),
+                        ),
+                    ),
                     'tool-creator-get-tbl-cols' => array(
                         'type' => 'Segment',
                         'options' => array(

@@ -76,6 +76,7 @@ return array(
     'tr_melistoolcreator_tcf-desc tooltip' => 'Tool description',
 
     // Error messages
+    'tr_melistoolcreator_err_message' => 'Unable to proceed to the next step, please try again',
     'tr_melistoolcreator_err_invalid_module' => 'Alphanumeric and underscore are the only valid characters allowed and can\'t start with numeric for naming a tool name.',
     'tr_melistoolcreator_err_empty' => 'The input is required and can\'t be empty.',
     'tr_melistoolcreator_err_long_50' => 'Value is too long, it should be less than 50 characters.',

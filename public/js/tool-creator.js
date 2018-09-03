@@ -1,271 +1,279 @@
 $(function(){
 
-   var $body = $("body");
+    var $body = $("body");
 
-   var loader = '<div id="loader" class="overlay-loader"><img class="loader-icon spinning-cog" src="/MelisCore/assets/images/cog12.svg" data-cog="cog12"></div>';
+    var loader = '<div id="loader" class="overlay-loader"><img class="loader-icon spinning-cog" src="/MelisCore/assets/images/cog12.svg" data-cog="cog12"></div>';
 
-   $body.on("click", ".melis-tool-creator .btn-steps", function(){
-       var curStep = $(this).data("curstep");
-       var nxtStep = $(this).data("nxtstep");
+    $body.on("click", ".melis-tool-creator .btn-steps", function(){
+        var curStep = $(this).data("curstep");
+        var nxtStep = $(this).data("nxtstep");
 
-       var dataString = new Array;
+        var dataString = new Array;
 
-       var stepForm = $(".melis-toolcreator-steps-content form.tool-creator-step-"+curStep);
+        var stepForm = $(".melis-toolcreator-steps-content form.tool-creator-step-"+curStep);
 
-       var dataName = "step-form";
-       if (stepForm.length > 1){
-           dataName = "step-form[%s]";
-       }
+        var dataName = "step-form";
+        if (stepForm.length > 1){
+            dataName = "step-form[%s]";
+        }
 
-       stepForm.each(function(index, val){
+        stepForm.each(function(index, val){
 
-           var formData = $(this).serializeArray();
+            var formData = $(this).serializeArray();
 
-           $.each(formData, function(i, v){
+            $.each(formData, function(i, v){
 
-               /**
-                * Special case for step 4
-                * this form contains input with the same name attribute of "tcf-db-table-cols"
-                */
-               var multInpt = "";
-               if ($.inArray(v.name, ["tcf-db-table-cols", "tcf-db-table-col-editable", "tcf-db-table-col-required", "tcf-db-table-col-type"]) != -1){
-                   multInpt = "[]";
-               }
+                /**
+                 * Special case for step 4
+                 * this form contains input with the same name attribute of "tcf-db-table-cols"
+                 */
+                var multInpt = "";
+                if ($.inArray(v.name, ["tcf-db-table-cols", "tcf-db-table-col-editable", "tcf-db-table-col-required", "tcf-db-table-col-type"]) != -1){
+                    multInpt = "[]";
+                }
 
-               dataString.push({
-                   name : dataName.replace(/%s/g, index)+"["+v.name+"]"+multInpt,
-                   value : v.value
-               });
-           });
-       });
-
-       dataString.push({
-           name : "curStep",
-           value : curStep,
-       });
-
-       dataString.push({
-           name : "nxtStep",
-           value : nxtStep,
-       });
-
-       if ($(this).hasClass("tcf-validate")){
-           dataString.push({
-               name : "validate",
-               value : true,
-           });
-       }
-
-       $("#id_melistoolcreator_steps").append(loader);
-
-       $.post("/melis/zoneview?cpath=melistoolcreator_steps",dataString).done(function(res){
-
-           $("#id_melistoolcreator_steps #loader img").removeClass('spinning-cog').addClass('shrinking-cog');
-
-           setTimeout(function(){
-
-               $("#id_melistoolcreator_steps").replaceWith(res.html);
-
-               $(".melis-toolcreator-steps li").removeClass("active");
-               var targetId = $("#id_melistoolcreator_steps .steps-content").attr("id");
-               $("#tc_"+targetId).addClass("active");
-           }, 500);
-       }).error(function(xhr, textStatus, errorThrown){
-           // alert( translations.tr_meliscore_error_message );
-           alert(xhr.responseText);
-       });
-   });
-
-   $body.on("click", ".tc-reload-dbtbl-cached", function(){
-       var reloadBtn = $(this);
-       reloadBtn.attr("disabled", true);
-
-       $(".melis-toolcreator-steps-table-list").append(loader);
-
-       $.post('/melis/tool-creator-reload-dbtbl-cached', {reloadDbTblCached : true, selectedTbl: $(".melis-toolcreator-steps-table-list input[name='tcf-db-table']").val()}).done(function(res){
-
-           reloadBtn.attr("disabled", false);
-
-           $(".melis-toolcreator-steps-table-list #loader img").removeClass('spinning-cog').addClass('shrinking-cog');
-
-           setTimeout(function(){
-
-               $(".melis-toolcreator-steps-table-list #loader").remove();
-
-               $(".melis-toolcreator-steps-table-list").html(res.html);
-
-           }, 500);
+                dataString.push({
+                    name : dataName.replace(/%s/g, index)+"["+v.name+"]"+multInpt,
+                    value : v.value
+                });
+            });
         });
-   });
 
-   $body.on("click", ".melis-toolcreator-steps-table-list li", function(){
+        dataString.push({
+            name : "curStep",
+            value : curStep,
+        });
 
-       $(".melis-toolcreator-steps-table-list li .fa").removeClass("fa-check-square-o");
-       $(".melis-toolcreator-steps-table-list li .fa").addClass("fa-square-o");
-       $(".melis-toolcreator-steps-table-list li .fa").removeClass("text-success");
-       $(this).find(".fa").addClass("fa-check-square-o");
-       $(this).find(".fa").removeClass("fa-square-o");
-       $(this).find(".fa").addClass("text-success");
+        dataString.push({
+            name : "nxtStep",
+            value : nxtStep,
+        });
 
-       $(".melis-toolcreator-steps-table-list").append(loader);
+        if ($(this).hasClass("tcf-validate")){
+            dataString.push({
+                name : "validate",
+                value : true,
+            });
+        }
 
-       $(".melis-toolcreator-steps-table-columns").parent().removeClass("hidden")
-       $(".melis-toolcreator-steps-table-columns").append(loader);
+        $("#id_melistoolcreator_steps").append(loader);
 
-       $(".melis-toolcreator-steps-table-list input[name='tcf-db-table']").val($(this).data("table-name"));
+        $.post("/melis/tool-creator-validate-cur-step", dataString).done(function(data){
 
-       $("#melistoolcreator_step3 .alert").hide("slow");
+            $("#id_melistoolcreator_steps #loader img").removeClass('spinning-cog').addClass('shrinking-cog');
 
-       $.post('/melis/tool-creator-get-tbl-cols', {tableName : $(this).data("table-name")}).done(function(res){
+            setTimeout(function(){
+                if(!data.errors) {
+                    $("#id_melistoolcreator_steps").html(data.html);
 
-           $(".melis-toolcreator-steps-table-list #loader img").removeClass('spinning-cog').addClass('shrinking-cog');
-           $(".melis-toolcreator-steps-table-columns #loader img").removeClass('spinning-cog').addClass('shrinking-cog');
+                    $(".melis-toolcreator-steps li").removeClass("active");
+                    var targetId = $("#id_melistoolcreator_steps .steps-content").attr("id");
+                    $("#tc_"+targetId).addClass("active");
 
-           setTimeout(function(){
+                }else{
+                    melisHelper.melisKoNotification(data.textTitle, data.textMessage, data.errors);
+                    melisCoreTool.highlightErrors(0, data.errors, "tool-creator-step-"+curStep);
+                    $("#id_melistoolcreator_steps #loader").remove()
+                }
+            }, 500);
 
-               $(".melis-toolcreator-steps-table-list #loader").remove();
+        }).error(function(xhr, textStatus, errorThrown){
+            // alert( translations.tr_meliscore_error_message );
+            alert(xhr.responseText);
+        });
 
-               $(".melis-toolcreator-steps-table-columns").html(res.html);
+        // $("#id_melistoolcreator_steps").append(loader);
+        //
+        // $.post("/melis/zoneview?cpath=melistoolcreator_steps",dataString).done(function(res){
+        //
+        //     $("#id_melistoolcreator_steps #loader img").removeClass('spinning-cog').addClass('shrinking-cog');
+        //
+        //     setTimeout(function(){
+        //
+        //         $("#id_melistoolcreator_steps").replaceWith(res.html);
+        //
+        //         $(".melis-toolcreator-steps li").removeClass("active");
+        //         var targetId = $("#id_melistoolcreator_steps .steps-content").attr("id");
+        //         $("#tc_"+targetId).addClass("active");
+        //     }, 500);
+        // }).error(function(xhr, textStatus, errorThrown){
+        //     // alert( translations.tr_meliscore_error_message );
+        //     alert(xhr.responseText);
+        // });
+    });
 
-           }, 500);
-       });
-   });
+    $body.on("click", ".tc-reload-dbtbl-cached", function(){
+        var reloadBtn = $(this);
+        reloadBtn.attr("disabled", true);
 
-   $body.on("click", ".melis-toolcreator-steps-tbl-cols .tcf-fa-checkbox", function(){
+        $(".melis-toolcreator-steps-table-list").append(loader);
 
-       if ($(this).hasClass("fa-check-square-o")){
-           // Unchecking
-           if ($(this).hasClass("tcf-fa-checkall")){
-               $(".tcf-fa-checkbox.tcf-fa-checkitem").addClass("fa-square-o");
-               $(".tcf-fa-checkbox.tcf-fa-checkitem").removeClass("text-success");
-               $(".tcf-fa-checkbox.tcf-fa-checkitem").removeClass("fa-check-square-o");
-               $(".tcf-fa-checkbox.tcf-fa-checkitem").next("input").attr("checked", false);
-           }else{
-               // Unchecking select all checkbox
-               $(".tcf-fa-checkbox.tcf-fa-checkall").addClass("fa-square-o");
-               $(".tcf-fa-checkbox.tcf-fa-checkall").removeClass("text-success");
-               $(".tcf-fa-checkbox.tcf-fa-checkall").removeClass("fa-check-square-o");
-           }
+        $.post('/melis/tool-creator-reload-dbtbl-cached', {reloadDbTblCached : true, selectedTbl: $(".melis-toolcreator-steps-table-list input[name='tcf-db-table']").val()}).done(function(res){
 
-           $(this).addClass("fa-square-o");
-           $(this).removeClass("text-success");
-           $(this).removeClass("fa-check-square-o");
-           $(this).next("input").attr("checked", false);
+            reloadBtn.attr("disabled", false);
 
-           if ($(this).hasClass("tcf-fa-checkbox-editable") || $(this).hasClass("tcf-fa-checkbox-required")) {
-               console.log($(this).attr("class"));
-           }
+            $(".melis-toolcreator-steps-table-list #loader img").removeClass('spinning-cog').addClass('shrinking-cog');
 
-           // Unchecking required if the editable is unchecked
-           if ($(this).hasClass("tcf-fa-checkbox-editable")) {
+            setTimeout(function(){
 
-               var requiredInput =  $("input[name='tcf-db-table-col-required'][value='"+$(this).next("input").val()+"']");
-               var requiredIcon =  $("input[name='tcf-db-table-col-required'][value='"+$(this).next("input").val()+"']").prev();
+                $(".melis-toolcreator-steps-table-list #loader").remove();
 
-               if (requiredIcon.hasClass("fa-check-square-o")) {
-                   requiredIcon.addClass("fa-square-o");
-                   requiredIcon.removeClass("text-success");
-                   requiredIcon.removeClass("fa-check-square-o");
-                   requiredInput.attr("checked", false);
-               }
+                $(".melis-toolcreator-steps-table-list").html(res.html);
 
-               // Disabling field type select input
-               $(this).parents("tr").find("select[name='tcf-db-table-col-type']").attr("disabled", true);
-           }
+            }, 500);
+        });
+    });
 
-       }else{
-           // Checking
-           if ($(this).hasClass("tcf-fa-checkall")){
-               $(".tcf-fa-checkbox.tcf-fa-checkitem").removeClass("fa-square-o");
-               $(".tcf-fa-checkbox.tcf-fa-checkitem").addClass("fa-check-square-o");
-               $(".tcf-fa-checkbox.tcf-fa-checkitem").addClass("text-success");
-               $(".tcf-fa-checkbox.tcf-fa-checkitem").next("input").attr("checked", true);
-           }
+    $body.on("click", ".melis-toolcreator-steps-table-list li", function(){
 
-           $(this).removeClass("fa-square-o");
-           $(this).addClass("fa-check-square-o");
-           $(this).addClass("text-success");
-           $(this).next("input").attr("checked", true);
+        $(".melis-toolcreator-steps-table-list li .fa").removeClass("fa-check-square-o");
+        $(".melis-toolcreator-steps-table-list li .fa").addClass("fa-square-o");
+        $(".melis-toolcreator-steps-table-list li .fa").removeClass("text-success");
+        $(this).find(".fa").addClass("fa-check-square-o");
+        $(this).find(".fa").removeClass("fa-square-o");
+        $(this).find(".fa").addClass("text-success");
 
-           // Set check "select all checkbox"
-           if ($(".tcf-fa-checkbox.tcf-fa-checkitem").length == $(".tcf-fa-checkbox.tcf-fa-checkitem.fa-check-square-o").length){
-               $(".tcf-fa-checkbox.tcf-fa-checkall").removeClass("fa-square-o")
-                                                   .addClass("fa-check-square-o")
-                                                   .addClass("text-success");
-           }
+        $(".melis-toolcreator-steps-table-list").append(loader);
 
-           // Checking editable if the required is checked
-           if ($(this).hasClass("tcf-fa-checkbox-required")) {
+        $(".melis-toolcreator-steps-table-columns").parent().removeClass("hidden")
+        $(".melis-toolcreator-steps-table-columns").append(loader);
 
-               var editableInput =  $("input[name='tcf-db-table-col-editable'][value='"+$(this).next("input").val()+"']");
-               var editableIcon =  $("input[name='tcf-db-table-col-editable'][value='"+$(this).next("input").val()+"']").prev();
+        $(".melis-toolcreator-steps-table-list input[name='tcf-db-table']").val($(this).data("table-name"));
 
-               if (editableIcon.hasClass("fa-square-o")){
-                   editableIcon.removeClass("fa-square-o");
-                   editableIcon.addClass("fa-check-square-o");
-                   editableIcon.addClass("text-success");
-                   editableInput.attr("checked", true);
+        $("#melistoolcreator_step3 .alert").hide("slow");
 
-                   // Enabling field type select input
-                   $(this).parents("tr").find("select[name='tcf-db-table-col-type']").attr("disabled", false);
-               }
-           }
+        $.post('/melis/tool-creator-get-tbl-cols', {tableName : $(this).data("table-name")}).done(function(res){
 
-           // Checking required if the editable is unchecked
-           if ($(this).hasClass("tcf-fa-checkbox-editable")) {
-               // Enabling field type select input
-               $(this).parents("tr").find("select[name='tcf-db-table-col-type']").attr("disabled", false);
-           }
-       }
-   });
+            $(".melis-toolcreator-steps-table-list #loader img").removeClass('spinning-cog').addClass('shrinking-cog');
+            $(".melis-toolcreator-steps-table-columns #loader img").removeClass('spinning-cog').addClass('shrinking-cog');
 
-   /*$body.on("click", ".fancytree-title", function(){
+            setTimeout(function(){
 
-       var icon = $(this).children("i.fa");
-       var toolstreeInput = $("#tc-toolstree-selection input[name='tcf-module-toolstree']");
+                $(".melis-toolcreator-steps-table-list #loader").remove();
 
-       var toolsTreeIcon = $("#tc-toolstree-selection").find('i.fa').not(icon);
-       toolsTreeIcon.addClass("fa-square-o");
-       toolsTreeIcon.removeClass("text-success");
-       toolsTreeIcon.removeClass("fa-check-square-o");
+                $(".melis-toolcreator-steps-table-columns").html(res.html);
 
-       if (!icon.hasClass("fa-check-square-o")){
-           icon.removeClass("fa-square-o");
-           icon.addClass("fa-check-square-o");
-           icon.addClass("text-success");
-           toolstreeInput.val(icon.data("toolstree"));
-       }
-   })*/
+            }, 500);
+        });
+    });
 
-   $body.on("click", ".melis-tc-final-content .fa", function(){
-       if ($(this).hasClass("fa-check-square-o")){
-           // unChecking
-           $(this).addClass("fa-square-o");
-           $(this).removeClass("text-success");
-           $(this).removeClass("fa-check-square-o");
-           $(this).next("input").attr("checked", false);
-       }else{
-           // Checking
-           $(this).removeClass("fa-square-o");
-           $(this).addClass("fa-check-square-o");
-           $(this).addClass("text-success");
-           $(this).next("input").attr("checked", true);
-       }
-   });
+    $body.on("click", ".melis-toolcreator-steps-tbl-cols .tcf-fa-checkbox", function(){
 
-   $body.on("click", ".tc-final-step", function(){
+        if ($(this).hasClass("fa-check-square-o")){
+            // Unchecking
+            if ($(this).hasClass("tcf-fa-checkall")){
+                $(".tcf-fa-checkbox.tcf-fa-checkitem").addClass("fa-square-o");
+                $(".tcf-fa-checkbox.tcf-fa-checkitem").removeClass("text-success");
+                $(".tcf-fa-checkbox.tcf-fa-checkitem").removeClass("fa-check-square-o");
+                $(".tcf-fa-checkbox.tcf-fa-checkitem").next("input").attr("checked", false);
+            }else{
+                // Unchecking select all checkbox
+                $(".tcf-fa-checkbox.tcf-fa-checkall").addClass("fa-square-o");
+                $(".tcf-fa-checkbox.tcf-fa-checkall").removeClass("text-success");
+                $(".tcf-fa-checkbox.tcf-fa-checkall").removeClass("fa-check-square-o");
+            }
 
-       var activateModule = false;
+            $(this).addClass("fa-square-o");
+            $(this).removeClass("text-success");
+            $(this).removeClass("fa-check-square-o");
+            $(this).next("input").attr("checked", false);
 
-       if ($(".melis-tc-final-content .fa").hasClass("fa-check-square-o")){
-           activateModule = true;
-       }
+            if ($(this).hasClass("tcf-fa-checkbox-editable") || $(this).hasClass("tcf-fa-checkbox-required")) {
+                console.log($(this).attr("class"));
+            }
 
-       $.get("/melis/MelisToolCreator/ToolCreator/finalize", {activateModule : activateModule}).done(function(res){
+            // Unchecking required if the editable is unchecked
+            if ($(this).hasClass("tcf-fa-checkbox-editable")) {
+
+                var requiredInput =  $("input[name='tcf-db-table-col-required'][value='"+$(this).next("input").val()+"']");
+                var requiredIcon =  $("input[name='tcf-db-table-col-required'][value='"+$(this).next("input").val()+"']").prev();
+
+                if (requiredIcon.hasClass("fa-check-square-o")) {
+                    requiredIcon.addClass("fa-square-o");
+                    requiredIcon.removeClass("text-success");
+                    requiredIcon.removeClass("fa-check-square-o");
+                    requiredInput.attr("checked", false);
+                }
+
+                // Disabling field type select input
+                $(this).parents("tr").find("select[name='tcf-db-table-col-type']").attr("disabled", true);
+            }
+
+        }else{
+            // Checking
+            if ($(this).hasClass("tcf-fa-checkall")){
+                $(".tcf-fa-checkbox.tcf-fa-checkitem").removeClass("fa-square-o");
+                $(".tcf-fa-checkbox.tcf-fa-checkitem").addClass("fa-check-square-o");
+                $(".tcf-fa-checkbox.tcf-fa-checkitem").addClass("text-success");
+                $(".tcf-fa-checkbox.tcf-fa-checkitem").next("input").attr("checked", true);
+            }
+
+            $(this).removeClass("fa-square-o");
+            $(this).addClass("fa-check-square-o");
+            $(this).addClass("text-success");
+            $(this).next("input").attr("checked", true);
+
+            // Set check "select all checkbox"
+            if ($(".tcf-fa-checkbox.tcf-fa-checkitem").length == $(".tcf-fa-checkbox.tcf-fa-checkitem.fa-check-square-o").length){
+                $(".tcf-fa-checkbox.tcf-fa-checkall").removeClass("fa-square-o")
+                    .addClass("fa-check-square-o")
+                    .addClass("text-success");
+            }
+
+            // Checking editable if the required is checked
+            if ($(this).hasClass("tcf-fa-checkbox-required")) {
+
+                var editableInput =  $("input[name='tcf-db-table-col-editable'][value='"+$(this).next("input").val()+"']");
+                var editableIcon =  $("input[name='tcf-db-table-col-editable'][value='"+$(this).next("input").val()+"']").prev();
+
+                if (editableIcon.hasClass("fa-square-o")){
+                    editableIcon.removeClass("fa-square-o");
+                    editableIcon.addClass("fa-check-square-o");
+                    editableIcon.addClass("text-success");
+                    editableInput.attr("checked", true);
+
+                    // Enabling field type select input
+                    $(this).parents("tr").find("select[name='tcf-db-table-col-type']").attr("disabled", false);
+                }
+            }
+
+            // Checking required if the editable is unchecked
+            if ($(this).hasClass("tcf-fa-checkbox-editable")) {
+                // Enabling field type select input
+                $(this).parents("tr").find("select[name='tcf-db-table-col-type']").attr("disabled", false);
+            }
+        }
+    });
+
+    $body.on("click", ".melis-tc-final-content .fa", function(){
+        if ($(this).hasClass("fa-check-square-o")){
+            // unChecking
+            $(this).addClass("fa-square-o");
+            $(this).removeClass("text-success");
+            $(this).removeClass("fa-check-square-o");
+            $(this).next("input").attr("checked", false);
+        }else{
+            // Checking
+            $(this).removeClass("fa-square-o");
+            $(this).addClass("fa-check-square-o");
+            $(this).addClass("text-success");
+            $(this).next("input").attr("checked", true);
+        }
+    });
+
+    $body.on("click", ".tc-final-step", function(){
+
+        var activateModule = false;
+
+        if ($(".melis-tc-final-content .fa").hasClass("fa-check-square-o")){
+            activateModule = true;
+        }
+
+        $.get("/melis/MelisToolCreator/ToolCreator/finalize", {activateModule : activateModule}).done(function(res){
             $(".melis-tc-final-content").hide();
             $(".melis-tc-final-content").hide();
-       }).fail(function(){
+        }).fail(function(){
 
-       });
-   });
+        });
+    });
 });
