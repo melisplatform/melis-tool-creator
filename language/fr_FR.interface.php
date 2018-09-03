@@ -63,6 +63,7 @@ return array(
     'tr_melistoolcreator_col_mandatory' => 'Obligatoire',
     'tr_melistoolcreator_col_field_type' => 'Type de champ',
     'tr_melistoolcreator_columns' => 'Colonnes',
+    'tr_melistoolcreator_columns_desciption' => 'Description des colonnes',
     'tr_melistoolcreator_refreshing' => 'Rafraîchissement....',
 
     // Forms

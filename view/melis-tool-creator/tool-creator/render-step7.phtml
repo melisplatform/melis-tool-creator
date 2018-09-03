@@ -78,7 +78,7 @@
                 <?php } elseif ($key == 'step6') { ?>
                     <table class="table table-striped">
                         <tr>
-                            <th>Columns</th>
+                            <th><?php echo $this->translate('tr_melistoolcreator_columns') ?></th>
                             <?php
                                 foreach ($this->languages As $lang){
                                     if (!empty($step[$lang['lang_locale']])) {
@@ -107,7 +107,7 @@
                                 $colName = $col;
                                 if (strpos($col, 'tcinputdesc') && $colDescFlag){
                                     echo '<tr>';
-                                    echo '<th colspan="3">Columns description</th>';
+                                    echo '<th colspan="3">' . $this->translate('tr_melistoolcreator_columns_desciption') . '</th>';
                                     echo '</tr>';
                                     $colDescFlag = false;
                                 }
