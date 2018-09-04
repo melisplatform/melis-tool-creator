@@ -75,6 +75,9 @@ return array(
     'tr_melistoolcreator_tcf-desc' => 'Tool description',
     'tr_melistoolcreator_tcf-desc tooltip' => 'Tool description',
 
+    // Warning message
+    'tr_melistoolcreator_warning_message' => 'For a better experience of this tool please use desktop',
+
     // Error messages
     'tr_melistoolcreator_err_message' => 'Unable to proceed to the next step, please try again',
     'tr_melistoolcreator_err_invalid_module' => 'Alphanumeric and underscore are the only valid characters allowed and can\'t start with numeric for naming a tool name.',
