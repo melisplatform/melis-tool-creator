@@ -154,8 +154,10 @@ class ToolCreatorController extends AbstractActionController
 
                 // Translating error input name
                 $stepErrors = array();
-                foreach ($viewVars->hasError As $key => $val)
-                    $stepErrors[$translator->translate('tr_melistoolcreator_'.$key)] = $val;
+                foreach ($viewVars->hasError As $key => $val){
+                    $stepErrors[$key] = $val;
+                    $stepErrors[$key]['label'] = $translator->translate('tr_melistoolcreator_'.$key);
+                }
 
                 $results['errors'] = $stepErrors;
                 $results['textMessage'] = $translator->translate('tr_melistoolcreator_err_message');
