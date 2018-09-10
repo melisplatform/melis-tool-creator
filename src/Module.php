@@ -30,10 +30,10 @@ class Module
     {
         $config = array();
         $configFiles = array(
-            include __DIR__ . '/config/module.config.php',
-            include __DIR__ . '/config/app.interface.php',
-            include __DIR__ . '/config/app.toolstree.php',
-            include __DIR__ . '/config/app.tools.php',
+            include __DIR__ . '/../config/module.config.php',
+            include __DIR__ . '/../config/app.interface.php',
+            include __DIR__ . '/../config/app.toolstree.php',
+            include __DIR__ . '/../config/app.tools.php',
         );
 
         foreach ($configFiles as $file) {
@@ -68,7 +68,6 @@ class Module
         {
             $translationType = array(
                 'interface',
-//                'forms',
             );
 
             $translationList = array();
@@ -88,8 +87,8 @@ class Module
                 if(empty($transPath)){
 
                     // if translation is not found, use melis default translations
-                    $defaultLocale = (file_exists(__DIR__ . "/language/$locale.$type.php"))? $locale : "en_EN";
-                    $transPath = __DIR__ . "/language/$defaultLocale.$type.php";
+                    $defaultLocale = (file_exists(__DIR__ . "/../language/$locale.$type.php"))? $locale : "en_EN";
+                    $transPath = __DIR__ . "/../language/$defaultLocale.$type.php";
                 }
 
                 $translator->addTranslationFile('phparray', $transPath);
