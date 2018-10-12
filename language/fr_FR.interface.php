@@ -22,7 +22,7 @@ return array(
     
     // Steps
     'tr_melistoolcreator_module' => 'Outil',
-    'tr_melistoolcreator_tcf-name tooltip' => 'Les caractères alphanumériques et les traits de soulignement sont les seuls caractères valides autorisés et ne peuvent pas commencer par un nom numérique pour nommer un nom d\'outil',
+    'tr_melistoolcreator_tcf-name tooltip' => 'Les caractères alphanumériques seuls caractères valides autorisés et ne peuvent pas commencer par un nom numérique pour nommer un nom d\'outil',
     'tr_melistoolcreator_module_desc' => 'Entrez le nom de l\'outil que vous voulez créer',
     'tr_melistoolcreator_texts' => 'Textes',
     'tr_melistoolcreator_texts_title' => 'Traductions du texte du module',
@@ -80,7 +80,7 @@ return array(
 
     // Error messages
     'tr_melistoolcreator_err_message' => 'Impossible de passer à l\'étape suivante, veuillez réessayer',
-    'tr_melistoolcreator_err_invalid_module' => 'Alphanumerique et underscore sont les seuls caractères valides autorisés et ne peuvent pas commencer par un nom numérique pour un nom d\'outil.',
+    'tr_melistoolcreator_err_invalid_module' => 'Alphanumerique les seuls caractères valides autorisés et ne peuvent pas commencer par un nom numérique pour un nom d\'outil.',
     'tr_melistoolcreator_err_empty' => 'L\'entrée est obligatoire et ne peut pas être vide.',
     'tr_melistoolcreator_err_long_50' => 'La valeur est trop longue, elle devrait être inférieure à 50 caractères.',
     'tr_melistoolcreator_err_long_100' => 'La valeur est trop longue, elle devrait être inférieure à 100 caractères.',
