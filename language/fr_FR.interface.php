@@ -27,7 +27,7 @@ return array(
     'tr_melistoolcreator_texts' => 'Textes',
     'tr_melistoolcreator_texts_title' => 'Traductions du texte du module',
     'tr_melistoolcreator_texts_desc' => 'Entrer les traductions du texte dans différentes langues, au moins une langue doit être remplie',
-    'tr_melistoolcreator_database' => 'Database',
+    'tr_melistoolcreator_database' => 'Base de données',
     'tr_melistoolcreator_database_title' => 'Table de base de données du module',
     'tr_melistoolcreator_database_desc' => 'Sélectionnez une table de base de données qui utilisera le module generate',
     'tr_melistoolcreator_database_reload_cached' => 'Actualiser la liste des tables de base de donnée',
