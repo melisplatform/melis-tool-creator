@@ -156,7 +156,7 @@ class ToolCreatorController extends AbstractActionController
                 $stepErrors = array();
                 foreach ($viewVars->hasError As $key => $val){
                     $stepErrors[$key] = $val;
-                    $stepErrors[$key]['label'] = $translator->translate('tr_melistoolcreator_'.$key);
+                    $stepErrors[$key]['label'] = ($curStep != 6) ? $translator->translate('tr_melistoolcreator_'.$key) : $key; // Skipping step 6. ask your self y then find an answer.
                 }
 
                 $results['errors'] = $stepErrors;
@@ -303,10 +303,14 @@ class ToolCreatorController extends AbstractActionController
                     $hasValidForm = true;
 
                 }else{
-                    if (empty($step2Formtmp))
+                    if (empty($hasErrorForm))
                         $hasErrorForm = $step2Formtmp->getMessages();
                     else
                         $hasErrorForm = ArrayUtils::merge($hasErrorForm, $step2Formtmp->getMessages());
+
+                    foreach ($hasErrorForm as $keyError => $valueError){
+                        $hasErrorForm[$keyError]['form'][] = $lang['lang_locale'].'-tool-creator-step-2';
+                    }
                 }
 
                 // Getting input with data for Error preparation
@@ -819,6 +823,10 @@ class ToolCreatorController extends AbstractActionController
                         $hasErrorForm = $step6FormTmp->getMessages();
                     else
                         $hasErrorForm = ArrayUtils::merge($hasErrorForm, $step6FormTmp->getMessages());
+
+                    foreach ($hasErrorForm as $keyError => $valueError){
+                        $hasErrorForm[$keyError]['form'][] = $lang['lang_locale'].'-tool-creator-step-6';
+                    }
                 }
 
                 // Getting input with data for Error preparation
@@ -848,7 +856,8 @@ class ToolCreatorController extends AbstractActionController
             $translator = $this->getServiceLocator()->get('translator');
             foreach ($hasErrorForm As $key => $errs){
                 foreach ($errs As $eKey => $txt)
-                    $hasErrorForm[$key][$eKey] = $translator->translate($txt);
+                    if ($eKey != 'form')
+                        $hasErrorForm[$key][$eKey] = $translator->translate($txt);
             }
             $viewStp->hasError = $hasErrorForm;
         }

@@ -71,8 +71,14 @@ $(function(){
                     $("#tc_"+targetId).addClass("active");
 
                 }else{
-                    melisHelper.melisKoNotification(data.textTitle, data.textMessage, data.errors);
-                    melisCoreTool.highlightErrors(0, data.errors, "tool-creator-step-"+curStep);
+                    // melisHelper.melisKoNotification(data.textTitle, data.textMessage, data.errors);
+                    // melisCoreTool.highlightErrors(0, data.errors, "tool-creator-step-"+curStep);
+
+
+                    melisHelper.melisMultiKoNotification(data.textTitle, data.textMessage, data.errors);
+                    melisHelper.highlightMultiErrors(0, data.errors, ".tool-creator-step-"+curStep);
+
+
                     $("#id_melistoolcreator_steps #loader").remove()
                 }
             }, 500);
@@ -81,25 +87,6 @@ $(function(){
             // alert( translations.tr_meliscore_error_message );
             alert(xhr.responseText);
         });
-
-        // $("#id_melistoolcreator_steps").append(loader);
-        //
-        // $.post("/melis/zoneview?cpath=melistoolcreator_steps",dataString).done(function(res){
-        //
-        //     $("#id_melistoolcreator_steps #loader img").removeClass('spinning-cog').addClass('shrinking-cog');
-        //
-        //     setTimeout(function(){
-        //
-        //         $("#id_melistoolcreator_steps").replaceWith(res.html);
-        //
-        //         $(".melis-toolcreator-steps li").removeClass("active");
-        //         var targetId = $("#id_melistoolcreator_steps .steps-content").attr("id");
-        //         $("#tc_"+targetId).addClass("active");
-        //     }, 500);
-        // }).error(function(xhr, textStatus, errorThrown){
-        //     // alert( translations.tr_meliscore_error_message );
-        //     alert(xhr.responseText);
-        // });
     });
 
     $body.on("click", ".tc-reload-dbtbl-cached", function(){

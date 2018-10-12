@@ -29,6 +29,8 @@
                         <?php
                             $form->prepare();
 
+                            $form->setAttribute('id', $key.'-'.$form->getAttribute('id'));
+
                             echo $this->form()->openTag($form);
 
                             foreach ($form->getElements() As $key => $val){
