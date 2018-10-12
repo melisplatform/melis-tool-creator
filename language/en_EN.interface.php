@@ -45,7 +45,7 @@ return array(
     'tr_melistoolcreator_finalization' => 'Finalization',
     'tr_melistoolcreator_finalization_desc' => 'Before proceeding of creation of the new tool here is another option of the activation of the tool',
     'tr_melistoolcreator_finalization_activate_module' => 'Activate tool after creation',
-    'tr_melistoolcreator_finalization_activation_note' => '<strong>Note:</strong> If you choose to activate the tool this will required a restart of the of the platform',
+    'tr_melistoolcreator_finalization_activation_note' => '<strong>Note:</strong> If you choose to activate the tool this will required a restart of the platform',
     'tr_melistoolcreator_finalization_success_title' => 'Module has been successfully created',
     'tr_melistoolcreator_finalization_success_desc_with_counter' => 'The platform will refresh in <strong><span id="tc-restart-cd">5</span></strong>',
     'tr_melistoolcreator_finalization_success_desc' => 'You can now manually activate the tool by changing the status of the tool form the list of the Modules in System configuration / Modules',
