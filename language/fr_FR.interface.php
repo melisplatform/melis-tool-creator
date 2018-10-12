@@ -13,6 +13,10 @@ return array(
     'tr_melistoolcreator_back' => 'Retour',
     'tr_melistoolcreator_finish' => 'Terminer et créer l\'outil',
 
+    // Common
+    'tr_melistoolcreator_common_name' => 'Nom',
+    'tr_melistoolcreator_common_description' => 'Description',
+
     // Warnings
     'tr_melistoolcreator_fp_title' => 'Autorisation de fichier refusée',
     'tr_melistoolcreator_fp_msg' => 'Afin de créer des outils à l\'aide de cet outil, veuillez l\'autoriser pour écrire dans le répertoire de fichiers ci-dessous ou contactez l\'administrateur si le problème persiste.',

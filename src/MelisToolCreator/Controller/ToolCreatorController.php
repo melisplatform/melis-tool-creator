@@ -696,6 +696,8 @@ class ToolCreatorController extends AbstractActionController
      */
     public function renderStep6($viewStp, $validate = false)
     {
+        $translator = $this->getServiceLocator()->get('translator');
+
         // Tool creator session container
         $container = new Container('melistoolcreator');
         $tcfDbTbl = $container['melis-toolcreator'];
@@ -764,7 +766,7 @@ class ToolCreatorController extends AbstractActionController
                     ),
                     'attributes' => array(
                         'required' => 'required',
-                        'placeholder' => 'Name'
+                        'placeholder' => $translator->translate('tr_melistoolcreator_common_name')
                     ),
                 ));
 
@@ -776,7 +778,7 @@ class ToolCreatorController extends AbstractActionController
                     ),
                     'attributes' => array(
                         'required' => 'required',
-                        'placeholder' => 'Description',
+                        'placeholder' => $translator->translate('tr_melistoolcreator_common_description'),
                     ),
                 ));
 
@@ -853,7 +855,6 @@ class ToolCreatorController extends AbstractActionController
 
         // adding a variable to viewmodel to flag an error
         if ($hasErrorForm && !$hasValidForm){
-            $translator = $this->getServiceLocator()->get('translator');
             foreach ($hasErrorForm As $key => $errs){
                 foreach ($errs As $eKey => $txt)
                     if ($eKey != 'form')

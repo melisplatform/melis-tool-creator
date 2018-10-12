@@ -13,6 +13,10 @@ return array(
     'tr_melistoolcreator_back' => 'Back',
     'tr_melistoolcreator_finish' => 'Finish and create the tool',
 
+    // Common
+    'tr_melistoolcreator_common_name' => 'Name',
+    'tr_melistoolcreator_common_description' => 'Description',
+
     // Warnings
     'tr_melistoolcreator_fp_title' => 'File permission denied',
     'tr_melistoolcreator_fp_msg' => 'In-order to create tool(s) using this tool, please grant this to write to the following file directory below or contact the administrator if the problem persists.',
