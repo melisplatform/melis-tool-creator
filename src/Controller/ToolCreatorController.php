@@ -26,7 +26,7 @@ class ToolCreatorController extends AbstractActionController
 
     public function __construct()
     {
-        $this->moduleTplDir = __DIR__ .'/../../../etc/ModuleTpl';
+        $this->moduleTplDir = __DIR__ .'/../../etc/ModuleTpl';
     }
 
     /**
