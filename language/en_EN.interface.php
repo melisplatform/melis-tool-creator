@@ -93,7 +93,7 @@ return [
     'tr_melistoolcreator_lang_txt' => 'Language',
     'tr_melistoolcreator_col_txt' => 'Columns',
     'tr_melistoolcreator_name_txt' => 'Name',
-    'tr_melistoolcreator_desc_txt' => 'Tooltip description',
+    'tr_melistoolcreator_desc_txt' => 'description',
 
     // Forms
     'tr_melistoolcreator_tcf-name' => 'Tool name',
@@ -103,6 +103,8 @@ return [
     'tr_melistoolcreator_tcf-title tooltip' => 'Tool title',
     'tr_melistoolcreator_tcf-desc' => 'Tool description',
     'tr_melistoolcreator_tcf-desc tooltip' => 'Tool description',
+    'tr_melistoolcreator_inpt_name' => 'Name',
+    'tr_melistoolcreator_inpt_name tooltip' => 'Tooltip description',
 
     // Warning message
     'tr_melistoolcreator_warning_message' => 'For a better experience of this tool we recommend to use a wider screen',//TO REMOVE
