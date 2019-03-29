@@ -38,7 +38,7 @@
                                     $requiredCheckBox = $form->get('tcf-db-table-col-required')->setCheckedValue($col['Field']);
                                     $fieldType = clone $form->get('tcf-db-table-col-type');
 
-                                    $pk = in_array($col['Key'], array('PRI')) ? ' <i class="fa fa-key fa-lg fa-rotate-90"></i>': '';
+                                    $pk = in_array($col['Key'], ['PRI']) ? ' <i class="fa fa-key fa-lg fa-rotate-90"></i>': '';
 
                                     $editableIcon = $col['editable'];
                                     $requiredIcon = $col['required'];
@@ -47,21 +47,17 @@
                                     $requiredCheckBox->setChecked($col['requiredIsChecked']);
 
                                     $extraCol = '-';
-                                    if (!empty($col['Extra'])){
+                                    if (!empty($col['Extra']))
                                         $extraCol = $col['Extra'];
-                                    }
 
-                                    if (!is_null($col['fieldType'])){
+                                    if (!is_null($col['fieldType']))
                                         $fieldType->setValue($col['fieldType']);
-                                    }else{
-                                        if (!$col['editableIsChecked']){
+                                    else
+                                        if (!$col['editableIsChecked'])
                                             $fieldType->setAttribute('disabled', 'disabled');
-                                        }
-                                    }
 
-                                    if ($editableIcon === 'AUTO_INCREMENT'){
+                                    if (isset($col['isAutoIncrement']))
                                         $fieldType->setAttribute('class', 'hidden');
-                                    }
 
                                     echo '<tr>
                                             <td>'.$ctr++.'</td>

@@ -893,8 +893,9 @@ class ToolCreatorController extends AbstractActionController
             $tableCols[$key]['requiredIsChecked'] = false;
 
             if ($val['Key'] == 'PRI' && $val['Extra'] == 'auto_increment'){
-                $tableCols[$key]['editable'] = 'AUTO_INCREMENT';
-                $tableCols[$key]['required'] = 'AUTO_INCREMENT';
+                $tableCols[$key]['editable'] = sprintf($iconTag, implode(' ', [$editableIcon, $checkedIcon]));
+                $tableCols[$key]['required'] = sprintf($iconTag, implode(' ', [$requiredIcon, $checkedIcon]));
+                $tableCols[$key]['isAutoIncrement'] = true;
                 $tableCols[$key]['editableIsChecked'] = true;
                 $tableCols[$key]['requiredIsChecked'] = true;
             }elseif ($val['Key'] == 'PRI' || $val['Null'] == 'NO'){
