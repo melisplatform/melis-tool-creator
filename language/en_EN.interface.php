@@ -93,7 +93,7 @@ return [
     'tr_melistoolcreator_lang_txt' => 'Language',
     'tr_melistoolcreator_col_txt' => 'Columns',
     'tr_melistoolcreator_name_txt' => 'Name',
-    'tr_melistoolcreator_desc_txt' => 'Description',
+    'tr_melistoolcreator_desc_txt' => 'Tooltip description',
 
     // Forms
     'tr_melistoolcreator_tcf-name' => 'Tool name',
