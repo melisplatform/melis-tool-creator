@@ -1,0 +1,62 @@
+                                                        'moduletpl_properties_tool' => [
+                                                            'conf' => [
+                                                                'id' => 'id_moduletpl_properties_tool',
+                                                                'melisKey' => 'moduletpl_properties_tool',
+                                                                'name' => 'tr_moduletpl_properties_title',
+                                                            ],
+                                                            'forward' => [
+                                                                'module' => 'ModuleTpl',
+                                                                'controller' => 'Properties',
+                                                                'action' => 'render-tool',
+                                                                'jscallback' => '',
+                                                                'jsdatas' => []
+                                                            ],
+                                                            'interface' => [
+                                                                'moduletpl_properties_header' => [
+                                                                    'conf' => [
+                                                                        'id' => 'id_moduletpl_properties_header',
+                                                                        'melisKey' => 'moduletpl_properties_header',
+                                                                        'name' => 'tr_moduletpl_properties_header',
+                                                                    ],
+                                                                    'forward' => [
+                                                                        'module' => 'ModuleTpl',
+                                                                        'controller' => 'Properties',
+                                                                        'action' => 'render-tool-header',
+                                                                        'jscallback' => '',
+                                                                        'jsdatas' => []
+                                                                    ],
+                                                                ],
+                                                                'moduletpl_properties_content' => [
+                                                                    'conf' => [
+                                                                        'id' => 'id_moduletpl_properties_content',
+                                                                        'melisKey' => 'moduletpl_properties_content',
+                                                                        'name' => 'tr_moduletpl_properties_content',
+                                                                    ],
+                                                                    'forward' => [
+                                                                        'module' => 'ModuleTpl',
+                                                                        'controller' => 'Properties',
+                                                                        'action' => 'render-tool-content',
+                                                                        'jscallback' => '',
+                                                                        'jsdatas' => []
+                                                                    ],
+                                                                    'interface' => [
+                                                                        'moduletpl_properties_main' => [
+                                                                            'conf' => [
+                                                                                'id' => 'id_moduletpl_properties_main',
+                                                                                'melisKey' => 'moduletpl_properties_main',
+                                                                                'name' => 'Properties',
+                                                                                'icon' => 'glyphicons tag'
+                                                                            ],
+                                                                            'forward' => [
+                                                                                'module' => 'ModuleTpl',
+                                                                                'controller' => 'Properties',
+                                                                                'action' => 'render-tool-main-content',
+                                                                                'jscallback' => '',
+                                                                                'jsdatas' => []
+                                                                            ],
+                                                                        ],
+#TCTOOLINTERFACE
+                                                                    ]
+                                                                ]
+                                                            ]
+                                                        ]

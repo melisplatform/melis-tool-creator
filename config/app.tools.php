@@ -1,468 +1,631 @@
 <?php
 
-return array(
-    'plugins' => array(
-        'melistoolcreator' => array(
-            'forms' => array(
-                'melistoolcreator_step1_form' => array(
-                    'attributes' => array(
+/**
+ * Melis Technology (http://www.melistechnology.com]
+ *
+ * @copyright Copyright (c] 2015 Melis Technology (http://www.melistechnology.com]
+ *
+ */
+
+return [
+    'plugins' => [
+        'melistoolcreator' => [
+            'forms' => [
+                'melistoolcreator_step1_form' => [
+                    'attributes' => [
                         'name' => 'tool-creator-step-1',
                         'id' => 'tool-creator-step-1',
                         'class' => 'tool-creator-step-1',
                         'method' => 'POST',
                         'action' => '',
-                    ),
+                    ],
                     'hydrator'  => 'Zend\Stdlib\Hydrator\ArraySerializable',
-                    'elements' => array(
-                        array(
-                            'spec' => array(
+                    'elements' => [
+                        [
+                            'spec' => [
                                 'name' => 'tcf-name',
                                 'type' => 'MelisText',
-                                'options' => array(
+                                'options' => [
                                     'label' => 'tr_melistoolcreator_tcf-name',
                                     'tooltip' => 'tr_melistoolcreator_tcf-name tooltip',
-                                ),
-                                'attributes' => array(
+                                ],
+                                'attributes' => [
                                     'id' => 'moudle-name',
                                     'value' => '',
                                     'placeholder' => '',
                                     'required' => 'required',
-                                ),
-                            ),
-                        ),
-                        /*array(
-                            'spec' => array(
+                                ],
+                            ],
+                        ],
+                        [
+                            'spec' => [
+                                'type' => 'Zend\Form\Element\Radio',
+                                'name' => 'tcf-tool-type',
+                                'options' => [
+                                    'label' => 'Tool type',
+                                    'tooltip' => 'Tool type',
+                                    'label_options' => [
+                                        'disable_html_escape' => true,
+                                    ],
+                                    'label_attributes' => [
+                                        'class' => 'tcf-radio-box'
+                                    ],
+                                    'value_options' => [
+                                        'modal' => 'Modal <span class="tcf-radio-box-circle"></span>',
+                                        'tabulation' => 'Tabulation <span class="tcf-radio-box-circle"></span>',
+                                    ],
+                                ],
+                                'attributes' => [
+                                    'value' => 'modal',
+                                    'class' => 'moudle-name',
+                                    'required' => 'required',
+                                ],
+                            ]
+                        ]
+                        /*[
+                            'spec' => [
                                 'name' => 'tcf-module-toolstree',
                                 'type' => 'MelisText',
-                                'options' => array(
+                                'options' => [
                                     'label' => 'Tools tree',
                                     'tooltip' => 'Tools tree',
-                                ),
-                                'attributes' => array(
+                                ],
+                                'attributes' => [
                                     'id' => 'tcf-module-toolstree',
                                     'class' => 'hidden',
-                                ),
-                            ),
-                        ),*/
-                    ),
-                    'input_filter' => array(
-                        'tcf-name' => array(
+                                ],
+                            ],
+                        ],*/
+                    ],
+                    'input_filter' => [
+                        'tcf-name' => [
                             'name'     => 'tcf-name',
                             'required' => true,
-                            'validators' => array(
-                                array(
+                            'validators' => [
+                                [
                                     'name' => 'regex',
-                                    'options' => array(
+                                    'options' => [
                                         'pattern' => '/^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$/',
-                                        'messages' => array(\Zend\Validator\Regex::NOT_MATCH => 'tr_melistoolcreator_err_invalid_module'),
+                                        'messages' => [\Zend\Validator\Regex::NOT_MATCH => 'tr_melistoolcreator_err_invalid_module'],
                                         'encoding' => 'UTF-8',
-                                    ),
-                                ),
-                                array(
+                                    ],
+                                ],
+                                [
                                     'name'    => 'StringLength',
-                                    'options' => array(
+                                    'options' => [
                                         'encoding' => 'UTF-8',
                                         'max'      => 50,
-                                        'messages' => array(
+                                        'messages' => [
                                             \Zend\Validator\StringLength::TOO_LONG => 'tr_melistoolcreator_err_long_50',
-                                        ),
-                                    ),
-                                ),
-                                array(
+                                        ],
+                                    ],
+                                ],
+                                [
                                     'name' => 'NotEmpty',
-                                    'options' => array(
-                                        'messages' => array(
+                                    'options' => [
+                                        'messages' => [
                                             \Zend\Validator\NotEmpty::IS_EMPTY => 'tr_melistoolcreator_err_empty',
-                                        ),
-                                    ),
-                                ),
-                            ),
-                            'filters'  => array(
-                                array('name' => 'StripTags'),
-                                array('name' => 'StringTrim'),
-                            ),
-                        ),
-                        /*'tcf-module-toolstree' => array(
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            'filters'  => [
+                                ['name' => 'StripTags'],
+                                ['name' => 'StringTrim'],
+                            ],
+                        ],
+                        /*'tcf-module-toolstree' => [
                             'name'     => 'tcf-module-toolstree',
                             'required' => true,
-                            'validators' => array(
-                                array(
+                            'validators' => [
+                                [
                                     'name' => 'NotEmpty',
-                                    'options' => array(
-                                        'messages' => array(
+                                    'options' => [
+                                        'messages' => [
                                             \Zend\Validator\NotEmpty::IS_EMPTY => 'tr_melistoolcreator_err_empty',
-                                        ),
-                                    ),
-                                ),
-                            ),
-                            'filters'  => array(
-                                array('name' => 'StripTags'),
-                                array('name' => 'StringTrim'),
-                            ),
-                        ),*/
-                    ),
-                ),
-                'melistoolcreator_step2_form' => array(
-                    'attributes' => array(
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            'filters'  => [
+                                ['name' => 'StripTags'],
+                                ['name' => 'StringTrim'],
+                            ],
+                        ],*/
+                    ],
+                ],
+                'melistoolcreator_step2_form' => [
+                    'attributes' => [
                         'name' => 'tool-creator-step-2',
                         'id' => 'tool-creator-step-2',
                         'class' => 'tool-creator-step-2',
                         'method' => 'POST',
                         'action' => '',
-                    ),
+                    ],
                     'hydrator'  => 'Zend\Stdlib\Hydrator\ArraySerializable',
-                    'elements' => array(
-                        array(
-                            'spec' => array(
+                    'elements' => [
+                        [
+                            'spec' => [
                                 'name' => 'tcf-lang-local',
                                 'type' => 'Hidden',
-                            ),
-                        ),
-                        array(
-                            'spec' => array(
+                            ],
+                        ],
+                        [
+                            'spec' => [
                                 'name' => 'tcf-title',
                                 'type' => 'MelisText',
-                                'options' => array(
+                                'options' => [
                                     'label' => 'tr_melistoolcreator_tcf-title',
                                     'tooltip' => 'tr_melistoolcreator_tcf-title tooltip',
-                                ),
-                                'attributes' => array(
+                                ],
+                                'attributes' => [
                                     'id' => 'tcf-title',
                                     'value' => '',
                                     'placeholder' => '',
                                     'required' => 'required',
-                                ),
-                            ),
-                        ),
-                        array(
-                            'spec' => array(
+                                ],
+                            ],
+                        ],
+                        [
+                            'spec' => [
                                 'name' => 'tcf-desc',
                                 'type' => 'Textarea',
-                                'options' => array(
+                                'options' => [
                                     'label' => 'tr_melistoolcreator_tcf-desc',
                                     'tooltip' => 'tr_melistoolcreator_tcf-desc tooltip',
-                                ),
-                                'attributes' => array(
+                                ],
+                                'attributes' => [
                                     'id' => 'tcf-desc',
                                     'value' => '',
                                     'placeholder' => '',
                                     'required' => 'required',
                                     'class' => 'form-control',
                                     'rows' => 4
-                                ),
-                            ),
-                        )
-                    ),
-                    'input_filter' => array(
-                        'tcf-title' => array(
+                                ],
+                            ],
+                        ]
+                    ],
+                    'input_filter' => [
+                        'tcf-title' => [
                             'name'     => 'tcf-title',
                             'required' => true,
-                            'validators' => array(
-                                array(
+                            'validators' => [
+                                [
                                     'name'    => 'StringLength',
-                                    'options' => array(
+                                    'options' => [
                                         'encoding' => 'UTF-8',
                                         'max'      => 100,
-                                        'messages' => array(
+                                        'messages' => [
                                             \Zend\Validator\StringLength::TOO_LONG => 'tr_melistoolcreator_err_long_100',
-                                        ),
-                                    ),
-                                ),
-                                array(
+                                        ],
+                                    ],
+                                ],
+                                [
                                     'name' => 'NotEmpty',
-                                    'options' => array(
-                                        'messages' => array(
+                                    'options' => [
+                                        'messages' => [
                                             \Zend\Validator\NotEmpty::IS_EMPTY => 'tr_melistoolcreator_err_empty',
-                                        ),
-                                    ),
-                                ),
-                            ),
-                            'filters'  => array(
-                                array('name' => 'StripTags'),
-                                array('name' => 'StringTrim'),
-                            ),
-                        ),
-                        'tcf-desc' => array(
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            'filters'  => [
+                                ['name' => 'StripTags'],
+                                ['name' => 'StringTrim'],
+                            ],
+                        ],
+                        'tcf-desc' => [
                             'name'     => 'tcf-desc',
                             'required' => true,
-                            'validators' => array(
-                                array(
+                            'validators' => [
+                                [
                                     'name'    => 'StringLength',
-                                    'options' => array(
+                                    'options' => [
                                         'encoding' => 'UTF-8',
                                         'max'      => 250,
-                                        'messages' => array(
+                                        'messages' => [
                                             \Zend\Validator\StringLength::TOO_LONG => 'tr_melistoolcreator_err_long_250',
-                                        ),
-                                    ),
-                                ),
-                                array(
+                                        ],
+                                    ],
+                                ],
+                                [
                                     'name' => 'NotEmpty',
-                                    'options' => array(
-                                        'messages' => array(
+                                    'options' => [
+                                        'messages' => [
                                             \Zend\Validator\NotEmpty::IS_EMPTY => 'tr_melistoolcreator_err_empty',
-                                        ),
-                                    ),
-                                ),
-                            ),
-                            'filters'  => array(
-                                array('name' => 'StripTags'),
-                                array('name' => 'StringTrim'),
-                            ),
-                        ),
-                    ),
-                ),
-                'melistoolcreator_step3_form' => array(
-                    'attributes' => array(
-                        'name' => 'tool-creator-step-3',
-                        'id' => 'tool-creator-step-3',
-                        'class' => 'tool-creator-step-3 hidden',
-                        'method' => 'POST',
-                        'action' => '',
-                    ),
-                    'hydrator'  => 'Zend\Stdlib\Hydrator\ArraySerializable',
-                    'elements' => array(
-                        array(
-                            'spec' => array(
-                                'name' => 'tcf-db-table',
-                                'type' => 'Hidden',
-                            ),
-                        ),
-                    ),
-                    'input_filter' => array(
-                        'tcf-db-table' => array(
-                            'name'     => 'tcf-db-table',
-                            'required' => true,
-                            'validators' => array(
-                                array(
-                                    'name' => 'NotEmpty',
-                                    'options' => array(
-                                        'messages' => array(
-                                            \Zend\Validator\NotEmpty::IS_EMPTY => 'tr_melistoolcreator_err_empty',
-                                        ),
-                                    ),
-                                ),
-                            ),
-                            'filters'  => array(
-                                array('name' => 'StripTags'),
-                                array('name' => 'StringTrim'),
-                            ),
-                        ),
-                    ),
-                ),
-                'melistoolcreator_step4_form' => array(
-                    'attributes' => array(
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            'filters'  => [
+                                ['name' => 'StripTags'],
+                                ['name' => 'StringTrim'],
+                            ],
+                        ],
+                    ],
+                ],
+                'melistoolcreator_step3_form' => [
+                    'melistoolcreator_step3_primary_tbl' => [
+                        'attributes' => [
+                            'name' => 'tool-creator-step-3',
+                            'id' => 'tool-creator-step-3',
+                            'class' => 'tool-creator-step-3 hidden',
+                            'method' => 'POST',
+                            'action' => '',
+                        ],
+                        'hydrator'  => 'Zend\Stdlib\Hydrator\ArraySerializable',
+                        'elements' => [
+                            [
+                                'spec' => [
+                                    'name' => 'tcf-db-table',
+                                    'type' => 'Hidden',
+                                ],
+                            ],
+                        ],
+                        'input_filter' => [
+                            'tcf-db-table' => [
+                                'name'     => 'tcf-db-table',
+                                'required' => true,
+                                'validators' => [
+                                    [
+                                        'name' => 'NotEmpty',
+                                        'options' => [
+                                            'messages' => [
+                                                \Zend\Validator\NotEmpty::IS_EMPTY => 'Please select a primary database table',
+                                            ],
+                                        ],
+                                    ],
+                                ],
+                                'filters'  => [
+                                    ['name' => 'StripTags'],
+                                    ['name' => 'StringTrim'],
+                                ],
+                            ],
+                        ],
+                    ],
+                    'melistoolcreator_step3_language_tbl' => [
+                        'attributes' => [
+                            'name' => 'tool-creator-step-3',
+                            'id' => 'tool-creator-step-3',
+                            'class' => 'tool-creator-step-3 hidden',
+                            'method' => 'POST',
+                            'action' => '',
+                        ],
+                        'hydrator'  => 'Zend\Stdlib\Hydrator\ArraySerializable',
+                        'elements' => [
+                            [
+                                'spec' => [
+                                    'name' => 'tcf-db-table-has-language',
+                                    'type' => 'Hidden',
+                                    'attributes' => [
+                                        'value' => true
+                                    ]
+                                ],
+                            ],
+                            [
+                                'spec' => [
+                                    'name' => 'tcf-db-table-language-tbl',
+                                    'type' => 'Hidden',
+                                ],
+                            ],
+                            [
+                                'spec' => [
+                                    'name' => 'tcf-db-table-language-pri-fk',
+                                    'type' => 'Hidden',
+                                ],
+                            ],
+                            [
+                                'spec' => [
+                                    'name' => 'tcf-db-table-language-lang-fk',
+                                    'type' => 'Hidden',
+                                ],
+                            ],
+                        ],
+                        'input_filter' => [
+                            'tcf-db-table-has-language' => [
+                                'name'     => 'tcf-db-table-has-language',
+                                'required' => false,
+                                'validators' => [
+                                ],
+                                'filters'  => [
+                                    ['name' => 'StripTags'],
+                                    ['name' => 'StringTrim'],
+                                ],
+                            ],
+                            'tcf-db-table-language-tbl' => [
+                                'name'     => 'tcf-db-table-language-tbl',
+                                'required' => true,
+                                'validators' => [
+                                    [
+                                        'name' => 'NotEmpty',
+                                        'options' => [
+                                            'messages' => [
+                                                \Zend\Validator\NotEmpty::IS_EMPTY => 'Please select a language database table',
+                                            ],
+                                        ],
+                                    ],
+                                ],
+                                'filters'  => [
+                                    ['name' => 'StripTags'],
+                                    ['name' => 'StringTrim'],
+                                ],
+                            ],
+                            'tcf-db-table-language-pri-fk' => [
+                                'name'     => 'tcf-db-table-language-pri-fk',
+                                'required' => true,
+                                'validators' => [
+                                    [
+                                        'name' => 'NotEmpty',
+                                        'options' => [
+                                            'messages' => [
+                                                \Zend\Validator\NotEmpty::IS_EMPTY => 'Please select Foreign key of Primary table from Language table',
+                                            ],
+                                        ],
+                                    ],
+                                ],
+                                'filters'  => [
+                                    ['name' => 'StripTags'],
+                                    ['name' => 'StringTrim'],
+                                ],
+                            ],
+                            'tcf-db-table-language-lang-fk' => [
+                                'name'     => 'tcf-db-table-language-lang-fk',
+                                'required' => true,
+                                'validators' => [
+                                    [
+                                        'name' => 'NotEmpty',
+                                        'options' => [
+                                            'messages' => [
+                                                \Zend\Validator\NotEmpty::IS_EMPTY => 'Please select Foreign key of CMS Page languages from Language table',
+                                            ],
+                                        ],
+                                    ],
+                                ],
+                                'filters'  => [
+                                    ['name' => 'StripTags'],
+                                    ['name' => 'StringTrim'],
+                                ],
+                            ],
+                        ],
+                    ]
+                ],
+                'melistoolcreator_step4_form' => [
+                    'attributes' => [
                         'name' => 'tool-creator-step-4',
                         'id' => 'tool-creator-step-4',
                         'class' => 'tool-creator-step-4',
                         'method' => 'POST',
                         'action' => '',
-                    ),
+                    ],
                     'hydrator'  => 'Zend\Stdlib\Hydrator\ArraySerializable',
-                    'elements' => array(
-                        array(
-                            'spec' => array(
+                    'elements' => [
+                        [
+                            'spec' => [
                                 'name' => 'tcf-db-table-cols',
                                 'type' => 'Checkbox',
-                                'options' => array(
+                                'options' => [
                                     'use_hidden_element' => false,
-                                ),
-                                'attributes' => array(
+                                ],
+                                'attributes' => [
                                     'class' => 'hidden'
-                                )
-                            ),
-                        ),
-                    ),
-                    'input_filter' => array(
-                        'tcf-db-table-cols' => array(
+                                ]
+                            ],
+                        ],
+                    ],
+                    'input_filter' => [
+                        'tcf-db-table-cols' => [
                             'name'     => 'tcf-db-table-cols',
                             'required' => true,
-                            'validators' => array(
-                                array(
+                            'validators' => [
+                                [
                                     'name' => 'NotEmpty',
-                                    'options' => array(
-                                        'messages' => array(
+                                    'options' => [
+                                        'messages' => [
                                             \Zend\Validator\NotEmpty::IS_EMPTY => 'tr_melistoolcreator_err_empty',
-                                        ),
-                                    ),
-                                ),
-                            ),
-                            'filters'  => array(
-                                array('name' => 'StripTags'),
-                                array('name' => 'StringTrim'),
-                            ),
-                        ),
-                    ),
-                ),
-                'melistoolcreator_step5_form' => array(
-                    'attributes' => array(
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            'filters'  => [
+                                ['name' => 'StripTags'],
+                                ['name' => 'StringTrim'],
+                            ],
+                        ],
+                    ],
+                ],
+                'melistoolcreator_step5_form' => [
+                    'attributes' => [
                         'name' => 'tool-creator-step-5',
                         'id' => 'tool-creator-step-5',
                         'class' => 'tool-creator-step-5',
                         'method' => 'POST',
                         'action' => '',
-                    ),
+                    ],
                     'hydrator'  => 'Zend\Stdlib\Hydrator\ArraySerializable',
-                    'elements' => array(
-                        array(
-                            'spec' => array(
+                    'elements' => [
+                        [
+                            'spec' => [
                                 'name' => 'tcf-db-table-col-editable',
                                 'type' => 'Checkbox',
-                                'options' => array(
+                                'options' => [
                                     'use_hidden_element' => false,
-                                ),
-                                'attributes' => array(
+                                ],
+                                'attributes' => [
                                     'class' => 'hidden'
-                                )
-                            ),
-                        ),
-                        array(
-                            'spec' => array(
+                                ]
+                            ],
+                        ],
+                        [
+                            'spec' => [
                                 'name' => 'tcf-db-table-col-required',
                                 'type' => 'Checkbox',
-                                'options' => array(
+                                'options' => [
                                     'use_hidden_element' => false,
-                                ),
-                                'attributes' => array(
+                                ],
+                                'attributes' => [
                                     'class' => 'hidden'
-                                )
-                            ),
-                        ),
-                        array(
-                            'spec' => array(
+                                ]
+                            ],
+                        ],
+                        [
+                            'spec' => [
                                 'name' => 'tcf-db-table-col-type',
                                 'type' => 'Select',
-                                'options' => array(
-                                    'value_options' => array(
+                                'options' => [
+                                    'value_options' => [
                                         'MelisText' => 'Text',
                                         'TextArea' => 'Textarea',
-                                        'MelisCoreTinyMCE' => 'Textarea (TinyMCE)',
+                                        'MelisCoreTinyMCE' => 'Textarea (TinyMCE]',
                                         'Datepicker' => 'Date Picker',
                                         'Datetimepicker' => 'Datetime Picker',
                                         'MelisCmsPluginSiteSelect' => 'Melis site',
                                         'MelisCmsLanguageSelect' => 'Melis Page Language',
                                         'MelisCmsTemplateSelect' => 'Melis Template',
                                         'MelisCoreUserSelect' => 'Melis BO Users',
-                                    ),
-                                ),
-                                'attributes' => array(
+                                    ],
+                                ],
+                                'attributes' => [
                                     'class' => 'form-control',
-                                )
-                            ),
-                        ),
-                    ),
-                    'input_filter' => array(
-                        'tcf-db-table-col-editable' => array(
+                                ]
+                            ],
+                        ],
+                    ],
+                    'input_filter' => [
+                        'tcf-db-table-col-editable' => [
                             'name'     => 'tcf-db-table-col-editable',
                             'required' => false,
-                            'validators' => array(
+                            'validators' => [
 
-                            ),
-                            'filters'  => array(
-                                array('name' => 'StripTags'),
-                                array('name' => 'StringTrim'),
-                            ),
-                        ),
-                        'tcf-db-table-col-required' => array(
+                            ],
+                            'filters'  => [
+                                ['name' => 'StripTags'],
+                                ['name' => 'StringTrim'],
+                            ],
+                        ],
+                        'tcf-db-table-col-required' => [
                             'name'     => 'tcf-db-table-col-required',
                             'required' => false,
-                            'validators' => array(
+                            'validators' => [
 
-                            ),
-                            'filters'  => array(
-                                array('name' => 'StripTags'),
-                                array('name' => 'StringTrim'),
-                            ),
-                        ),
-                        'tcf-db-table-col-type' => array(
+                            ],
+                            'filters'  => [
+                                ['name' => 'StripTags'],
+                                ['name' => 'StringTrim'],
+                            ],
+                        ],
+                        'tcf-db-table-col-type' => [
                             'name'     => 'tcf-db-table-col-type',
                             'required' => false,
-                            'validators' => array(
+                            'validators' => [
 
-                            ),
-                            'filters'  => array(
-                                array('name' => 'StripTags'),
-                                array('name' => 'StringTrim'),
-                            ),
-                        ),
-                    ),
-                ),
-                'melistoolcreator_step6_form' => array(
-                    'attributes' => array(
-                        'name' => 'tool-creator-step-6',
-                        'id' => 'tool-creator-step-6',
+                            ],
+                            'filters'  => [
+                                ['name' => 'StripTags'],
+                                ['name' => 'StringTrim'],
+                            ],
+                        ],
+                    ],
+                ],
+                'melistoolcreator_step6_form' => [
+                    'attributes' => [
+                        'name' => '',
+                        'id' => '',
                         'class' => 'tool-creator-step-6',
                         'method' => 'POST',
                         'action' => '',
-                    ),
+                    ],
                     'hydrator'  => 'Zend\Stdlib\Hydrator\ArraySerializable',
-                    'elements' => array(
-                        array(
-                            'spec' => array(
+                    'elements' => [
+                        [
+                            'spec' => [
                                 'name' => 'tcf-lang-local',
                                 'type' => 'Hidden',
-                            ),
-                        ),
-                    ),
-                    'input_filter' => array(
-                        'tcf-lang-local' => array(
+                            ],
+                        ],
+                        [
+                            'spec' => [
+                                'name' => 'tcf-tbl-type',
+                                'type' => 'Hidden',
+                            ],
+                        ],
+                    ],
+                    'input_filter' => [
+                        'tcf-lang-local' => [
                             'name'     => 'tcf-lang-local',
                             'required' => true,
-                            'validators' => array(
-                                array(
+                            'validators' => [
+                                [
                                     'name' => 'NotEmpty',
-                                    'options' => array(
-                                        'messages' => array(
+                                    'options' => [
+                                        'messages' => [
                                             \Zend\Validator\NotEmpty::IS_EMPTY => 'tr_melistoolcreator_err_empty',
-                                        ),
-                                    ),
-                                ),
-                            ),
-                            'filters'  => array(
-                                array('name' => 'StripTags'),
-                                array('name' => 'StringTrim'),
-                            ),
-                        ),
-                    ),
-                ),
-                'melistoolcreator_step8_form' => array(
-                    'attributes' => array(
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            'filters'  => [
+                                ['name' => 'StripTags'],
+                                ['name' => 'StringTrim'],
+                            ],
+                        ],
+                        'tcf-tbl-type' => [
+                            'name'     => 'tcf-tbl-type',
+                            'required' => true,
+                            'validators' => [
+                                [
+                                    'name' => 'NotEmpty',
+                                    'options' => [
+                                        'messages' => [
+                                            \Zend\Validator\NotEmpty::IS_EMPTY => 'tr_melistoolcreator_err_empty',
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            'filters'  => [
+                                ['name' => 'StripTags'],
+                                ['name' => 'StringTrim'],
+                            ],
+                        ],
+                    ],
+                ],
+                'melistoolcreator_step8_form' => [
+                    'attributes' => [
                         'name' => 'tool-creator-step-8',
                         'id' => 'tool-creator-step-8',
                         'class' => 'tool-creator-step-8',
                         'method' => 'POST',
                         'action' => '',
-                    ),
+                    ],
                     'hydrator'  => 'Zend\Stdlib\Hydrator\ArraySerializable',
-                    'elements' => array(
-                        array(
-                            'spec' => array(
+                    'elements' => [
+                        [
+                            'spec' => [
                                 'name' => 'tcf-activate-tool',
                                 'type' => 'Checkbox',
-                                'options' => array(
+                                'options' => [
                                     'use_hidden_element' => false,
-                                ),
-                                'attributes' => array(
+                                ],
+                                'attributes' => [
                                     'class' => 'hidden'
-                                )
-                            ),
-                        ),
-                    ),
-                    'input_filter' => array(
-                        'tcf-activate-tool' => array(
+                                ]
+                            ],
+                        ],
+                    ],
+                    'input_filter' => [
+                        'tcf-activate-tool' => [
                             'name'     => 'tcf-activate-tool',
                             'required' => true,
-                            'validators' => array(
+                            'validators' => [
 
-                            ),
-                            'filters'  => array(
-                                array('name' => 'StripTags'),
-                                array('name' => 'StringTrim'),
-                            ),
-                        ),
-                    ),
-                ),
-            ),
-        ),
-    ),
-);
+                            ],
+                            'filters'  => [
+                                ['name' => 'StripTags'],
+                                ['name' => 'StringTrim'],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ],
+];

@@ -18,6 +18,18 @@
                     echo $this->formElementErrors($moduleField, array('class' => 'text-danger'));
                 ?>
             </div>
+            <div class="form-group">
+                <?php
+                    $typeField = $form->get('tcf-tool-type');
+                    $inputLabel = $typeField->getLabelAttributes();
+                    $typeField->setLabelAttributes(array('class', null));
+                    $label = $typeField->getLabel().'<i class="fa fa-info-circle fa-lg pull-right tip-info" data-toggle="tooltip" data-placement="left" title="" data-original-title="'.$typeField->getOption('tooltip').'"></i>';
+                    $typeField->setLabel($label);
+                    echo $this->formLabel($typeField);
+                    $typeField->setLabelAttributes($inputLabel);
+                    echo $this->formElement($typeField);
+                ?>
+            </div>
             <!--<div class="form-group">
                 <div id="tc-toolstree-selection">-->
                     <?php

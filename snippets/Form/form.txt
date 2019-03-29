@@ -1,0 +1,18 @@
+                    'forms' => [
+                        'moduletpl_property_form' => [
+                            'attributes' => [
+                                'name' => 'moduleTplForm',
+                                'id' => 'moduleTplForm',
+                                'method' => 'POST',
+                                'action' => '',
+                            ],
+                            'hydrator'  => 'Zend\Stdlib\Hydrator\ArraySerializable',
+                            'elements' => [
+#FORMINPUTS
+                            ],
+                            'input_filter' => [
+#FORMINPUTFILTERS
+                            ]
+                        ],
+#FORMLANGUAGE
+                    ]

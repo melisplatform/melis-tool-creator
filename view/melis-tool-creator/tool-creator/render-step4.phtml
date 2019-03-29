@@ -15,73 +15,165 @@
             </div>
         <?php } ?>
 
+        <?php
+            $form = $this->step4Form;
+            echo $this->form()->openTag($form);
+        ?>
+
         <div class="col-sm-12">
+            <?php if ($this->langTblCols) { ?>
+                <h4><?php echo $this->translate('tr_melistoolcreator_pri_tbl_cols') ?></h4>
+            <?php } ?>
             <div class="melis-toolcreator-steps-tbl-cols">
-                <?php
-                $form = $this->step4Form;
-                echo $this->form()->openTag($form);
-                ?>
-                    <div class="widget-body list table-responsive">
-                        <table class="table table-striped table-primary">
-                            <thead>
-                                <tr>
-                                    <?php
-                                        $checkBoxIcon = "fa-check-square-o text-success";
-                                        if (isset($this->tblColumns)){
-                                            if (count($this->table) != count($this->tblColumns)){
-                                                $checkBoxIcon = "fa-square-o";
+                <div class="widget-body list table-responsive">
+                    <table class="table table-striped table-primary">
+                        <thead>
+                            <tr>
+                                <?php
+                                    $checkBoxIcon = "fa-check-square-o text-success";
+                                    if (isset($this->tblColumns)){
+                                        $ctr = 0;
+                                        foreach ($this->priTblCols As $col){
+                                            if (in_array($col['Field'], $this->tblColumns)){
+                                                $ctr++;
                                             }
                                         }
-                                    ?>
-                                    <th><i class="fa <?php echo $checkBoxIcon ?> fa-lg tcf-fa-checkbox tcf-fa-checkall"></i></th>
-                                    <th>#</th>
-                                    <th><?php echo $this->translate('tr_melistoolcreator_col_pk') ?></th>
-                                    <th><?php echo $this->translate('tr_melistoolcreator_col_name') ?></th>
-                                    <th><?php echo $this->translate('tr_melistoolcreator_col_type') ?></th>
-                                    <th><?php echo $this->translate('tr_melistoolcreator_col_null') ?></th>
-                                    <th><?php echo $this->translate('tr_melistoolcreator_col_default') ?></th>
-                                    <th><?php echo $this->translate('tr_melistoolcreator_col_extra') ?></th>
-                                </tr>
-                            </thead>
-                            <?php
-                                $ctr = 1;
-                                foreach ($this->table As $col){
-                                    $pk = in_array($col['Key'], array('PRI')) ? ' <i class="fa fa-key fa-lg fa-rotate-90"></i>': '';
-
-                                    $checkBox = $form->get('tcf-db-table-cols')->setCheckedValue($col['Field']);
-
-                                    $checkBoxIcon = "fa-check-square-o text-success";
-                                    $checkBox->setChecked(true);
-
-                                    if (!empty($this->tblColumns)){
-                                        if (!in_array($col['Field'], $this->tblColumns)){
-                                            $checkBox->setChecked(false);
+                                        if (count($this->priTblCols) != $ctr){
                                             $checkBoxIcon = "fa-square-o";
                                         }
                                     }
+                                ?>
+                                <th><i class="fa <?php echo $checkBoxIcon ?> fa-lg tcf-fa-checkbox tcf-fa-checkall" data-col-type="pri-cols"></i></th>
+                                <th>#</th>
+                                <th><?php echo $this->translate('tr_melistoolcreator_col_pk') ?></th>
+                                <th><?php echo $this->translate('tr_melistoolcreator_col_name') ?></th>
+                                <th><?php echo $this->translate('tr_melistoolcreator_col_type') ?></th>
+                                <th><?php echo $this->translate('tr_melistoolcreator_col_null') ?></th>
+                                <th><?php echo $this->translate('tr_melistoolcreator_col_default') ?></th>
+                                <th><?php echo $this->translate('tr_melistoolcreator_col_extra') ?></th>
+                            </tr>
+                        </thead>
+                        <?php
+                            $ctr = 1;
+                            foreach ($this->priTblCols As $col){
+                                $pk = in_array($col['Key'], array('PRI')) ? '<i class="fa fa-key fa-lg fa-rotate-90"></i>': '';
 
-                                    echo '<tr>
-                                            <td>
-                                                <i class="fa '.$checkBoxIcon.' fa-lg tcf-fa-checkbox tcf-fa-checkitem"></i>
-                                                '.$this->formElement($checkBox).'
-                                            </td>
-                                            <td>'.$ctr++.'</td>
-                                            <td>'.$pk.'</td>
-                                            <td><b>'.$col['Field'].'</b></td>
-                                            <td>'.$col['Type'].'</td>
-                                            <td>'.$col['Null'].'</td>
-                                            <td>'.$col['Default'].'</td>
-                                            <td>'.$col['Extra'].'</td>
-                                        </tr>';
+                                $checkBox = $form->get('tcf-db-table-cols')->setCheckedValue($col['Field']);
+
+                                $checkBoxIcon = "fa-check-square-o text-success";
+                                $checkBox->setChecked(true);
+
+                                if (!empty($this->tblColumns)){
+                                    if (!in_array($col['Field'], $this->tblColumns)){
+                                        $checkBox->setChecked(false);
+                                        $checkBoxIcon = "fa-square-o";
+                                    }
                                 }
+
+                                echo '<tr>
+                                        <td>
+                                            <i class="fa '.$checkBoxIcon.' fa-lg tcf-fa-checkbox tcf-fa-checkitem" data-col-type="pri-cols"></i>
+                                            '.$this->formElement($checkBox).'
+                                        </td>
+                                        <td>'.$ctr++.'</td>
+                                        <td>'.$pk.'</td>
+                                        <td><b>'.$col['Field'].'</b></td>
+                                        <td>'.$col['Type'].'</td>
+                                        <td>'.$col['Null'].'</td>
+                                        <td>'.$col['Default'].'</td>
+                                        <td>'.$col['Extra'].'</td>
+                                    </tr>';
+                            }
+                        ?>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <?php if ($this->langTblCols) { ?>
+            <div class="col-sm-12">
+                <h4><?php echo $this->translate('tr_melistoolcreator_lang_tbl_cols') ?></h4>
+                <div class="melis-toolcreator-steps-tbl-cols">
+                    <div class="widget-body list table-responsive">
+                        <table class="table table-striped table-primary">
+                            <thead>
+                            <tr>
+                                <?php
+                                $checkBoxIcon = "fa-check-square-o text-success";
+                                if (isset($this->tblColumns)){
+                                    $ctr = 0;
+                                    foreach ($this->langTblCols As $col){
+                                        if (in_array('tclangtblcol_'.$col['Field'], $this->tblColumns)){
+                                            $ctr++;
+                                        }
+                                    }
+                                    if (count($this->langTblCols) != $ctr){
+                                        $checkBoxIcon = "fa-square-o";
+                                    }
+                                }
+                                ?>
+                                <th><i class="fa <?php echo $checkBoxIcon ?> fa-lg tcf-fa-checkbox tcf-fa-checkall" data-col-type="lang-cols"></i></th>
+                                <th>#</th>
+                                <th><?php echo $this->translate('tr_melistoolcreator_col_pk') ?></th>
+                                <th><?php echo $this->translate('tr_melistoolcreator_col_fk') ?></th>
+                                <th><?php echo $this->translate('tr_melistoolcreator_col_name') ?></th>
+                                <th><?php echo $this->translate('tr_melistoolcreator_col_type') ?></th>
+                                <th><?php echo $this->translate('tr_melistoolcreator_col_null') ?></th>
+                                <th><?php echo $this->translate('tr_melistoolcreator_col_default') ?></th>
+                                <th><?php echo $this->translate('tr_melistoolcreator_col_extra') ?></th>
+                            </tr>
+                            </thead>
+                            <?php
+                            $ctr = 1;
+                            foreach ($this->langTblCols As $col){
+                                $pk = in_array($col['Key'], array('PRI')) ? '<i class="fa fa-key fa-lg fa-rotate-90"></i>': '';
+
+                                // Adding prefix "tclangtblcol_" for language columns
+                                $langCOls = 'tclangtblcol_'.$col['Field'];
+                                $checkBox = $form->get('tcf-db-table-cols')->setCheckedValue($langCOls);
+
+                                $checkBoxIcon = "fa-check-square-o text-success";
+                                $checkBox->setChecked(true);
+
+                                if (!empty($this->tblColumns)){
+                                    if (!in_array($langCOls, $this->tblColumns)){
+                                        $checkBox->setChecked(false);
+                                        $checkBoxIcon = "fa-square-o";
+                                    }
+                                }
+
+                                $fk = null;
+                                if (!empty($this->fkCols)){
+                                    if (in_array('tclangtblcol_'.$col['Field'], $this->fkCols)){
+                                        $fk = '<i class="fa fa-key fa-lg fa-rotate-90 fa-key-fk"></i>';
+                                    }
+                                }
+
+                                echo '<tr>
+                                        <td>
+                                            <i class="fa '.$checkBoxIcon.' fa-lg tcf-fa-checkbox tcf-fa-checkitem" data-col-type="lang-cols"></i>
+                                            '.$this->formElement($checkBox).'
+                                        </td>
+                                        <td>'.$ctr++.'</td>
+                                        <td>'.$pk.'</td>
+                                        <td>'.$fk.'</td>
+                                        <td><b>'.$col['Field'].'</b></td>
+                                        <td>'.$col['Type'].'</td>
+                                        <td>'.$col['Null'].'</td>
+                                        <td>'.$col['Default'].'</td>
+                                        <td>'.$col['Extra'].'</td>
+                                    </tr>';
+                            }
                             ?>
                         </table>
                     </div>
-                <?php
-                    echo $this->form()->closeTag();
-                ?>
+                </div>
             </div>
-        </div>
+        <?php } ?>
+
+        <?php
+            echo $this->form()->closeTag();
+        ?>
     </div>
 
 

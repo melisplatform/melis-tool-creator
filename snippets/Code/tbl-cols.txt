@@ -1,0 +1,5 @@
+                            '#TCKEYCOL' => array(
+								'text' => 'tr_moduletpl_#TCKEY',
+								'css' => array('width' => '#TCTBLKEY%'),
+								'sortable' => true
+							)

@@ -1,0 +1,1 @@
+melisHelper.tabClose(id+"_id_moduletpl_properties_tool");

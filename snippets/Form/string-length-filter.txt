@@ -1,0 +1,10 @@
+                                        [
+                                            'name' => 'StringLength',
+                                            'options' => [
+                                                'encoding' => 'UTF-8',
+                                                'max'      => #KEYLENGHTVAL,
+                                                'messages' => [
+                                                    \Zend\Validator\StringLength::TOO_LONG => 'tr_moduletpl_value_too_long',
+                                                ],
+                                            ],
+                                        ]

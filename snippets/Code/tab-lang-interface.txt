@@ -1,0 +1,15 @@
+                                                                        'moduletpl_language' => [
+                                                                            'conf' => [
+                                                                                'id' => 'id_moduletpl_language',
+                                                                                'melisKey' => 'moduletpl_language',
+                                                                                'name' => 'Language',
+                                                                                'icon' => 'glyphicons font'
+                                                                            ],
+                                                                            'forward' => [
+                                                                                'module' => 'ModuleTpl',
+                                                                                'controller' => 'Language',
+                                                                                'action' => 'render-tool-language-content',
+                                                                                'jscallback' => '',
+                                                                                'jsdatas' => []
+                                                                            ],
+                                                                        ]

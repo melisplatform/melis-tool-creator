@@ -5,7 +5,7 @@
 </style>
 <div id="<?php echo $this->id; ?>" class="steps-content">
     <div class="row">
-        <div class="col-sm-12">
+        <div class="col-sm-12 margin-bottom-10">
             <h3><?php echo $this->translate('tr_melistoolcreator_cols_translations_title') ?></h3>
             <p><?php echo $this->translate('tr_melistoolcreator_cols_translations_desc') ?></p>
         </div>
@@ -14,7 +14,7 @@
                 <ul class="nav-tabs product-text-tab">
                     <?php $ctr = 0; foreach ($this->languages As $key => $val):?>
                         <li class="<?php echo ($ctr++) ?: 'active'?>">
-                            <a class="clearfix" data-toggle="tab" href="#toolcreator-text-transaltions-<?php echo $val['lang_locale']?>" aria-expanded="false">
+                            <a class="clearfix" data-toggle="tab" href="#toolcreator-text-transaltions-<?php echo $val['lang_cms_locale']?>" aria-expanded="false">
                                 <span class="langimg-cont"><?php echo $val['lang_label']?></span>
                             </a>
                         </li>
@@ -27,45 +27,59 @@
                 <?php $ctr = 0; foreach ($this->step6Form As $key => $form):?>
                     <div id="toolcreator-text-transaltions-<?php echo $key ?>" class="tab-pane <?php echo ($ctr++) ? '': 'active'?>">
                         <?php
-                            $form->prepare();
+                            foreach ($form As $tblType => $tblForm){
 
-                            echo $this->form()->openTag($form);
+                                if (count($form) > 1){
+                                    echo '<h4>'.$this->translate('tr_melistoolcreator_'.$tblType).'</h4>';
+                                }
 
-                            foreach ($form->getElements() As $key => $val){
+                                $tblForm->setAttribute('style', 'margin-bottom: 20px');
+                                $tblForm->prepare();
 
-                                if ($val->getOption('col-name'))
-                                    echo '<div class="row">';
+                                echo $this->form()->openTag($tblForm);
 
-                                if ($val->getLabel() || $val->getOption('col-desc')){
-                                    if (!empty($this->formElementErrors($val))){
-                                        $val->setLabelAttributes(array('class' => 'text-danger'));
-                                    }
+                                foreach ($tblForm->getElements() As $key => $val){
 
                                     if ($val->getOption('col-name'))
-                                        echo '<div class="col-md-4">';
+                                        echo '<div class="row">';
 
-                                    if ($val->getOption('col-desc')){
-                                        $val->setLabel(' ');
-                                        $val->setLabelAttributes(array('class' => 'tcf-lbl-balance'));
-                                        echo '<div class="col-md-8">';
+                                    if ($val->getLabel() || $val->getOption('col-desc')){
+                                        if (!empty($this->formElementErrors($val))){
+                                            $val->setLabelAttributes(array('class' => 'text-danger'));
+                                        }
+
+                                        if ($val->getOption('col-name'))
+                                            echo '<div class="col-md-4">';
+
+                                        if ($val->getOption('col-desc')){
+                                            $val->setLabel(' ');
+                                            $val->setLabelAttributes(array('class' => 'tcf-lbl-balance'));
+                                            echo '<div class="col-md-8">';
+                                        }
+
+                                        echo '<div class="form-group">';
+
+                                        if ($tblType == 'lang_tbl'){
+                                            // Removing language col prefix to display
+                                            $val->setLabel(str_replace('tclangtblcol_', '', $val->getLabel()));
+                                        }
+
+                                        echo $this->formLabel($val);
                                     }
 
-                                    echo '<div class="form-group">';
-                                    echo $this->formLabel($val);
+                                    echo $this->formElement($val);
+
+                                    if ($val->getLabel() || $val->getOption('col-desc')){
+                                        echo $this->formElementErrors($val, array('class' => 'text-danger'));
+                                        echo '</div></div>';
+                                    }
+
+                                    if ($val->getOption('col-desc'))
+                                        echo '</div>';
                                 }
 
-                                echo $this->formElement($val);
-
-                                if ($val->getLabel() || $val->getOption('col-desc')){
-                                    echo $this->formElementErrors($val, array('class' => 'text-danger'));
-                                    echo '</div></div>';
-                                }
-
-                                if ($val->getOption('col-desc'))
-                                    echo '</div>';
+                                echo $this->form()->closeTag();
                             }
-
-                            echo $this->form()->closeTag();
                         ?>
                     </div>
                 <?php endforeach;?>

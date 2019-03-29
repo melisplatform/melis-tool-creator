@@ -1,0 +1,58 @@
+    public function saveAction()
+    {
+        $translator = $this->getServiceLocator()->get('translator');
+
+        $success = 0;
+        $textTitle = $translator->translate('tr_moduletpl_title');
+        $textMessage = $translator->translate('tr_moduletpl_unable_to_save');
+        $errors = [];
+
+        $request = $this->getRequest();
+        $id = null;
+        $entryTitle = null;
+
+        if ($request->isPost()){
+
+            $postData = $request->getPost()->toArray();
+            $moduleTplForm = $this->getForm();
+            $moduleTplForm->setData($postData);
+            if ($moduleTplForm->isValid()){
+
+                $formData = $moduleTplForm->getData();
+
+                $pk = null;
+                if (!empty($formData['#TCKEY'])){
+                    $pk = $formData['#TCKEY'];
+                    unset($formData['#TCKEY']);
+                }
+
+                $moduleTplTable = $this->getServiceLocator()->get('ModuleTplTable');
+                $id = $moduleTplTable->save($formData, $pk);
+
+                if ($id){
+                    $success = 1;
+                    $entryTitle = $translator->translate('tr_moduletpl_common_entry_id').': '.$id;
+                    $textMessage = $translator->translate('tr_moduletpl_save_success');
+                }
+            }else{
+                $errors = $moduleTplForm->getMessages();
+                foreach ($errors as $keyError => $valueError){
+                    $errors[$keyError]['label'] = $translator->translate("tr_moduletpl_".$keyError);
+                }
+            }
+        }
+
+        $response = [
+            'success' => $success,
+            'textTitle' => $textTitle,
+            'textMessage' => $textMessage,
+            'errors' => $errors
+        ];
+
+        if (!is_null($id)){
+            $response['entryId'] = $id;
+            $response['entryTitle'] = $entryTitle;
+        }
+
+        return new JsonModel($response);
+    }

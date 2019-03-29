@@ -1,4 +1,4 @@
-<ul>
+<ul data-type="<?php echo $this->type ?>">
     <?php
     foreach ($this->tables As $tbl){
         $icon = 'fa-square-o';
@@ -6,7 +6,12 @@
             $icon = 'fa-check-square-o text-success';
         }
 
-        echo '<li data-table-name="'.$tbl->getName().'">
+        $hasPrimaryTbl = null;
+        if (!empty($this->selectedPrimaryTbl))
+            if ($this->selectedPrimaryTbl == $tbl->getName())
+                $hasPrimaryTbl = 'class="melis-toolcreator-disable-db-tbl-item"';
+
+        echo '<li data-table-name="'.$tbl->getName().'" '.$hasPrimaryTbl.'>
                 <span><i class="fa '.$icon.' fa-lg"></i> '.$tbl->getName().'</span>
             </li>';
     }

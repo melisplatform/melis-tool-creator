@@ -15,6 +15,9 @@
 #id_melistoolcreator_steps .fa-key{
     color: #ffa700;
 }
+#id_melistoolcreator_steps .fa-key.fa-key-fk{
+    color: inherit;
+}
 
 .fancytree-title .fa{
     width: 20px;
@@ -171,6 +174,36 @@
 
 .melis-tool-creator-display-warning{
     display: none;
+}
+
+#id_melistoolcreator_content .widget.widget-tabs>.widget-head ul li.active a {
+    color: #981a1f;
+}
+
+#id_melistoolcreator_content .widget.widget-tabs>.widget-head ul li.active a i:before {
+    color: #981a1f;
+}
+
+.melis-tc-tool-language.fa{
+    width: 28px;
+    cursor: pointer;
+}
+
+.melis-tooc-reator-lang-cols-info{
+    padding: 10px;
+}
+
+.melis-toolcreator-disable-db-tbl-item{
+    display: none;
+}
+
+.melis-toolcreator-disable-db-tbl-item .alert{
+    margin-bottom: 0px;
+}
+
+.melis-toolcreator-db-step.alert p{
+    display: list-item;
+    margin-left: 15px;
 }
 
 @media (max-width: 1743px){
