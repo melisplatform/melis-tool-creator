@@ -33,8 +33,8 @@ class ToolCreatorController extends AbstractActionController
         $view = new ViewModel();
 
         // Initializing the Tool creator session container
-//        $container = new Container('melistoolcreator');
-//        $container['melis-toolcreator'] = [];
+        $container = new Container('melistoolcreator');
+        $container['melis-toolcreator'] = [];
 
         return $view;
     }
