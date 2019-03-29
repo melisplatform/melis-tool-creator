@@ -599,7 +599,7 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
                                 $text = $stepTexts[$lang['lang_cms_locale']][$key];
 
                             $key = $this->sp('tcinputdesc', 'tooltip', $key);
-                            $key = $this->sp('tclangtblcol_', 'tooltip', $key);
+                            $key = $this->sp('tclangtblcol_', '', $key);
                         }
 
                         $translations[$lang['lang_cms_locale']][$key] = $text;
