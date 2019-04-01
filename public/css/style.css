@@ -206,6 +206,24 @@
     margin-left: 15px;
 }
 
+.melis-toolcreator-steps li span {
+    padding: 0px 8px 0 40px;
+    padding-left: 10px;
+}
+
+.melis-toolcreator-steps li.active span {
+    padding-left: inherit;
+}
+
+.melis-toolcreator-steps .bwizard-steps li:before {
+    border-left: 10px solid #fff;
+}
+
+.melis-toolcreator-steps li.active:after {
+    right: -10px;
+    border-left: 10px solid #fafafa;
+}
+
 @media (max-width: 1743px){
     .melis-tool-creator-display-warning{
         display: block;
