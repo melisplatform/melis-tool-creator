@@ -42,8 +42,8 @@ return [
                                 'type' => 'Zend\Form\Element\Radio',
                                 'name' => 'tcf-tool-type',
                                 'options' => [
-                                    'label' => 'Tool type',
-                                    'tooltip' => 'Tool type',
+                                    'label' => 'tr_melistoolcreator_tcf_tool_type',
+                                    'tooltip' => 'tr_melistoolcreator_tcf_tool_type tooltip',
                                     'label_options' => [
                                         'disable_html_escape' => true,
                                     ],

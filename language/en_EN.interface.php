@@ -34,7 +34,9 @@ return [
 
     // Steps
     'tr_melistoolcreator_module' => 'Tool',
-    'tr_melistoolcreator_tcf-name tooltip' => 'Alphanumeric and underscore are the only valid characters allowed. The tool name cannot start by a number neither contain any space',
+    'tr_melistoolcreator_tcf-name tooltip' => 'Name of the tool. Alphanumeric and underscore are the only valid characters allowed. The tool name cannot start by a number neither contain any space',
+    'tr_melistoolcreator_tcf_tool_type' => 'Tool type',
+    'tr_melistoolcreator_tcf_tool_type tooltip' => 'Select the tool type you want to create',
     'tr_melistoolcreator_module_desc' => 'Enter the name of the tool',
     'tr_melistoolcreator_texts' => 'Texts',
     'tr_melistoolcreator_texts_title' => 'Module text translations',
@@ -111,7 +113,7 @@ return [
 
     // Error messages
     'tr_melistoolcreator_err_message' => 'Unable to proceed to the next step, please try again',
-    'tr_melistoolcreator_err_invalid_module' => 'Alphanumeric and underscore are the only valid characters allowed. The tool name cannot start by a number',
+    'tr_melistoolcreator_err_invalid_module' => 'Alphanumeric and underscore are the only valid characters allowed. The tool name cannot start by a number neither contain any space',
     'tr_melistoolcreator_err_empty' => 'The input is required and cannot be empty',
     'tr_melistoolcreator_err_long_50' => 'Value is too long, it should be less than 50 characters',
     'tr_melistoolcreator_err_long_100' => 'Value is too long, it should be less than 100 characters',

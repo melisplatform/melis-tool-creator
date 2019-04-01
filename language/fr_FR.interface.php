@@ -34,7 +34,9 @@ return [
 
     // Steps
     'tr_melistoolcreator_module' => 'Outil',
-    'tr_melistoolcreator_tcf-name tooltip' => 'Les caractères autorisés sont alphanumerique et underscore. Le nom de l\'outil ne peut pas commencer par un numéro ni ne contenir d\'espace',
+    'tr_melistoolcreator_tcf-name tooltip' => 'Nom de l\'outil. Les caractères autorisés sont alphanumerique et underscore. Le nom de l\'outil ne peut pas commencer par un numéro ni ne contenir d\'espace',
+    'tr_melistoolcreator_tcf_tool_type' => 'Tool type',
+    'tr_melistoolcreator_tcf_tool_type tooltip' => 'Sélectionnez le type d\'outil que vous souhaitez créer',
     'tr_melistoolcreator_module_desc' => 'Saisissez le nom de l\'outil',
     'tr_melistoolcreator_texts' => 'Textes',
     'tr_melistoolcreator_texts_title' => 'Module de traductions de texte',
@@ -111,7 +113,7 @@ return [
 
     // Error messages
     'tr_melistoolcreator_err_message' => 'Impossible de passer à l\'étape suivante, veuillez réessayer',
-    'tr_melistoolcreator_err_invalid_module' => 'Les caractères autorisés sont alphanumerique et underscore. Le nom de l\'outil ne peut pas commencer par un numéro',
+    'tr_melistoolcreator_err_invalid_module' => 'Les caractères autorisés sont alphanumerique et underscore. Le nom de l\'outil ne peut pas commencer par un numéro ni ne contenir d\'espace',
     'tr_melistoolcreator_err_empty' => 'Champ requis, ne peut être vide',
     'tr_melistoolcreator_err_long_50' => 'Valeur trop longue, elle doit être de moins de 50 caractères',
     'tr_melistoolcreator_err_long_100' => 'Valeur trop longue, elle doit être de moins de 100 caractères',
