@@ -178,7 +178,6 @@ return [
                                     'id' => 'tcf-desc',
                                     'value' => '',
                                     'placeholder' => '',
-                                    'required' => 'required',
                                     'class' => 'form-control',
                                     'rows' => 4
                                 ],
@@ -216,7 +215,7 @@ return [
                         ],
                         'tcf-desc' => [
                             'name'     => 'tcf-desc',
-                            'required' => true,
+                            'required' => false,
                             'validators' => [
                                 [
                                     'name'    => 'StringLength',
@@ -227,15 +226,7 @@ return [
                                             \Zend\Validator\StringLength::TOO_LONG => 'tr_melistoolcreator_err_long_250',
                                         ],
                                     ],
-                                ],
-                                [
-                                    'name' => 'NotEmpty',
-                                    'options' => [
-                                        'messages' => [
-                                            \Zend\Validator\NotEmpty::IS_EMPTY => 'tr_melistoolcreator_err_empty',
-                                        ],
-                                    ],
-                                ],
+                                ]
                             ],
                             'filters'  => [
                                 ['name' => 'StripTags'],
