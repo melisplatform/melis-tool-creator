@@ -1266,10 +1266,9 @@ class ToolCreatorController extends AbstractActionController
     {
         $langLabel = $langName;
 
-        $langLocale = explode('_', $locale)[0];
         $moduleSvc = $this->getServiceLocator()->get('ModulesService');
-        if (file_exists($moduleSvc->getModulePath('MelisCore').'/public/assets/images/lang/'.$langLocale.'.png'))
-            $langLabel = '<img src="/MelisCore/assets/images/lang/'.$langLocale.'.png"> '.$langName;
+        if (file_exists($moduleSvc->getModulePath('MelisCms').'/public/images/lang-flags/'.$locale.'.png'))
+            $langLabel = '<img src="/MelisCms/images/lang-flags/'.$locale.'.png"> '.$langName;
 
         return $langLabel;
     }

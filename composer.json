@@ -24,6 +24,7 @@
     "ext-json": "*",
     "ext-pdo_mysql": "*",
     "melisplatform/melis-core": "^3.0",
+    "melisplatform/melis-cms": "^3.0",
     "melisplatform/melis-engine": "^3.0",
   },
   "require-dev": {
