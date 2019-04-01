@@ -11,7 +11,7 @@
                 <?php
                     $moduleField = $form->get('tcf-name');
                     $moduleField->setLabelOptions(array('disable_html_escape' => true));
-                    $label = $moduleField->getLabel().'<i class="fa fa-info-circle fa-lg pull-right tip-info" data-toggle="tooltip" data-placement="left" title="" data-original-title="'.$moduleField->getOption('tooltip').'"></i>';
+                    $label = $moduleField->getLabel().' *<i class="fa fa-info-circle fa-lg pull-right tip-info" data-toggle="tooltip" data-placement="left" title="" data-original-title="'.$moduleField->getOption('tooltip').'"></i>';
                     $moduleField->setLabel($label);
                     echo $this->formLabel($moduleField);
                     echo $this->formElement($moduleField);
