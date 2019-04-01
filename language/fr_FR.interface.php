@@ -27,14 +27,14 @@ return [
 
     // Warnings
     'tr_melistoolcreator_fp_title' => 'Droits d\'écriture des fichiers refusés',
-    'tr_melistoolcreator_fp_msg' => 'Pour créer des outils via ce module, veuillez donner les droits d\'écriture sur les dossiers suivants ou contactez l\'administrateur si le problème persiste.',
+    'tr_melistoolcreator_fp_msg' => 'Pour créer des outils via ce module, veuillez donner les droits d\'écriture sur les dossiers suivants ou contactez l\'administrateur si le problème persiste',
     'tr_melistoolcreator_fp_config' => '<b>/config/melis.module.load.php</b> - Ce fichier est requis pour activer un outil après sa création',
     'tr_melistoolcreator_fp_cache' => '<b>/cache</b> - Le répertoire où le fichier cache de la liste des tables est enregistré, celà accélère le processus d\'installation de l\'outil ',
     'tr_melistoolcreator_fp_module' => '<b>/module</b> - Le répertoire dans lequel les outils créés sont enregistrés',
 
     // Steps
     'tr_melistoolcreator_module' => 'Outil',
-    'tr_melistoolcreator_tcf-name tooltip' => 'Les caractères autorisés sont alphanumerique et underscore. Le nom de l\'outil ne peut pas commencer par un numéro.',
+    'tr_melistoolcreator_tcf-name tooltip' => 'Les caractères autorisés sont alphanumerique et underscore. Le nom de l\'outil ne peut pas commencer par un numéro ni ne contenir d\'espace',
     'tr_melistoolcreator_module_desc' => 'Saisissez le nom de l\'outil',
     'tr_melistoolcreator_texts' => 'Textes',
     'tr_melistoolcreator_texts_title' => 'Module de traductions de texte',

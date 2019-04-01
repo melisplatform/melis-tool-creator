@@ -27,14 +27,14 @@ return [
 
     // Warnings
     'tr_melistoolcreator_fp_title' => 'File permission denied',
-    'tr_melistoolcreator_fp_msg' => 'In-order to create tools using this module, please give the rights to write in the following directories or contact the administrator if the problem persists.',
+    'tr_melistoolcreator_fp_msg' => 'In-order to create tools using this module, please give the rights to write in the following directories or contact the administrator if the problem persists',
     'tr_melistoolcreator_fp_config' => '<b>/config/melis.module.load.php</b> - this file is required to activate a tool after its creation',
     'tr_melistoolcreator_fp_cache' => '<b>/cache</b> - the directory where the table list cache file are saved, this accelerates the setup process of the tool',
     'tr_melistoolcreator_fp_module' => '<b>/module</b> - The directory where the created tools are saved',
 
     // Steps
     'tr_melistoolcreator_module' => 'Tool',
-    'tr_melistoolcreator_tcf-name tooltip' => 'Alphanumeric and underscore are the only valid characters allowed. The tool name cannot start by a number',
+    'tr_melistoolcreator_tcf-name tooltip' => 'Alphanumeric and underscore are the only valid characters allowed. The tool name cannot start by a number neither contain any space',
     'tr_melistoolcreator_module_desc' => 'Enter the name of the tool',
     'tr_melistoolcreator_texts' => 'Texts',
     'tr_melistoolcreator_texts_title' => 'Module text translations',
