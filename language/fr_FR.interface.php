@@ -45,7 +45,7 @@ return [
     'tr_melistoolcreator_database_title' => 'Table du module',
     'tr_melistoolcreator_database_desc' => 'Sélectionnez la table qui sera utilisée par l\'outil',
     'tr_melistoolcreator_database_reload_cached' => 'Rafraîchir la liste des tables',
-    'tr_melistoolcreator_database_reload_cached_tooltip' => 'Le rafraîchissement peut prendre quelques minutes',
+    'tr_melistoolcreator_database_reload_cached_tooltip' => 'Rafraîchir la liste des tables peut prendre quelques minutes',
     'tr_melistoolcreator_table_cols' => 'Colonnes du tableau',
     'tr_melistoolcreator_table_cols_title' => 'Colonnes du tableau',
     'tr_melistoolcreator_table_cols_desc' => 'Veuillez choisir la ou les colonnes à afficher dans le tableau de l\outil',
