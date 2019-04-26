@@ -8,7 +8,7 @@
                                                                             'forward' => [
                                                                                 'module' => 'ModuleTpl',
                                                                                 'controller' => 'Language',
-                                                                                'action' => 'render-tool-language-content',
+                                                                                'action' => 'render-language-form',
                                                                                 'jscallback' => '',
                                                                                 'jsdatas' => []
                                                                             ],

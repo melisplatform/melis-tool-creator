@@ -1,0 +1,18 @@
+    public function renderPropertiesFormAction()
+    {
+        $view = new ViewModel();
+        $form = $this->getForm();
+
+        $id = $this->params()->fromQuery('id', 'add');
+        $view->id = $id;
+
+        if ($id != 'add'){
+            $moduleTplTable = $this->getServiceLocator()->get('ModuleTplTable');
+            $data = $moduleTplTable->getEntryById($id)->current();
+            $form->bind($data);
+        }
+
+        $view->form = $form;
+
+        return $view;
+    }

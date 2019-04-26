@@ -1,0 +1,11 @@
+                $saveLanguageResult = $this->dispatchPlugin(
+                    $e,
+                    'ModuleTpl\Controller\Language',
+                    [
+                        'action' => 'saveLanguage',
+                        'success' => $result['success'],
+                        'id' => $result['data']['id'],
+                    ]
+                );
+
+                $result = ArrayUtils::merge($result, $saveLanguageResult);

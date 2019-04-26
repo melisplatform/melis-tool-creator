@@ -16,7 +16,7 @@ use Zend\View\Model\ViewModel;
 
 class LanguageController extends AbstractActionController
 {
-    public function renderToolLanguageContentAction()
+    public function renderLanguageFormAction()
     {
         $myToolTabLangTable = $this->getServiceLocator()->get('ModuleTplLangTable');
         $cmsLang = $this->getServiceLocator()->get('MelisEngineTableCmsLang');

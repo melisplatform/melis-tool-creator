@@ -32,7 +32,7 @@ return [
                                             ],
                                             'forward' => [
                                                 'module' => 'ModuleTpl',
-                                                'controller' => '#TCPRIMARYCTRL',
+                                                'controller' => 'List',
                                                 'action' => 'render-tool',
                                                 'jscallback' => '',
                                                 'jsdatas' => []
@@ -46,7 +46,7 @@ return [
                                                     ],
                                                     'forward' => [
                                                         'module' => 'ModuleTpl',
-                                                        'controller' => '#TCPRIMARYCTRL',
+                                                        'controller' => 'List',
                                                         'action' => 'render-tool-header',
                                                         'jscallback' => '',
                                                         'jsdatas' => []
@@ -60,7 +60,7 @@ return [
                                                     ],
                                                     'forward' => [
                                                         'module' => 'ModuleTpl',
-                                                        'controller' => '#TCPRIMARYCTRL',
+                                                        'controller' => 'List',
                                                         'action' => 'render-tool-content',
                                                         'jscallback' => '',
                                                         'jsdatas' => []

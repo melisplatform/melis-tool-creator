@@ -52,7 +52,7 @@ return [
                                     ],
                                     'value_options' => [
                                         'modal' => 'Modal <span class="tcf-radio-box-circle"></span>',
-                                        'tabulation' => 'Tabulation <span class="tcf-radio-box-circle"></span>',
+                                        'tab' => 'Tabulation <span class="tcf-radio-box-circle"></span>',
                                     ],
                                 ],
                                 'attributes' => [

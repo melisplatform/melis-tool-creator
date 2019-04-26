@@ -44,11 +44,11 @@ return [
         'locale' => 'en_EN',
     ],
     'service_manager' => [
-#TCSERVICE
+#TCSERVICES
     ],
     'controllers' => [
         'invokables' => [
-#TCCONTROLLER
+#TCCONTROLLERS
         ],
     ],
     'view_manager' => [

@@ -115,7 +115,6 @@ $(function(){
 
     $body.on("click", ".melis-toolcreator-steps-table-tabs .widget-head a[data-toggle='tab']", function(){
        var type =$(this).data("type");
-       console.log(type);
     });
 
     $body.on("click", ".melis-toolcreator-steps-table-list li", function(){
@@ -217,9 +216,6 @@ $(function(){
                 .removeClass("fa-check-square-o")
                 .next("input").attr("checked", false);
 
-            if ($(this).hasClass("tcf-fa-checkbox-editable") || $(this).hasClass("tcf-fa-checkbox-required")) {
-                console.log($(this).attr("class"));
-            }
 
             // Unchecking required if the editable is unchecked
             if ($(this).hasClass("tcf-fa-checkbox-editable")) {

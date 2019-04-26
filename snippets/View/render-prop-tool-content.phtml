@@ -28,8 +28,20 @@
     <div class="tab-content innerAll spacing-x2">
         <?php
             if(!empty($this->zoneconfig['interface'])){
+                $ctr = 0;
                 foreach($this->zoneconfig['interface'] as $keyConfig => $val){
-                    echo $this->$keyConfig;
+
+                    $tabId = $this->id . '_' . $val['conf']['id'];
+
+                    $active = ($ctr++) ? '' : 'active';
+                    echo '<div class="tab-pane '.$active.'" id="'.$tabId.'" data-melisKey="'.$val['conf']['melisKey'].'">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                '. $this->$keyConfig .'
+                                            </div>
+                                        </div>
+                                    </div>';
+                    
                 }
             }
         ?>

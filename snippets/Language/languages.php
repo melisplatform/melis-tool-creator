@@ -1,5 +1,5 @@
 <?php
-    return array(
+    return [
         // Table action column translations
         'common_table_edit_button' => 'tr_melistoolcreator_common_table_edit_button',
         'common_table_delete_button' => 'tr_melistoolcreator_common_table_delete_button',
@@ -20,4 +20,5 @@
         'delete_confirm_msg' => 'tr_melistoolcreator_delete_confirm_msg',
 
         'properties' => 'tr_melistoolcreator_properties',
-    );
+        'language' => 'tr_melistoolcreator_language',
+    ];

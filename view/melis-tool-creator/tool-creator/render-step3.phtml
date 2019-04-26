@@ -23,7 +23,6 @@
             </div>
         <?php } ?>
 
-        <?php if ($this->toolType != 'modal'){ ?>
         <div class="col-sm-12">
             <div class="row">
                 <div class="col-sm-6">
@@ -37,7 +36,6 @@
                 <div class="col-sm-6"></div>
             </div>
         </div>
-        <?php } ?>
 
         <div class="col-sm-6">
             <div class="widget widget-inverse">
@@ -54,43 +52,41 @@
         </div>
     </div>
 
-    <?php if ($this->toolType != 'modal'){ ?>
-        <div class="row">
-            <hr>
+    <div class="row">
+        <hr>
+        <div class="col-sm-12">
+            <h4><i class="fa fa-lg <?php echo ($this->hasLanguage) ? 'fa-check-square-o text-success' : 'fa-square-o'?> melis-tc-tool-language"></i> <?php echo $this->translate('tr_melistoolcreator_int_lang_tab') ?></h4>
+        </div>
+        <div class="melis-tc-tool-language-db-list" <?php echo (!$this->hasLanguage) ? 'style="display: none"' : ''?>>
             <div class="col-sm-12">
-                <h4><i class="fa fa-lg <?php echo ($this->hasLanguage) ? 'fa-check-square-o text-success' : 'fa-square-o'?> melis-tc-tool-language"></i> <?php echo $this->translate('tr_melistoolcreator_int_lang_tab') ?></h4>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <h3>
+                            <?php echo $this->translate('tr_melistoolcreator_lang_tbl_lst') ?>
+                            <small>
+                                <i class="fa fa-info-circle pull-right tip-info" data-toggle="tooltip" data-placement="left" title="" data-original-title="<?php echo $this->translate('tr_melistoolcreator_select_lang_tbl_lst') ?>" style="padding-top: 10px;"></i>
+                            </small>
+                        </h3>
+                    </div>
+                    <div class="col-sm-6"></div>
+                </div>
             </div>
-            <div class="melis-tc-tool-language-db-list" <?php echo (!$this->hasLanguage) ? 'style="display: none"' : ''?>>
-                <div class="col-sm-12">
-                    <div class="row">
-                        <div class="col-sm-6">
-                            <h3>
-                                <?php echo $this->translate('tr_melistoolcreator_lang_tbl_lst') ?>
-                                <small>
-                                    <i class="fa fa-info-circle pull-right tip-info" data-toggle="tooltip" data-placement="left" title="" data-original-title="<?php echo $this->translate('tr_melistoolcreator_select_lang_tbl_lst') ?>" style="padding-top: 10px;"></i>
-                                </small>
-                            </h3>
-                        </div>
-                        <div class="col-sm-6"></div>
+            <div class="col-sm-6">
+                <div class="widget widget-inverse">
+                    <div class="widget-head">
+                        <h4 class="heading"><i class="fa fa-table"></i> <?php echo $this->translate('tr_melistoolcreator_db_tables') ?></h4>
+                    </div>
+                    <div class="widget-body list melis-toolcreator-steps-table-list melis-toolcreator-steps-language-db-table-list">
+                        <?php echo $this->dbLangTables ?>
                     </div>
                 </div>
-                <div class="col-sm-6">
-                    <div class="widget widget-inverse">
-                        <div class="widget-head">
-                            <h4 class="heading"><i class="fa fa-table"></i> <?php echo $this->translate('tr_melistoolcreator_db_tables') ?></h4>
-                        </div>
-                        <div class="widget-body list melis-toolcreator-steps-table-list melis-toolcreator-steps-language-db-table-list">
-                            <?php echo $this->dbLangTables ?>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-6 melis-toolcreator-steps-language-db-table-columns">
-                    <?php echo $this->langTblCols ?>
-                </div>
+            </div>
+            <div class="col-sm-6 melis-toolcreator-steps-language-db-table-columns">
+                <?php echo $this->langTblCols ?>
             </div>
         </div>
-        <br>
-    <?php } ?>
+    </div>
+    <br>
 
     <button class="btn btn-default btn-steps" data-curstep="3" data-nxtstep="2"><?php echo $this->translate('tr_melistoolcreator_back') ?></button>
     <button class="btn btn-default pull-right btn-steps tcf-validate" data-curstep="3" data-nxtstep="4"><?php echo $this->translate('tr_melistoolcreator_next') ?></button>

@@ -16,61 +16,117 @@ use Zend\Session\Container;
 
 class PropertiesController extends AbstractActionController
 {
-    public function renderToolAction()
+
+#TCPROPACTIONS
+
+    public function saveAction()
     {
-        $id = $this->params()->fromQuery('id', 'add');
-        $view = new ViewModel();
-        $view->id = $id;
-        return $view;
+        $translator = $this->getServiceLocator()->get('translator');
+
+        $success = 0;
+        $textTitle = $translator->translate('tr_moduletpl_title');
+        $textMessage = $translator->translate('tr_moduletpl_unable_to_save');
+        $errors = [];
+
+        $request = $this->getRequest();
+        $id = null;
+        $entryTitle = null;
+
+        if ($request->isPost()){
+
+            $this->getEventManager()->trigger('moduletpl_properties_save_start', $this, $request);
+
+            // Result stored on session
+            $container = new Container('moduletpl');
+            $saveResult = $container['moduletpl-save-action'];
+
+            if (!empty($saveResult['errors']))
+                $errors = $saveResult['errors'];
+            if (!empty($saveResult['data']))
+                $data = $saveResult['data'];
+
+            if (empty($errors)){
+                $id = $data['id'];
+                $success = 1;
+
+                $entryTitle = $translator->translate('tr_moduletpl_common_entry_id').': '.$id;
+                $textMessage = $translator->translate('tr_moduletpl_save_success');
+            }
+
+            // Unset temporary data on session
+            unset($container['moduletpl-save-action']);
+        }
+
+        $response = [
+            'success' => $success,
+            'textTitle' => $textTitle,
+            'textMessage' => $textMessage,
+            'errors' => $errors
+        ];
+
+        if (!is_null($id)){
+            $response['entryId'] = $id;
+            $response['entryTitle'] = $entryTitle;
+        }
+
+        return new JsonModel($response);
     }
 
-    public function renderToolHeaderAction()
+    public function savePropertiesAction()
     {
-        $view = new ViewModel();
-        $id = $this->params()->fromQuery('id', 'add');
+        $id = null;
+        $entryTitle = null;
+        $success = 0;
+        $errors = [];
 
         $translator = $this->getServiceLocator()->get('translator');
-        $title = $translator->translate('tr_moduletpl_common_button_add');
 
-        if (is_numeric($id)){
-            $title = $translator->translate('tr_moduletpl_title').' / '.$id;
-        }
+        $request = $this->getRequest();
+        $postData = $request->getPost()->toArray();
 
-        $view->id = $id;
-        $view->title = $title;
-        return $view;
-    }
+        if (!empty($postData['#TCKEY']))
+            $id = $postData['#TCKEY'];
 
-    public function renderToolContentAction()
-    {
-        $view = new ViewModel();
-        $id = $this->params()->fromQuery('id', 'add');
-        $view->id = $id;
-        return $view;
-    }
-
-    public function renderToolMainContentAction()
-    {
-        $view = new ViewModel();
         $moduleTplForm = $this->getForm();
+        $moduleTplForm->setData($postData);
 
-        $id = $this->params()->fromQuery('id', 'add');
-        $view->id = $id;
+        if ($moduleTplForm->isValid()){
 
-        $moduleTplForm->setAttribute('id', $id. '_' . $moduleTplForm->getAttribute('id'));
+            $formData = $moduleTplForm->getData();
 
-        if ($id != 'add'){
-            $moduleTplTable = $this->getServiceLocator()->get('ModuleTplTable');
-            $data = $moduleTplTable->getEntryById($id)->current();
-            $moduleTplForm->bind($data);
+            $moduleTplLangTable = $this->getServiceLocator()->get('ModuleTplTable');
+            $res = $moduleTplLangTable->save($formData, $id);
+
+            if (!is_null($res)){
+                $id = $res;
+                $success = 1;
+            }
+        }else{
+            $errors = $moduleTplForm->getMessages();
+            foreach ($errors as $keyError => $valueError){
+                $errors[$keyError]['label'] = $translator->translate("tr_moduletpl_".$keyError);
+            }
         }
 
-        $view->moduleTplForm = $moduleTplForm;
+        $result = [
+            'success' => $success,
+            'errors' => $errors,
+            'data' => ['id' => $id],
+        ];
 
-        return $view;
+        return new JsonModel($result);
     }
 
-#TCSAVEACTION
+    public function deleteAction()
+    {
+        $request = $this->getRequest();
+        $queryData = $request->getQuery()->toArray();
+
+        if (!empty($queryData['id'])){
+            $moduleTplTable = $this->getServiceLocator()->get('ModuleTplTable');
+            $moduleTplTable->deleteById($queryData['id']);
+        }
+    }
 
     private function getForm()
     {

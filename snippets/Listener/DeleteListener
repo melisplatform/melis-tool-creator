@@ -26,9 +26,11 @@ class DeleteListener extends MelisCoreGeneralListener implements ListenerAggrega
 
                 $this->dispatchPlugin(
                     $e,
-                    'ModuleTpl\Controller\Language',
+                    'ModuleTpl\Controller\Properties',
                     ['action' => 'delete']
                 );
+
+#TCDELETELISTENER
             });
 
         $this->listeners[] = $callBackHandler;

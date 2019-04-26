@@ -1,1 +1,0 @@
-            'ModuleTpl\Controller\Index' => 'ModuleTpl\Controller\IndexController'

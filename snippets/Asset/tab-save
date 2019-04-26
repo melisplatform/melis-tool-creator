@@ -1,16 +1,19 @@
         var id = $(this).data("id");
-        var dataString = $("form#moduleTplForm").serializeArray();
+
+        var dataString = $("form#"+id+"_moduleTplForm").serializeArray();
 
         dataString.push({
             name: "#TCPKEY",
             value: id
         });
 
+#TCSAVELANG
+
         dataString = $.param(dataString);
 
         $.ajax({
             type        : 'POST',
-            url         : '/melis/ModuleTpl/#TCPRIMARYCTRL/save',
+            url         : '/melis/ModuleTpl/Properties/save',
             data		: dataString,
             dataType    : 'json',
             encode		: true
@@ -19,12 +22,21 @@
                 // Notifications
                 melisHelper.melisOkNotification(data.textTitle, data.textMessage);
 
-                $("#id_moduletpl_modal_container").modal("hide");
+                // Reload List
                 melisHelper.zoneReload("id_moduletpl_content", "moduletpl_content");
+
+                // Close add page
+                $("a[data-id='"+id+"_id_moduletpl_properties_tool']").trigger("click");
+
+                // Open new created/updated entry
+                melisHelper.tabOpen(data.entryTitle, 'fa fa-puzzle-piece', data.entryId+'_id_moduletpl_properties_tool', 'moduletpl_properties_tool', {id: data.entryId}, 'id_moduletpl_tool');
+
             }else{
                 melisHelper.melisKoNotification(data.textTitle, data.textMessage, data.errors);
-                melisHelper.highlightMultiErrors(data.success, data.errors, "#moduleTplForm");
+                melisHelper.highlightMultiErrors(data.success, data.errors, "#"+id+"_id_moduletpl_properties_content");
             }
+
+            btn.attr('disabled', false);
 
         }).fail(function(){
             alert( translations.tr_meliscore_error_message );

@@ -27,25 +27,13 @@ class SavePropertiesListener extends MelisCoreGeneralListener implements Listene
             'moduletpl_properties_save_start',
             function($e){
 
-                $savePropertiesResult = $this->dispatchPlugin(
+                $result = $this->dispatchPlugin(
                     $e,
                     'ModuleTpl\Controller\Properties',
-                    array(
-                        'action' => 'saveProperties'
-                    )
+                    ['action' => 'saveProperties']
                 );
 
-                $saveLanguageResult = $this->dispatchPlugin(
-                    $e,
-                    'ModuleTpl\Controller\Language',
-                    array(
-                        'action' => 'saveLanguage',
-                        'success' => $savePropertiesResult['success'],
-                        'id' => $savePropertiesResult['data']['id'],
-                    )
-                );
-
-                $result = ArrayUtils::merge($savePropertiesResult, $saveLanguageResult);
+#TCSAVELISTENER
 
                 $container = new Container('moduletpl');
                 $container['moduletpl-save-action'] = $result;

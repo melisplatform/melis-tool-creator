@@ -1,0 +1,15 @@
+                                                                'moduletpl_lang_form' => [
+                                                                    'conf' => [
+                                                                        'id' => 'id_moduletpl_lang_form',
+                                                                        'melisKey' => 'moduletpl_lang_form',
+                                                                        'name' => 'tr_moduletpl_language',
+                                                                        'icon' => 'font'
+                                                                    ],
+                                                                    'forward' => [
+                                                                        'module' => 'ModuleTpl',
+                                                                        'controller' => 'Language',
+                                                                        'action' => 'render-language-form',
+                                                                        'jscallback' => '',
+                                                                        'jsdatas' => []
+                                                                    ]
+                                                                ]

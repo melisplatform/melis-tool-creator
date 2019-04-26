@@ -52,12 +52,31 @@
 
                                     if (!is_null($col['fieldType']))
                                         $fieldType->setValue($col['fieldType']);
-                                    else
+                                    else{
                                         if (!$col['editableIsChecked'])
                                             $fieldType->setAttribute('disabled', 'disabled');
 
-                                    if (isset($col['isAutoIncrement']))
+                                        switch ($col['Type']){
+                                            case 'text':
+                                            case 'longtext':
+                                                $fieldType->setValue('MelisCoreTinyMCE');
+                                                break;
+                                            case 'date':
+                                                $fieldType->setValue('Datepicker');
+                                                break;
+                                            case 'datetime':
+                                                $fieldType->setValue('Datetimepicker');
+                                                break;
+                                        }
+                                    }
+
+
+
+                                    if (isset($col['isAutoIncrement'])){
                                         $fieldType->setAttribute('class', 'hidden');
+                                        $editableIcon = '';
+                                        $requiredIcon = '';
+                                    }
 
                                     echo '<tr>
                                             <td>'.$ctr++.'</td>
@@ -125,27 +144,43 @@
                                         $requiredCheckBox->setChecked($col['requiredIsChecked']);
 
                                         $extraCol = '-';
-                                        if (!empty($col['Extra'])){
+                                        if (!empty($col['Extra']))
                                             $extraCol = $col['Extra'];
-                                        }
 
-                                        if (!is_null($col['fieldType'])){
+                                        if (!is_null($col['fieldType']))
                                             $fieldType->setValue($col['fieldType']);
-                                        }else{
-                                            if (!$col['editableIsChecked']){
+                                        else{
+                                            if (!$col['editableIsChecked'])
                                                 $fieldType->setAttribute('disabled', 'disabled');
+
+                                            switch ($col['Type']){
+                                                case 'text':
+                                                case 'longtext':
+                                                    $fieldType->setValue('MelisCoreTinyMCE');
+                                                    break;
+                                                case 'date':
+                                                    $fieldType->setValue('Datepicker');
+                                                    break;
+                                                case 'datetime':
+                                                    $fieldType->setValue('Datetimepicker');
+                                                    break;
                                             }
                                         }
 
                                         $fk = null;
                                         if ($editableIcon === 'AUTO_INCREMENT'){
                                             $fieldType->setAttribute('class', 'hidden');
+                                            $editableIcon = '';
+                                            $requiredIcon = '';
                                         }elseif ($editableIcon === 'FK'){
                                             $editableIcon = '';
                                             $requiredIcon = '';
                                             $fk = '<i class="fa fa-key fa-lg fa-rotate-90 fa-key-fk"></i>';
                                             $fieldType->setAttribute('class', 'hidden');
                                         }
+
+                                        if (isset($col['isAutoIncrement']))
+                                            $fieldType->setAttribute('class', 'hidden');
 
                                         echo '<tr>
                                                 <td>'.$ctr++.'</td>

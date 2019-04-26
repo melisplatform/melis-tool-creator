@@ -1,0 +1,32 @@
+                                                        'moduletpl_modal' => [
+                                                            'conf' => [
+                                                                'id' => 'id_moduletpl_modal',
+                                                                'melisKey' => 'moduletpl_modal',
+                                                                'name' => 'tr_moduletpl_modal',
+                                                            ],
+                                                            'forward' => [
+                                                                'module' => 'ModuleTpl',
+                                                                'controller' => 'List',
+                                                                'action' => 'render-modal-form',
+                                                                'jscallback' => '',
+                                                                'jsdatas' => []
+                                                            ],
+                                                            'interface' => [
+                                                                'moduletpl_properties_form' => [
+                                                                    'conf' => [
+                                                                        'id' => 'id_moduletpl_properties_form',
+                                                                        'melisKey' => 'moduletpl_properties_form',
+                                                                        'name' => 'tr_moduletpl_properties',
+                                                                        'icon' => 'cogwheel'
+                                                                    ],
+                                                                    'forward' => [
+                                                                        'module' => 'ModuleTpl',
+                                                                        'controller' => 'Properties',
+                                                                        'action' => 'render-properties-form',
+                                                                        'jscallback' => '',
+                                                                        'jsdatas' => []
+                                                                    ]
+                                                                ],
+#TCTOOLINTERFACE
+                                                            ]
+                                                        ]

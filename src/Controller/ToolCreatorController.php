@@ -389,61 +389,56 @@ class ToolCreatorController extends AbstractActionController
 
         $viewStp->dbTables = $dbTablesHtml['html'];
 
+        /**
+         * ========================================================
+         * ============= Language database table ==================
+         * ========================================================
+         */
+        $dbLangTablesHtml = $this->forward()->dispatch(
+            'MelisToolCreator\Controller\ToolCreator',
+            [
+                'action' => 'renderStep3LanguageDbTables',
+                'priTableName' => $dbTablesHtml['selectedTbl'],
+                'validate' => $validate,
+            ]
+        )->getVariables();
 
-        if ($toolType == 'tabulation'){
+        if ($dbLangTablesHtml['hasLanguage']){
 
-            /**
-             * ========================================================
-             * ============= Language database table ==================
-             * ========================================================
-             */
-            $dbLangTablesHtml = $this->forward()->dispatch(
-                'MelisToolCreator\Controller\ToolCreator',
-                [
-                    'action' => 'renderStep3LanguageDbTables',
-                    'priTableName' => $dbTablesHtml['selectedTbl'],
-                    'validate' => $validate,
-                ]
-            )->getVariables();
-
-            if ($dbLangTablesHtml['hasLanguage']){
-
-                // Merging error messages
-                if (isset($dbLangTablesHtml['hasError'])){
-                    if (!empty($dbTablesHtml['hasError'])){
-                        $viewStp->hasError = ArrayUtils::merge($dbTablesHtml['hasError'], $dbLangTablesHtml['hasError']);
-                    }else{
-                        $viewStp->hasError = $dbLangTablesHtml['hasError'];
-                    }
-                    $viewStp->skipErrModal = true;
+            // Merging error messages
+            if (isset($dbLangTablesHtml['hasError'])){
+                if (!empty($dbTablesHtml['hasError'])){
+                    $viewStp->hasError = ArrayUtils::merge($dbTablesHtml['hasError'], $dbLangTablesHtml['hasError']);
+                }else{
+                    $viewStp->hasError = $dbLangTablesHtml['hasError'];
                 }
-
-                if (!empty($dbLangTablesHtml['selectedTbl'])){
-                    /**
-                     * If this step has selected table this will
-                     * get the view of the column details to show directly
-                     * to the step view
-                     */
-                    $tblColsHtml = $this->forward()->dispatch(
-                        'MelisToolCreator\Controller\ToolCreator',
-                        [
-                            'action' => 'renderStep3TableColumns',
-                            'type' => 'language-db',
-                            'tableName' => $dbLangTablesHtml['selectedTbl'],
-                            'ptfk' => $dbLangTablesHtml['ptfk'],
-                            'ltfk' => $dbLangTablesHtml['ltfk'],
-                        ]
-                    )->getVariables();
-
-                    $viewStp->langTblCols = $tblColsHtml['html'];
-                }
-
+                $viewStp->skipErrModal = true;
             }
 
-            $viewStp->hasLanguage = $dbLangTablesHtml['hasLanguage'];
-            $viewStp->dbLangTables = $dbLangTablesHtml['html'];
+            if (!empty($dbLangTablesHtml['selectedTbl'])){
+                /**
+                 * If this step has selected table this will
+                 * get the view of the column details to show directly
+                 * to the step view
+                 */
+                $tblColsHtml = $this->forward()->dispatch(
+                    'MelisToolCreator\Controller\ToolCreator',
+                    [
+                        'action' => 'renderStep3TableColumns',
+                        'type' => 'language-db',
+                        'tableName' => $dbLangTablesHtml['selectedTbl'],
+                        'ptfk' => $dbLangTablesHtml['ptfk'],
+                        'ltfk' => $dbLangTablesHtml['ltfk'],
+                    ]
+                )->getVariables();
+
+                $viewStp->langTblCols = $tblColsHtml['html'];
+            }
 
         }
+
+        $viewStp->hasLanguage = $dbLangTablesHtml['hasLanguage'];
+        $viewStp->dbLangTables = $dbLangTablesHtml['html'];
 
         return $viewStp;
     }
@@ -893,8 +888,8 @@ class ToolCreatorController extends AbstractActionController
             $tableCols[$key]['requiredIsChecked'] = false;
 
             if ($val['Key'] == 'PRI' && $val['Extra'] == 'auto_increment'){
-                $tableCols[$key]['editable'] = sprintf($iconTag, implode(' ', [$editableIcon, $checkedIcon]));
-                $tableCols[$key]['required'] = sprintf($iconTag, implode(' ', [$requiredIcon, $checkedIcon]));
+                $tableCols[$key]['editable'] = 'AUTO_INCREMENT';//sprintf($iconTag, implode(' ', [$editableIcon, $checkedIcon]));
+                $tableCols[$key]['required'] = 'AUTO_INCREMENT';//sprintf($iconTag, implode(' ', [$requiredIcon, $checkedIcon]));
                 $tableCols[$key]['isAutoIncrement'] = true;
                 $tableCols[$key]['editableIsChecked'] = true;
                 $tableCols[$key]['requiredIsChecked'] = true;
@@ -1318,5 +1313,15 @@ class ToolCreatorController extends AbstractActionController
         $res = $toolCreatorSrv->createTool();
         print_r($res->getVariables());
         die();
+    }
+
+    public function chAction()
+    {
+        // Tool creator session container
+        $container = new Container('melistoolcreator');
+
+        $container['melis-toolcreator']['step1']['tcf-name'] = 'CalendarToolTab';
+        $container['melis-toolcreator']['step1']['tcf-tool-type'] = 'tab';
+        exit;
     }
 }

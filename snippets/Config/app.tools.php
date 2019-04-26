@@ -19,28 +19,28 @@ return [
                     'table' => [
                         // table ID
                         'target' => '#tableToolModuleTpl',
-                        'ajaxUrl' => '/melis/ModuleTpl/#TCPRIMARYCTRL/getList',
+                        'ajaxUrl' => '/melis/ModuleTpl/List/getList',
                         'dataFunction' => '',
                         'ajaxCallback' => '',
                         'filters' => [
                             'left' => [
                                 'moduletpl-tbl-filter-limit' => [
                                     'module' => 'ModuleTpl',
-                                    'controller' => '#TCPRIMARYCTRL',
+                                    'controller' => 'List',
                                     'action' => 'render-table-filter-limit',
                                 ],
                             ],
                             'center' => [
                                 'moduletpl-tbl-filter-search' => [
                                     'module' => 'ModuleTpl',
-                                    'controller' => '#TCPRIMARYCTRL',
+                                    'controller' => 'List',
                                     'action' => 'render-table-filter-search',
                                 ],
                             ],
                             'right' => [
                                 'moduletpl-tbl-filter-refresh' => [
                                     'module' => 'ModuleTpl',
-                                    'controller' => '#TCPRIMARYCTRL',
+                                    'controller' => 'List',
                                     'action' => 'render-table-filter-refresh',
                                 ],
                             ],

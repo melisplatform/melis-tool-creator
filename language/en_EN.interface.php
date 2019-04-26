@@ -139,5 +139,5 @@ return [
     'tr_melistoolcreator_delete_title' => 'Delete item',
     'tr_melistoolcreator_delete_confirm_msg' => 'Are you sure you want to delete this item?',
     'tr_melistoolcreator_properties' => 'Properties',
-    'tr_melistoolcreator_entry_details' => '',
+    'tr_melistoolcreator_language' => 'Language',
 ];

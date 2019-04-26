@@ -1,10 +1,10 @@
                             'edit' => [
                                   'module' => 'ModuleTpl',
-                                  'controller' => '#TCPRIMARYCTRL',
+                                  'controller' => 'List',
                                   'action' => 'render-table-action-edit',
                             ],
                             'delete' => [
                                 'module' => 'ModuleTpl',
-                                'controller' => '#TCPRIMARYCTRL',
+                                'controller' => 'List',
                                 'action' => 'render-table-action-delete',
                             ],

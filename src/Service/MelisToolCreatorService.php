@@ -67,6 +67,7 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
             'src' => [
                 $moduleName => [
                     'Controller' => null,
+                    'Listener' => null,
                     'Model' => [
                         'Tables' => [
                             'Factory' => null
@@ -79,7 +80,7 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
 
         $moduleDir = $_SERVER['DOCUMENT_ROOT'].'/../module/'.$moduleName;
 
-        $this->generateModuleFile($moduleDir, $moduleName);
+        $this->generateModuleFile($moduleDir);
 
         // Generating sub dir and files of the module
         $this->generateModuleSubDirsAndFiles($moduleDirs, $moduleDir);
@@ -92,25 +93,11 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
      * This method generate Module.php of the Module
      * @param $moduleName
      */
-    private function generateModuleFile($moduleDir, $moduleName)
+    private function generateModuleFile($moduleDir)
     {
         // Create module
         mkdir($moduleDir, 0777);
-
         $moduleFile = $this->fgc('/Module/Module.php');
-
-        $lstnerClss = '';
-        $lstnerCode = '';
-
-        if ($this->hasLanguage()){
-            $lstnerClss = 'use '.$moduleName.'\Listener\SavePropertiesListener;';
-            $lstnerClss .= PHP_EOL.'use '.$moduleName.'\Listener\DeleteListener;';
-            $lstnerCode = $this->fgc('/Code/tab-lang-module.txt');
-        }
-
-        $moduleFile = $this->sp('#TCMODULELISTNERCLSS', $lstnerClss, $moduleFile);
-        $moduleFile = $this->sp('#TCMODULELISTNER', $lstnerCode, $moduleFile);
-
         $this->generateFile('Module.php', null, $moduleDir, $moduleFile);
     }
 
@@ -136,9 +123,10 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
                 case 'Controller':
                     $this->generateModuleController($tempTargetDir);
                     break;
+                case 'Listener':
+                    $this->generateModuleListeners($tempTargetDir);
+                    break;
                 case 'view':
-                    // Generating view module directory
-                    mkdir($tempTargetDir.'/'.$this->moduleNameToViewName($this->tcSteps['step1']['tcf-name']), 0777);
                     $this->generateModuleViews($tempTargetDir);
                     break;
                 case 'js':
@@ -173,12 +161,15 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
         $moduleConfigFiles = $this->moduleTplDir.'/Config';
         foreach (scandir($moduleConfigFiles) As $file){
             if (is_file($moduleConfigFiles.'/'.$file)){
-                if (in_array($file, ['app.interface.php', 'app.toolstree.php'])){
+                if ($file == 'app.toolstree.php'){
                     $this->generateModuleInterfaceConfig($targetDir);
                 }elseif ($file == 'app.tools.php'){
                     $this->generateModuleToolConfig($targetDir);
                 }elseif ($file == 'module.config.php'){
                     $this->generateModuleConfig($targetDir);
+                }elseif ($file == 'app.interface.php'){
+                    $interfaceContent = $this->fgc('/Config/app.interface.php');
+                    $this->generateFile('app.interface.php', null, $targetDir, $interfaceContent);
                 }
             }
         }
@@ -191,22 +182,13 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
     private function generateModuleInterfaceConfig($targetDir)
     {
         // Application interfaces config
-        $interfaceContent = $this->fgc('/Config/app.interface.php');
         $toolsTreeContent = $this->fgc('/Config/app.toolstree.php');
 
-        if ($this->getToolType() == 'modal'){
-            $toolInterface = $this->fgc('/Code/modal-interface.txt');
-        }else{
-            $toolInterface = $this->fgc('/Code/tab-interface.txt');
+        $toolInterface = $this->fgc('/Code/'.$this->getToolType().'-interface');
 
-            $toolLangInterface = '';
-            if ($this->hasLanguage())
-                $toolLangInterface = $this->fgc('/Code/tab-lang-interface.txt');
+        if ($this->hasLanguage())
+            $toolInterface = $this->sp('#TCTOOLINTERFACE', $this->fgc('/Code/'.$this->getToolType().'-lang-interface'), $toolInterface);
 
-            $toolInterface = $this->sp('#TCTOOLINTERFACE', $toolLangInterface, $toolInterface);
-        }
-
-        $this->generateFile('app.interface.php', null, $targetDir, $interfaceContent);
         $toolsTreeContent = $this->sp('#TCTOOLINTERFACE', $toolInterface, $toolsTreeContent);
         $this->generateFile('app.toolstree.php', null, $targetDir, $toolsTreeContent);
     }
@@ -227,7 +209,7 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
         // Table searchable columns
         $strSearchableCols = [];
 
-        $tblCols = $this->fgc('/Code/tbl-cols.txt');
+        $tblCols = $this->fgc('/Code/tbl-cols');
 
         // Dividing length of table to several columns
         $colWidth = number_format(100/count($this->tcSteps['step4']['tcf-db-table-cols']), 0);
@@ -279,7 +261,7 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
          */
         $tblActionButtons = '';
         if (!empty($pk))
-            $tblActionButtons = $this->fgc('/Form/edit-delete-tool-config.txt');
+            $tblActionButtons = $this->fgc('/Form/edit-delete-tool-config');
 
         $formInputs = [];
         $formInputFilters = [];
@@ -287,11 +269,11 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
         $langInputs = [];
         $langInputFilters = [];
 
-        $formHiddenInputTplContent = $this->fgc('/Form/input-hidden.txt');
+        $formHiddenInputTplContent = $this->fgc('/Form/input-hidden');
 
         foreach ($this->tcSteps['step5']['tcf-db-table-col-editable'] As $key => $col){
 
-            $formInputsTplContent = $this->fgc('/Form/input.txt');
+            $formInputsTplContent = $this->fgc('/Form/input');
             $formInputsTplContent = $this->sp('#TCKEY', $col, $formInputsTplContent);
             $formInputsTplContent = $this->sp('#TCINPUTTYPE', $this->tcSteps['step5']['tcf-db-table-col-type'][$key], $formInputsTplContent);
 
@@ -320,12 +302,12 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
             // Generating input validators and filters
             $inputIsRequired = 'false';
             if (!$skipValidator){
-                $formInputFilterTplContent = $this->fgc('/Form/input-filter.txt');
+                $formInputFilterTplContent = $this->fgc('/Form/input-filter');
                 $formInputFilterTplContent = $this->sp('#TCKEY', $col, $formInputFilterTplContent);
 
                 if (in_array($col, $this->tcSteps['step5']['tcf-db-table-col-required'])){
                     $inputIsRequired = 'true';
-                    $formInputNotEmptyTplTplContent = $this->fgc('/Form/not-empty-filter.txt');
+                    $formInputNotEmptyTplTplContent = $this->fgc('/Form/not-empty-filter');
                     $formInputFilterTplContent = $this->sp('#TCVALIDATORS', $formInputNotEmptyTplTplContent, $formInputFilterTplContent);
                 }
 
@@ -350,13 +332,13 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
             }
         }
 
-        $moduleFormContent = $this->fgc('/Form/form.txt');
+        $moduleFormContent = $this->fgc('/Form/form');
         $moduleForm = $this->sp('#FORMINPUTS', implode(','."\n", $formInputs), $moduleFormContent);
         $moduleForm = $this->sp('#FORMINPUTFILTERS', implode(','."\n", $formInputFilters), $moduleForm);
 
         $langForm = '';
         if ($this->hasLanguage()){
-            $formLang = $this->fgc('/Form/form-language.txt');
+            $formLang = $this->fgc('/Form/form-language');
             $langForm = $this->sp('#FORMINPUTS', implode(','."\n", $langInputs), $formLang);
             $langForm = $this->sp('#FORMINPUTFILTERS', implode(','."\n", $langInputFilters), $langForm);
         }
@@ -377,20 +359,17 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
         // Application interfaces config
         $fileContent = $this->fgc('/Config/module.config.php');
 
-        $services = $this->fgc('/Code/modal-tab-services.txt');
-        $controller = $this->fgc('/Code/modal-controller.txt');
+        $controllers = $this->fgc('/Code/controllers');
+        $services = $this->fgc('/Code/services');
 
-        if ($this->getToolType() != 'modal'){
-            if (!$this->hasLanguage())
-                $controller = $this->fgc('/Code/tab-controllers.txt');
-            else{
-                $services = $this->fgc('/Code/tab-lang-services.txt');
-                $controller = $this->fgc('/Code/tab-lang-controllers.txt');
-            }
+        if ($this->hasLanguage()){
+            $controllers = $this->fgc('/Code/lang-controllers');
+            $services = $this->fgc('/Code/lang-services');
         }
 
-        $fileContent = $this->sp('#TCSERVICE', $services, $fileContent);
-        $fileContent = $this->sp('#TCCONTROLLER', $controller, $fileContent);
+        $fileContent = $this->sp('#TCSERVICES', $services, $fileContent);
+        $fileContent = $this->sp('#TCCONTROLLERS', $controllers, $fileContent);
+
         $this->generateFile('module.config.php', null, $targetDir, $fileContent);
     }
 
@@ -400,55 +379,52 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
      */
     private function generateModuleController($targetDir)
     {
-        if ($this->tcSteps['step1']['tcf-tool-type'] == 'modal')
-            $file = 'IndexController.php';
-        else
-            $file = 'ListController.php';
-
-        $moduleCtrlFile = $this->fgc('/Controller/'.$file);
-
         $pk = $this->hasPrimaryKey();
         if (!empty($pk)){
 
-            $moduleCtrlFile = $this->sp('\'key\' => true,', '\'key\' => \''.$pk['Field'].'\',', $moduleCtrlFile);
-            $moduleCtrlFile = $this->sp('#TCKEY', $pk['Field'], $moduleCtrlFile);
+            $modulePropCtrlFile = $this->fgc('/Controller/PropertiesController.php');
+            $modulePropCtrlFile = $this->sp('#TCKEY', $pk['Field'], $modulePropCtrlFile);
+            $modulePropCtrlFile = $this->sp('#TCPROPACTIONS', $this->fgc('/Code/'.$this->getToolType().'-prop-actions'), $modulePropCtrlFile);
+            $this->generateFile('PropertiesController.php', null, $targetDir, $modulePropCtrlFile);
 
-            if ($this->tcSteps['step1']['tcf-tool-type'] != 'modal'){
+            if ($this->hasLanguage()){
 
-                $modulePropCtrlFile = $this->fgc('/Controller/PropertiesController.php');
+                $langCtrl = $this->fgc('/Controller/LanguageController.php');
 
-                if (!$this->hasLanguage()){
-                    $saveAction = $this->fgc('/Code/tab-save-action.txt');
-                }else{
-                    $saveAction = $this->fgc('/Code/tab-lang-save-action.txt');
+                $langTblPK = $this->getTablePK($this->tcSteps['step3']['tcf-db-table-language-tbl']);
+                $langCtrlContent = $this->sp('#TCFKEYID', $langTblPK['Field'], $langCtrl);
 
-                    $langCtrl = $this->fgc('/Controller/LanguageController.php');
-                    $langTblPK = $this->getTablePK($this->tcSteps['step3']['tcf-db-table-language-tbl']);
-
-                    $langCtrlContent = $this->sp('#TCFKEYID', $langTblPK['Field'], $langCtrl);
-                    $langCtrlContent = $this->sp('#TCKEYLANGID', $this->tcSteps['step3']['tcf-db-table-language-lang-fk'], $langCtrlContent);
-                    $langCtrlContent = $this->sp('#TCKEYPRIID', $this->tcSteps['step3']['tcf-db-table-language-pri-fk'], $langCtrlContent);
-                    $this->generateFile('LanguageController.php', null, $targetDir, $langCtrlContent);
-
-                    // Generate Listener
-                    // Save listener
-                    $saveListener = $this->fgc('/Listener/SavePropertiesListener.php');
-                    mkdir($targetDir.'/../Listener', 0777);
-                    $this->generateFile('SavePropertiesListener.php', null, $targetDir.'/../Listener', $saveListener);
-                    // Delete Listener
-                    $deleteListener = $this->fgc('/Listener/DeleteListener.php');
-                    $this->generateFile('DeleteListener.php', null, $targetDir.'/../Listener', $deleteListener);
-                }
-
-                $modulePropCtrlFile = $this->sp('#TCSAVEACTION', $saveAction, $modulePropCtrlFile);
-                $modulePropCtrlFile = $this->sp('#TCKEY', $pk['Field'], $modulePropCtrlFile);
-
-                $this->generateFile('PropertiesController.php', null, $targetDir, $modulePropCtrlFile);
+                $langCtrlContent = $this->sp('#TCKEYLANGID', $this->tcSteps['step3']['tcf-db-table-language-lang-fk'], $langCtrlContent);
+                $langCtrlContent = $this->sp('#TCKEYPRIID', $this->tcSteps['step3']['tcf-db-table-language-pri-fk'], $langCtrlContent);
+                $this->generateFile('LanguageController.php', null, $targetDir, $langCtrlContent);
             }
         }
 
-        $this->generateFile($file, null, $targetDir, $moduleCtrlFile);
+        $listCtrlFile = $this->fgc('/Controller/ListController.php');
+        $modalAction = ($this->getToolType() == 'modal') ? $this->fgc('/Code/modal-action') : '';
+        $listCtrlFile = $this->sp('#TCMODALVIEWMODEL', $modalAction, $listCtrlFile);
+        $this->generateFile('ListController.php', null, $targetDir, $listCtrlFile);
     }
+
+    private function generateModuleListeners($targetDir)
+    {
+        // Save listener
+        $saveListener = $this->fgc('/Listener/SavePropertiesListener');
+        $saveLangDispatch = '';
+        if ($this->hasLanguage())
+            $saveLangDispatch = $this->fgc('/Code/save-lang-dispatch');
+        $saveListener = $this->sp('#TCSAVELISTENER', $saveLangDispatch, $saveListener);
+        $this->generateFile('SavePropertiesListener.php', null, $targetDir, $saveListener);
+
+        // Delete Listener
+        $deleteListener = $this->fgc('/Listener/DeleteListener');
+        $deleteLangDispatch = '';
+        if ($this->hasLanguage())
+            $deleteLangDispatch = $this->fgc('/Code/delete-lang-dispatch');
+        $deleteListener = $this->sp('#TCDELETELISTENER', $deleteLangDispatch, $deleteListener);
+        $this->generateFile('DeleteListener.php', null, $targetDir, $deleteListener);
+    }
+
 
     /**
      * This method generate the Module views
@@ -456,8 +432,11 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
      */
     private function generateModuleViews($targetDir)
     {
+        // Generating view module directory
+        mkdir($targetDir.'/'.$this->moduleNameToViewName($this->tcSteps['step1']['tcf-name']), 0777);
+
         // Common view file for tool
-        $commonViews = [
+        $listViews = [
             'table-filter-limit',
             'table-filter-refresh',
             'table-filter-search',
@@ -468,27 +447,27 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
             'tool',
         ];
 
-        if ($this->tcSteps['step1']['tcf-tool-type'] == 'modal'){
-            // Views of tool type to be generated
-            $toolViews = [
-                'index' => ArrayUtils::merge($commonViews, ['modal-form'])
-            ];
+        if ($this->getToolType() == 'modal'){
+            $listViews[] = 'modal-form';
+            $propViews[] = 'properties-form';
         }else{
-            $toolViews = [
-                'list' => $commonViews,
-                'properties' => [
-                    'prop-tool-main-content',
-                    'prop-tool-content',
-                    'prop-tool-header',
-                    'prop-tool'
-                ]
+            $propViews = [
+                'prop-tool-main-content',
+                'prop-tool-content',
+                'prop-tool-header',
+                'prop-tool'
             ];
+        }
 
-            if ($this->hasLanguage()){
-                $toolViews['language'] = [
-                    'tool-language-content'
-                ];
-            }
+        $toolViews = [
+            'list' => $listViews,
+            'properties' => $propViews
+        ];
+
+        if ($this->hasLanguage()){
+            $toolViews['language'] = [
+                'language-form'
+            ];
         }
 
         // Generating Views to the target module directory
@@ -518,30 +497,19 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
      */
     private function generateModuleJs($targetDir)
     {
-        $fileContent = $this->fgc('/Asset/tool.js');
+        $addBtnScript = $this->fgc('/Asset/'.$this->getToolType().'-add-btn');
+        $saveScript = $this->fgc('/Asset/'.$this->getToolType().'-save');
+        $ediBtnScript = $this->fgc('/Asset/'.$this->getToolType().'-edit-btn');
+        $closeTabDelete = ($this->getToolType() == 'tab') ? $this->fgc('/Asset/tab-delete') : '';
+        $langSave = ($this->hasLanguage()) ? $this->fgc('/Asset/'.$this->getToolType().'-lang-save'): '';
 
-        if ($this->tcSteps['step1']['tcf-tool-type'] == 'modal'){
-            $addBtnScript = $this->fgc('/Asset/modal-add-btn.txt');
-            $saveScript = $this->fgc('/Asset/modal-save.txt');
-            $ediBtnScript = $this->fgc('/Asset/modal-edit-btn.txt');
-            $closeTabDelete = '';
-        }else{
-            $addBtnScript = $this->fgc('/Asset/tab-add-btn.txt');
-            $saveScript = $this->fgc('/Asset/tab-save.txt');
-            $ediBtnScript = $this->fgc('/Asset/tab-edit-btn.txt');
-            $closeTabDelete = $this->fgc('/Asset/tab-lang-delete.txt');
-
-            $langSave = '';
-            if ($this->hasLanguage())
-                $langSave = $this->fgc('/Asset/tab-lang-save.txt');
-
-            $saveScript = $this->sp('#TCSAVELANG', $langSave, $saveScript);
-        }
+        $saveScript = $this->sp('#TCSAVELANG', $langSave, $saveScript);
 
         $pk = $this->hasPrimaryKey();
         if (!empty($pk))
             $saveScript = $this->sp('#TCPKEY', $pk['Field'], $saveScript);
 
+        $fileContent = $this->fgc('/Asset/tool.js');
         $fileContent = $this->sp('#TCADDBTN', $addBtnScript, $fileContent);
         $fileContent = $this->sp('#TCSAVE', $saveScript, $fileContent);
         $fileContent = $this->sp('#TCEDIT', $ediBtnScript, $fileContent);
@@ -645,7 +613,7 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
         // Tool creator session container
         $moduleName = $this->tcSteps['step1']['tcf-name'];
 
-        $moduleModelFiles = '/Model/ModuleTpl.php';
+        $moduleModelFiles = '/Model/ModuleTpl';
         $this->generateFile($moduleName.'.php', $moduleModelFiles, $targetDir);
     }
 
@@ -659,7 +627,7 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
 
         $moduleName = $this->tcSteps['step1']['tcf-name'];
 
-        $fileContent = $this->fgc('/Model/Tables/ModuleTplTable.php');
+        $fileContent = $this->fgc('/Model/Tables/ModuleTplTable');
 
         $tcfDbTbl = $this->tcSteps['step3']['tcf-db-table'];
         $sql = 'DESCRIBE '.$tcfDbTbl;
@@ -680,7 +648,7 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
         $JoinSyntx = '';
         if ($this->hasLanguage()){
             // Join sql syntax
-            $JoinSyntx = $this->fgc('/Code/tab-lang-join-sql.txt');
+            $JoinSyntx = $this->fgc('/Code/lang-join-sql');
             $JoinSyntx = $this->sp('#TCPLANGTABLE', $this->tcSteps['step3']['tcf-db-table-language-tbl'], $JoinSyntx);
             $JoinSyntx = $this->sp('#TCPLANGTBLFK', $this->tcSteps['step3']['tcf-db-table-language-pri-fk'], $JoinSyntx);
             $JoinSyntx = $this->sp('#TCPLANGTBLLANGFK', $this->tcSteps['step3']['tcf-db-table-language-lang-fk'], $JoinSyntx);
@@ -694,7 +662,7 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
 
         if ($this->hasLanguage()){
 
-            $fileContent = $this->fgc('/Model/Tables/ModuleTplLangTable.php');
+            $fileContent = $this->fgc('/Model/Tables/ModuleTplLangTable');
 
             $tcfDbTbl = $this->tcSteps['step3']['tcf-db-table-language-tbl'];
             $sql = 'DESCRIBE '.$tcfDbTbl;
@@ -727,13 +695,13 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
         $moduleName = $this->tcSteps['step1']['tcf-name'];
         $tcfDbTbl = $this->tcSteps['step3']['tcf-db-table'];
 
-        $fileContent = $this->fgc('/Model/Tables/Factory/ModuleTplTableFactory.php');
+        $fileContent = $this->fgc('/Model/Tables/Factory/ModuleTplTableFactory');
         $fileContent = str_replace('#TCDATABASETABLE', $tcfDbTbl, $fileContent);
 
         $this->generateFile($moduleName.'TableFactory.php', null, $targetDir, $fileContent);
 
         if ($this->hasLanguage()){
-            $fileContent = $this->fgc('/Model/Tables/Factory/ModuleTplLangTableFactory.php');
+            $fileContent = $this->fgc('/Model/Tables/Factory/ModuleTplLangTableFactory');
             $fileContent = str_replace('#TCDATABASETABLE', $this->tcSteps['step3']['tcf-db-table-language-tbl'], $fileContent);
             $this->generateFile($moduleName.'LangTableFactory.php', null, $targetDir, $fileContent);
         }
@@ -754,15 +722,8 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
         $tcfDbTbl = $container['melis-toolcreator'];
         $moduleName = $tcfDbTbl['step1']['tcf-name'];
 
-        if (is_null($fileContent)){
+        if (is_null($fileContent))
             $fileContent = $this->fgc($sourceDir);
-        }
-
-        // Tool Type Controller
-        if ($this->tcSteps['step1']['tcf-tool-type'] == 'modal')
-            $fileContent = str_replace('#TCPRIMARYCTRL', 'Index', $fileContent);
-        else
-            $fileContent = str_replace('#TCPRIMARYCTRL', 'List', $fileContent);
 
         $fileContent = str_replace('ModuleTpl', $moduleName, $fileContent);
         $fileContent = str_replace('moduleTpl', lcfirst($moduleName), $fileContent);

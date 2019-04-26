@@ -13,7 +13,6 @@ use Zend\Mvc\ModuleRouteListener;
 use Zend\Mvc\MvcEvent;
 use Zend\Session\Container;
 use Zend\Stdlib\ArrayUtils;
-#TCMODULELISTNERCLSS
 
 class Module
 {
@@ -25,7 +24,21 @@ class Module
 
         $this->createTranslations($e);
 
-#TCMODULELISTNER
+        $melisRoute = false;
+        $sm = $e->getApplication()->getServiceManager();
+        $routeMatch = $sm->get('router')->match($sm->get('request'));
+
+        if (!empty($routeMatch)){
+            $routeName = $routeMatch->getMatchedRouteName();
+            $module = explode('/', $routeName);
+
+            if (!empty($module[0]))
+                if ($module[0] == 'melis-backoffice'){
+                    // attach listeners for Melis
+                    $eventManager->attach(new \ModuleTpl\Listener\SavePropertiesListener());
+                    $eventManager->attach(new \ModuleTpl\Listener\DeleteListener());
+                }
+        }
     }
 
     public function getConfig()
@@ -63,11 +76,11 @@ class Module
 
         if (!empty($locale))
         {
-            $translationType = array(
-                'interface',
-            );
+            $translationType = [
+                'interface'
+            ];
 
-            $translationList = array();
+            $translationList = [];
             if(file_exists($_SERVER['DOCUMENT_ROOT'].'/../module/MelisModuleConfig/config/translation.list.php')){
                 $translationList = include 'module/MelisModuleConfig/config/translation.list.php';
             }
@@ -95,12 +108,12 @@ class Module
 
     public function getAutoloaderConfig()
     {
-        return array(
-            'Zend\Loader\StandardAutoloader' => array(
-                'namespaces' => array(
+        return [
+            'Zend\Loader\StandardAutoloader' => [
+                'namespaces' => [
                     __NAMESPACE__ => __DIR__ . '/src/' . __NAMESPACE__,
-                ),
-            ),
-        );
+                ]
+            ]
+        ];
     }
 }

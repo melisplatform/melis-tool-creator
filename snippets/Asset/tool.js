@@ -4,6 +4,8 @@ $(function(){
     });
 
     $("body").on("click", ".btnSaveModuleTpl", function(){
+        var btn = $(this);
+        btn.attr('disabled', true);
 #TCSAVE
     });
 
@@ -22,7 +24,7 @@ $(function(){
             function() {
                 $.ajax({
                     type        : 'GET',
-                    url         : '/melis/ModuleTpl/#TCPRIMARYCTRL/deleteItem?id='+id,
+                    url         : '/melis/ModuleTpl/List/deleteItem?id='+id,
                     dataType    : 'json',
                     encode		: true,
                     success		: function(){

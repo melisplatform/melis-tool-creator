@@ -37,10 +37,10 @@ class ListController extends AbstractActionController
 
         $columns = $melisTool->getColumns();
         $translator = $this->getServiceLocator()->get('translator');
-        $columns['actions'] = array('text' => $translator->translate('tr_moduletpl_common_table_column_action'));
+        $columns['actions'] = ['text' => $translator->translate('tr_moduletpl_common_table_column_action')];
 
         $view->tableColumns = $columns;
-        $view->toolTable = $melisTool->getDataTableConfiguration('#moduleTplTableContent');
+        $view->toolTable = $melisTool->getDataTableConfiguration('#moduleTplTableContent', true, false, ['order' => [[ 0, 'desc' ]]]);
 
         return $view;
     }
@@ -54,7 +54,7 @@ class ListController extends AbstractActionController
 
         $draw = 0;
         $dataCount = 0;
-        $tableData = array();
+        $tableData = [];
 
         if($this->getRequest()->isPost()){
 
@@ -91,42 +91,35 @@ class ListController extends AbstractActionController
 
     public function renderTableFilterLimitAction()
     {
-        $view = new ViewModel();
-        return $view;
+        return new ViewModel();
     }
 
     public function renderTableFilterSearchAction()
     {
-        $view = new ViewModel();
-        return $view;
+        return new ViewModel();
     }
 
     public function renderTableFilterRefreshAction()
     {
-        $view = new ViewModel();
-        return $view;
+        return new ViewModel();
     }
 
     public function renderTableActionEditAction()
     {
-        $view = new ViewModel();
-        return $view;
+        return new ViewModel();
     }
 
     public function renderTableActionDeleteAction()
     {
-        $view = new ViewModel();
-        return $view;
+        return new ViewModel();
     }
+
+#TCMODALVIEWMODEL
 
     public function deleteItemAction()
     {
-        $id = $this->params()->fromQuery('id', null);
-        $moduleTplTable = $this->getServiceLocator()->get('ModuleTplTable');
-        $moduleTplTable->deleteById($id);
-
         $this->getEventManager()->trigger('moduletpl_delete_end', $this, $this->getRequest());
 
-        return new JsonModel(array('success' => true));
+        return new JsonModel(['success' => true]);
     }
 }
