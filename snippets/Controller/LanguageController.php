@@ -55,23 +55,28 @@ class LanguageController extends AbstractActionController
         $request = $this->getRequest();
         $postData = $request->getPost()->toArray();
 
-        foreach ($postData['language'] As $form){
+        foreach ($postData['language'] As $key => $formData){
 
             // Foreign key from Param
             $fkId = $this->params()->fromRoute('id');
             $fkSuccess = $this->params()->fromRoute('success');
 
             $langForm = $this->getForm();
-            $langForm->setData($form);
+
+#TCFILEINPTPARAMS
+
+            $langForm->setData($formData);
 
             if ($langForm->isValid()){
 
                 if (!empty($fkId) && $fkSuccess){
                     $id = null;
-                    if (!empty($form['#TCFKEYID']))
-                        $id = $form['#TCFKEYID'];
+                    if (!empty($formData['#TCFKEYID']))
+                        $id = $formData['#TCFKEYID'];
 
                     $formData = $langForm->getData();
+
+#TCFILEINPTDATA
 
                     // Assign foreign key value
                     $formData['#TCKEYPRIID'] = $fkId;
@@ -96,6 +101,8 @@ class LanguageController extends AbstractActionController
 
         return new JsonModel($result);
     }
+
+#TCFILEINPTFILTER
 
     public function deleteAction()
     {

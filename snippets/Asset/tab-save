@@ -1,43 +1,56 @@
+    $("body").on("click", ".btnSaveModuleTpl", function(){
+        var btn = $(this);
         var id = $(this).data("id");
+        submitForm($("form#"+id+"_moduleTplForm"), id, btn);
+    });
 
-        var dataString = $("form#"+id+"_moduleTplForm").serializeArray();
+    var submitForm  = function(form, id, btn){
 
-        dataString.push({
-            name: "#TCPKEY",
-            value: id
-        });
+        form.unbind("submit");
+
+        form.on("submit", function(e) {
+
+            e.preventDefault();
+
+            btn.attr('disabled', true);
+
+            var formData = new FormData(this);
+
+            formData.append('#TCPKEY', id);
 
 #TCSAVELANG
 
-        dataString = $.param(dataString);
+            $.ajax({
+                type: 'POST',
+                url: '/melis/ModuleTpl/Properties/save',
+                data: formData,
+                cache: false,
+                contentType: false,
+                processData: false,
+            }).done(function (data) {
+                if(data.success){
+                    // Notifications
+                    melisHelper.melisOkNotification(data.textTitle, data.textMessage);
 
-        $.ajax({
-            type        : 'POST',
-            url         : '/melis/ModuleTpl/Properties/save',
-            data		: dataString,
-            dataType    : 'json',
-            encode		: true
-        }).done(function(data){
-            if(data.success){
-                // Notifications
-                melisHelper.melisOkNotification(data.textTitle, data.textMessage);
+                    // Reload List
+                    melisHelper.zoneReload("id_moduletpl_content", "moduletpl_content");
 
-                // Reload List
-                melisHelper.zoneReload("id_moduletpl_content", "moduletpl_content");
+                    // Close add page
+                    $("a[data-id='"+id+"_id_moduletpl_properties_tool']").trigger("click");
 
-                // Close add page
-                $("a[data-id='"+id+"_id_moduletpl_properties_tool']").trigger("click");
+                    // Open new created/updated entry
+                    melisHelper.tabOpen(data.entryTitle, 'fa fa-puzzle-piece', data.entryId+'_id_moduletpl_properties_tool', 'moduletpl_properties_tool', {id: data.entryId}, 'id_moduletpl_tool');
+                }else{
+                    melisHelper.melisKoNotification(data.textTitle, data.textMessage, data.errors);
+                    melisHelper.highlightMultiErrors(data.success, data.errors, "#"+id+"_id_moduletpl_properties_content");
+                }
 
-                // Open new created/updated entry
-                melisHelper.tabOpen(data.entryTitle, 'fa fa-puzzle-piece', data.entryId+'_id_moduletpl_properties_tool', 'moduletpl_properties_tool', {id: data.entryId}, 'id_moduletpl_tool');
+                btn.attr('disabled', false);
 
-            }else{
-                melisHelper.melisKoNotification(data.textTitle, data.textMessage, data.errors);
-                melisHelper.highlightMultiErrors(data.success, data.errors, "#"+id+"_id_moduletpl_properties_content");
-            }
-
-            btn.attr('disabled', false);
-
-        }).fail(function(){
-            alert( translations.tr_meliscore_error_message );
+            }).fail(function () {
+                alert(translations.tr_meliscore_error_message);
+            });
         });
+
+        form.submit();
+    };

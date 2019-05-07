@@ -82,17 +82,22 @@ class PropertiesController extends AbstractActionController
         $translator = $this->getServiceLocator()->get('translator');
 
         $request = $this->getRequest();
-        $postData = $request->getPost()->toArray();
+        $formData = $request->getPost()->toArray();
 
-        if (!empty($postData['#TCKEY']))
-            $id = $postData['#TCKEY'];
+        if (!empty($formData['#TCKEY']))
+            $id = $formData['#TCKEY'];
 
         $moduleTplForm = $this->getForm();
-        $moduleTplForm->setData($postData);
+
+#TCFILEINPTPARAMS
+
+        $moduleTplForm->setData($formData);
 
         if ($moduleTplForm->isValid()){
 
             $formData = $moduleTplForm->getData();
+
+#TCFILEINPTDATA
 
             $moduleTplLangTable = $this->getServiceLocator()->get('ModuleTplTable');
             $res = $moduleTplLangTable->save($formData, $id);
@@ -116,6 +121,8 @@ class PropertiesController extends AbstractActionController
 
         return new JsonModel($result);
     }
+
+#TCFILEINPTFILTER
 
     public function deleteAction()
     {

@@ -273,9 +273,24 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
 
         foreach ($this->tcSteps['step5']['tcf-db-table-col-editable'] As $key => $col){
 
-            $formInputsTplContent = $this->fgc('/Form/input');
+            $inptType = $this->tcSteps['step5']['tcf-db-table-col-type'][$key];
+
+            switch ($inptType){
+                case 'Switch':
+                    $formInputsTplContent = $this->fgc('/Form/switch-input');
+                    break;
+                case 'File':
+                    $formInputsTplContent = $this->fgc('/Form/file-input');
+                    break;
+                default:
+                    $formInputsTplContent = $this->fgc('/Form/input');
+                    break;
+            }
+
             $formInputsTplContent = $this->sp('#TCKEY', $col, $formInputsTplContent);
-            $formInputsTplContent = $this->sp('#TCINPUTTYPE', $this->tcSteps['step5']['tcf-db-table-col-type'][$key], $formInputsTplContent);
+            $formInputsTplContent = $this->sp('#TCINPUTTYPE', $inptType, $formInputsTplContent);
+
+
 
             $skipValidator = false;
             if (!empty($pk)){
@@ -305,12 +320,12 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
                 $formInputFilterTplContent = $this->fgc('/Form/input-filter');
                 $formInputFilterTplContent = $this->sp('#TCKEY', $col, $formInputFilterTplContent);
 
+                $formInputNotEmptyTplTplContent = '';
                 if (in_array($col, $this->tcSteps['step5']['tcf-db-table-col-required'])){
                     $inputIsRequired = 'true';
                     $formInputNotEmptyTplTplContent = $this->fgc('/Form/not-empty-filter');
-                    $formInputFilterTplContent = $this->sp('#TCVALIDATORS', $formInputNotEmptyTplTplContent, $formInputFilterTplContent);
                 }
-
+                $formInputFilterTplContent = $this->sp('#TCVALIDATORS', $formInputNotEmptyTplTplContent, $formInputFilterTplContent);
                 $formInputFilterTplContent = $this->sp('#TCISREQUIRED', $inputIsRequired, $formInputFilterTplContent);
 
                 if (is_bool(strpos($col, 'tclangtblcol_')))
@@ -383,19 +398,45 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
         if (!empty($pk)){
 
             $modulePropCtrlFile = $this->fgc('/Controller/PropertiesController.php');
-            $modulePropCtrlFile = $this->sp('#TCKEY', $pk['Field'], $modulePropCtrlFile);
             $modulePropCtrlFile = $this->sp('#TCPROPACTIONS', $this->fgc('/Code/'.$this->getToolType().'-prop-actions'), $modulePropCtrlFile);
+
+            // Checking if there is one file input
+            $fileParams = '';
+            $fileData = '';
+            $fileFilter = '';
+            if (in_array('File', $this->tcSteps['step5']['tcf-db-table-col-type'])){
+                $fileParams = $this->fgc('/Code/file-input-params');
+                $fileData = $this->fgc('/Code/file-input-data');
+                $fileFilter = $this->fgc('/Code/file-input-filter');
+            }
+
+            $modulePropCtrlFile = $this->sp('#TCFILEINPTPARAMS', $fileParams, $modulePropCtrlFile);
+            $modulePropCtrlFile = $this->sp('#TCFILEINPTDATA', $fileData, $modulePropCtrlFile);
+            $modulePropCtrlFile = $this->sp('#TCFILEINPTFILTER', $fileFilter, $modulePropCtrlFile);
+
+            $modulePropCtrlFile = $this->sp('#TCKEY', $pk['Field'], $modulePropCtrlFile);
             $this->generateFile('PropertiesController.php', null, $targetDir, $modulePropCtrlFile);
 
             if ($this->hasLanguage()){
 
                 $langCtrl = $this->fgc('/Controller/LanguageController.php');
 
-                $langTblPK = $this->getTablePK($this->tcSteps['step3']['tcf-db-table-language-tbl']);
-                $langCtrlContent = $this->sp('#TCFKEYID', $langTblPK['Field'], $langCtrl);
-
-                $langCtrlContent = $this->sp('#TCKEYLANGID', $this->tcSteps['step3']['tcf-db-table-language-lang-fk'], $langCtrlContent);
+                $langCtrlContent = $this->sp('#TCKEYLANGID', $this->tcSteps['step3']['tcf-db-table-language-lang-fk'], $langCtrl);
                 $langCtrlContent = $this->sp('#TCKEYPRIID', $this->tcSteps['step3']['tcf-db-table-language-pri-fk'], $langCtrlContent);
+
+                // Checking if there is one file input
+                if (in_array('File', $this->tcSteps['step5']['tcf-db-table-col-type'])){
+                    $fileParams = $this->fgc('/Code/file-input-params-lang');
+                    $fileData = $this->fgc('/Code/file-input-data-lang');
+                }
+
+                $langCtrlContent = $this->sp('#TCFILEINPTPARAMS', $fileParams, $langCtrlContent);
+                $langCtrlContent = $this->sp('#TCFILEINPTDATA', $fileData, $langCtrlContent);
+                $langCtrlContent = $this->sp('#TCFILEINPTFILTER', $fileFilter, $langCtrlContent);
+
+                $langTblPK = $this->getTablePK($this->tcSteps['step3']['tcf-db-table-language-tbl']);
+                $langCtrlContent = $this->sp('#TCFKEYID', $langTblPK['Field'], $langCtrlContent);
+
                 $this->generateFile('LanguageController.php', null, $targetDir, $langCtrlContent);
             }
         }

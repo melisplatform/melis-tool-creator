@@ -854,6 +854,10 @@ class ToolCreatorController extends AbstractActionController
             $viewStp->langTblCols = $this->tblColsFields($angTblCols, true);
         }
 
+        // Input Types
+        $config = $this->getServiceLocator()->get('config');
+        $viewStp->inputTypes = $config['plugins']['melistoolcreator']['datas']['input_types'];
+
         return $viewStp;
     }
 
@@ -1320,7 +1324,7 @@ class ToolCreatorController extends AbstractActionController
         // Tool creator session container
         $container = new Container('melistoolcreator');
 
-        $container['melis-toolcreator']['step1']['tcf-name'] = 'CalendarToolTab';
+//        $container['melis-toolcreator']['step1']['tcf-name'] = 'CalendarToolTab';
         $container['melis-toolcreator']['step1']['tcf-tool-type'] = 'tab';
         exit;
     }

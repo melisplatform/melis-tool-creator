@@ -11,6 +11,8 @@
         'common_button_save' => 'tr_melistoolcreator_common_button_save',
         'common_button_yes' => 'tr_melistoolcreator_common_button_yes',
         'common_button_no' => 'tr_melistoolcreator_common_button_no',
+        'common_activate' => 'tr_melistoolcreator_activate',
+        'common_deactivate' => 'tr_melistoolcreator_deactivate',
         // Message translations for Form validation
         'unable_to_save' => 'tr_melistoolcreator_unable_to_save',
         'save_success' => 'tr_melistoolcreator_save_success',

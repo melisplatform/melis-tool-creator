@@ -3,11 +3,7 @@ $(function(){
 #TCADDBTN
     });
 
-    $("body").on("click", ".btnSaveModuleTpl", function(){
-        var btn = $(this);
-        btn.attr('disabled', true);
 #TCSAVE
-    });
 
     $("body").on("click", ".btnEditModuleTpl", function(){
 #TCEDIT

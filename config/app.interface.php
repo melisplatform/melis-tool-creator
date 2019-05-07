@@ -73,6 +73,25 @@ return [
                         'name' => 'tr_melistoolcreator_finalization',
                         'icon' => 'fa-cogs'
                     ]
+                ],
+                'input_types' => [
+                    'MelisCoreTinyMCE' => [
+                        'text',
+                        'tinytext',
+                        'mediumtext',
+                        'longtext',
+                    ],
+                    'Datepicker' => [
+                        'date'
+                    ],
+                    'Datetimepicker' => [
+                        'datetime',
+                        'timestamp'
+                    ],
+                    'Switch' => [
+                        'tinyint',
+                        'boolean',
+                    ],
                 ]
             ],
             'interface' => [

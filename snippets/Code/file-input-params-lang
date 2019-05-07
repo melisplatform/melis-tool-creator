@@ -1,0 +1,13 @@
+            // File input
+            $filesInpt = $this->params()->fromFiles();
+            if (!empty($filesInpt['language']))
+                if (!empty($filesInpt['language'][$key]))
+                    foreach ($filesInpt['language'][$key] As $input => $file){
+                        if ($langForm->has($input))
+                            if (!empty($file['tmp_name'])){
+                                $this->fileInput($input, $langForm->getInputFilter());
+                                $formData[$input] = $file;
+                            }else
+                                if (is_numeric($formData['#TCFKEYID']))
+                                    $langForm->getInputFilter()->get($input)->setRequired(false);
+                    }

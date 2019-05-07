@@ -132,50 +132,6 @@
     cursor: pointer;
 }
 
-.tcf-radio-box{
-    display: block;
-    position: relative;
-    cursor: pointer;
-    font-family: sans-serif;
-    user-select: none;
-    padding-left: 24px;
-    margin-bottom: 7px;
-}
-.tcf-radio-box input{
-    display: none;
-}
-.tcf-radio-box .tcf-radio-box-circle{
-    display: inline-block;
-    width: 15px;
-    height: 15px;
-    background-color: #eee;
-    position: absolute;
-    left: 0;
-    top: 0;
-    border-radius: 50%;
-}
-.tcf-radio-box:hover .tcf-radio-box-circle{
-    background-color: #ccc;
-}
-.tcf-radio-box input:checked + .tcf-radio-box-circle{
-    background-color: #981a1f;
-}
-.tcf-radio-box input:checked + .tcf-radio-box-circle:after{
-    content: "";
-    height: 8px;
-    width: 8px;
-    background-color: white;
-    position: absolute;
-    border-radius: 50%;
-    left: 50%;
-    top: 50%;
-    transform: translate(-55%, -55%);
-}
-
-.melis-tool-creator-display-warning{
-    display: none;
-}
-
 #id_melistoolcreator_content .widget.widget-tabs>.widget-head ul li.active a {
     color: #981a1f;
 }

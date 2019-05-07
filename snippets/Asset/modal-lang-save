@@ -1,8 +1,12 @@
-        $("form."+id+"_moduleTplLangForm").each(function(i, v){
-            $.each($(this).serializeArray(), function(){
-                dataString.push({
-                    name : 'language['+i+']['+this.name+']',
-                    value: this.value
+            $("form."+id+"_moduleTplLangForm").each(function(i, v){
+                $.each($(this).serializeArray(), function(){
+                    formData.append('language['+i+']['+this.name+']', this.value);
                 });
+
+                var formFiles = $(this).find("[type='file']");
+                $.each(formFiles, function(){
+                    if (typeof $(this)[0].files[0] !== "undefined")
+                        formData.append('language['+i+']['+$(this).attr("name")+']', $(this)[0].files[0]);
+                });
+
             });
-        });

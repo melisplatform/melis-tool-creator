@@ -1,6 +1,5 @@
 <div id="<?php echo $this->id; ?>" class="steps-content">
     <div class="row">
-
         <div class="col-sm-12">
             <h3><?php echo $this->translate('tr_melistoolcreator_add_update_form_title') ?></h3>
             <p><?php echo $this->translate('tr_melistoolcreator_add_update_form_desc') ?></p>
@@ -56,21 +55,10 @@
                                         if (!$col['editableIsChecked'])
                                             $fieldType->setAttribute('disabled', 'disabled');
 
-                                        switch ($col['Type']){
-                                            case 'text':
-                                            case 'longtext':
-                                                $fieldType->setValue('MelisCoreTinyMCE');
-                                                break;
-                                            case 'date':
-                                                $fieldType->setValue('Datepicker');
-                                                break;
-                                            case 'datetime':
-                                                $fieldType->setValue('Datetimepicker');
-                                                break;
-                                        }
+                                        foreach ($this->inputTypes As $type => $types)
+                                            if (in_array($col['Type'], $types))
+                                                $fieldType->setValue($type);
                                     }
-
-
 
                                     if (isset($col['isAutoIncrement'])){
                                         $fieldType->setAttribute('class', 'hidden');
@@ -153,18 +141,9 @@
                                             if (!$col['editableIsChecked'])
                                                 $fieldType->setAttribute('disabled', 'disabled');
 
-                                            switch ($col['Type']){
-                                                case 'text':
-                                                case 'longtext':
-                                                    $fieldType->setValue('MelisCoreTinyMCE');
-                                                    break;
-                                                case 'date':
-                                                    $fieldType->setValue('Datepicker');
-                                                    break;
-                                                case 'datetime':
-                                                    $fieldType->setValue('Datetimepicker');
-                                                    break;
-                                            }
+                                            foreach ($this->inputTypes As $type => $types)
+                                                if (in_array($col['Type'], $types))
+                                                    $fieldType->setValue($type);
                                         }
 
                                         $fk = null;

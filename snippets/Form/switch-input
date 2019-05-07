@@ -1,0 +1,19 @@
+                                [
+                                    'spec' => [
+                                        'name' => '#TCKEY',
+                                        'type' => 'Checkbox',
+                                        'options' => [
+                                            'label' => 'tr_moduletpl_#TCKEY',
+                                            'tooltip' => 'tr_moduletpl_#TCKEY_tooltip',
+                                            'switch_options' => [
+                                                'label-on' => 'tr_moduletpl_common_activate',
+                                                'label-off' => 'tr_moduletpl_common_deactivate',
+                                                'icon' => "glyphicon glyphicon-resize-horizontal",
+                                            ],
+                                        ],
+                                        'attributes' => [
+                                            'id' => 'id_#TCKEY',
+                                            'value' => 1,
+                                        ],
+                                    ],
+                                ]

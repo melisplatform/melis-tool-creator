@@ -76,7 +76,7 @@ return [
     'tr_melistoolcreator_col_extra' => 'Extra',
     'tr_melistoolcreator_col_editable' => 'Editable',
     'tr_melistoolcreator_col_mandatory' => 'Mandatory',
-    'tr_melistoolcreator_col_field_type' => 'Field Type',
+    'tr_melistoolcreator_col_field_type' => 'Input type',
     'tr_melistoolcreator_columns' => 'Columns',
     'tr_melistoolcreator_columns_desciption' => 'Columns description',
     'tr_melistoolcreator_refreshing' => 'Resfreshing...',
@@ -96,6 +96,10 @@ return [
     'tr_melistoolcreator_col_txt' => 'Columns',
     'tr_melistoolcreator_name_txt' => 'Name',
     'tr_melistoolcreator_desc_txt' => 'description',
+    'tr_melistoolcreator_activate' => 'Activate',
+    'tr_melistoolcreator_deactivate' => 'Deactivate',
+
+
 
     // Forms
     'tr_melistoolcreator_tcf-name' => 'Tool name',

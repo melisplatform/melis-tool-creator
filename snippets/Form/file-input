@@ -1,0 +1,19 @@
+                                [
+                                    'spec' => [
+                                        'name' => '#TCKEY',
+                                        'type' => '#TCINPUTTYPE',
+                                        'options' => [
+                                            'label' => 'tr_moduletpl_#TCKEY',
+                                            'tooltip' => 'tr_moduletpl_#TCKEY_tooltip',
+                                            'filestyle_options' => [
+                                                'buttonBefore' => true,
+                                            ]
+                                        ],
+                                        'attributes' => [
+                                            'id' => '#TCKEY',
+                                            'class' => 'form-control',
+                                            'required' => #TCINPUTREQUIRED,
+                                            #TCINPTAI
+                                        ],
+                                    ],
+                                ]

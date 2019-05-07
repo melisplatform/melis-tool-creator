@@ -48,11 +48,11 @@ return [
                                         'disable_html_escape' => true,
                                     ],
                                     'label_attributes' => [
-                                        'class' => 'tcf-radio-box'
+                                        'class' => 'melis-radio-box'
                                     ],
                                     'value_options' => [
-                                        'modal' => 'Modal <span class="tcf-radio-box-circle"></span>',
-                                        'tab' => 'Tabulation <span class="tcf-radio-box-circle"></span>',
+                                        'modal' => 'Modal <span class="melis-radio-box-circle"></span>',
+                                        'tab' => 'Tabulation <span class="melis-radio-box-circle"></span>',
                                     ],
                                 ],
                                 'attributes' => [
@@ -465,8 +465,10 @@ return [
                                 'options' => [
                                     'value_options' => [
                                         'MelisText' => 'Text',
+                                        'Switch' => 'Switch',
+                                        'File' => 'File upload',
                                         'TextArea' => 'Textarea',
-                                        'MelisCoreTinyMCE' => 'Textarea (TinyMCE]',
+                                        'MelisCoreTinyMCE' => 'Textarea (TinyMCE)',
                                         'Datepicker' => 'Date Picker',
                                         'Datetimepicker' => 'Datetime Picker',
                                         'MelisCmsPluginSiteSelect' => 'Melis site',

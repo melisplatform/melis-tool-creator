@@ -1,35 +1,49 @@
+    $("body").on("click", ".btnSaveModuleTpl", function(){
+        var btn = $(this);
         var id = $(this).data("id");
-        var dataString = $("form#moduleTplForm").serializeArray();
+        submitForm($("form#moduleTplForm"), id, btn);
+    });
 
-        dataString.push({
-            name: "#TCPKEY",
-            value: id
-        });
+    var submitForm  = function(form, id, btn){
+
+        form.unbind("submit");
+
+        form.on("submit", function(e) {
+
+            e.preventDefault();
+
+            btn.attr('disabled', true);
+
+            var formData = new FormData(this);
+
+            formData.append('#TCPKEY', id);
 
 #TCSAVELANG
 
-        dataString = $.param(dataString);
+            $.ajax({
+                type: 'POST',
+                url: '/melis/ModuleTpl/Properties/save',
+                data: formData,
+                cache: false,
+                contentType: false,
+                processData: false,
+            }).done(function (data) {
+                if(data.success){
+                    // Notifications
+                    melisHelper.melisOkNotification(data.textTitle, data.textMessage);
 
-        $.ajax({
-            type        : 'POST',
-            url         : '/melis/ModuleTpl/Properties/save',
-            data		: dataString,
-            dataType    : 'json',
-            encode		: true
-        }).done(function(data){
-            if(data.success){
-                // Notifications
-                melisHelper.melisOkNotification(data.textTitle, data.textMessage);
+                    $("#id_moduletpl_modal_container").modal("hide");
+                    melisHelper.zoneReload("id_moduletpl_content", "moduletpl_content");
+                }else{
+                    melisHelper.melisKoNotification(data.textTitle, data.textMessage, data.errors);
+                    melisHelper.highlightMultiErrors(data.success, data.errors, "#id_moduletpl_modal");
+                }
 
-                $("#id_moduletpl_modal_container").modal("hide");
-                melisHelper.zoneReload("id_moduletpl_content", "moduletpl_content");
-            }else{
-                melisHelper.melisKoNotification(data.textTitle, data.textMessage, data.errors);
-                melisHelper.highlightMultiErrors(data.success, data.errors, "#id_moduletpl_modal");
-            }
-
-            btn.attr('disabled', false);
-
-        }).fail(function(){
-            alert( translations.tr_meliscore_error_message );
+                btn.attr('disabled', false);
+            }).fail(function () {
+                alert(translations.tr_meliscore_error_message);
+            });
         });
+
+        form.submit();
+    };
