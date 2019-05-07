@@ -70,7 +70,7 @@
     border-top: 20px inset transparent;
     content: "";
     z-index: 2;
-    border-left-color: #981a1f;
+    border-left-color: #e61c23;
 }
 
 .melis-toolcreator-steps li span {
@@ -94,7 +94,7 @@
 }
 
 .melis-tool-creator .btn-steps:hover{
-    background: #981a1f;
+    background: #e61c23;
     color: #fff;
 }
 
@@ -133,11 +133,11 @@
 }
 
 #id_melistoolcreator_content .widget.widget-tabs>.widget-head ul li.active a {
-    color: #981a1f;
+    color: #e61c23;
 }
 
 #id_melistoolcreator_content .widget.widget-tabs>.widget-head ul li.active a i:before {
-    color: #981a1f;
+    color: #e61c23;
 }
 
 .melis-tc-tool-language.fa{
@@ -178,10 +178,4 @@
 .melis-toolcreator-steps li.active:after {
     right: -10px;
     border-left: 10px solid #fafafa;
-}
-
-@media (max-width: 1743px){
-    .melis-tool-creator-display-warning{
-        display: block;
-    }
 }
