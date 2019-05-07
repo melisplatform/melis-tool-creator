@@ -5,6 +5,7 @@
 
                 var formFiles = $(this).find("[type='file']");
                 $.each(formFiles, function(){
+                    formData.append('language['+i+']['+$(this).attr("name")+']', $(this).data("value"));
                     if (typeof $(this)[0].files[0] !== "undefined")
                         formData.append('language['+i+']['+$(this).attr("name")+']', $(this)[0].files[0]);
                 });

@@ -10,13 +10,6 @@
                 <button class="btn btn-success tc-reload-dbtbl-cached"><?php echo $this->translate('tr_melistoolcreator_database_reload_cached') ?> <i class="fa fa-refresh"></i></button>
             </p>
         </div>
-
-        <pre>
-            <?php
-                print_r($this->hasError);
-            ?>
-        </pre>
-
         <?php if ($this->hasError){ ?>
             <div class="col-sm-12">
                 <div class="melis-toolcreator-db-step alert alert-danger">
