@@ -96,10 +96,8 @@ return [
     'tr_melistoolcreator_col_txt' => 'Columns',
     'tr_melistoolcreator_name_txt' => 'Name',
     'tr_melistoolcreator_desc_txt' => 'description',
-    'tr_melistoolcreator_activate' => 'Activate',
-    'tr_melistoolcreator_deactivate' => 'Deactivate',
-
-
+    'tr_melistoolcreator_activate' => 'Active',
+    'tr_melistoolcreator_deactivate' => 'Inactive ',
 
     // Forms
     'tr_melistoolcreator_tcf-name' => 'Tool name',
