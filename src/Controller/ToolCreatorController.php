@@ -1263,11 +1263,12 @@ class ToolCreatorController extends AbstractActionController
      */
     private function langLabel($locale, $langName)
     {
-        $langLabel = $langName;
+        $langLabel = '<span>'. $langName .'</span>';
 
         $moduleSvc = $this->getServiceLocator()->get('ModulesService');
-        if (file_exists($moduleSvc->getModulePath('MelisCms').'/public/images/lang-flags/'.$locale.'.png'))
-            $langLabel = '<img src="/MelisCms/images/lang-flags/'.$locale.'.png"> '.$langName;
+        if (file_exists($moduleSvc->getModulePath('MelisCms').'/public/images/lang-flags/'.$locale.'.png')){
+            $langLabel .= '<span class="pull-right"><img src="/MelisCms/images/lang-flags/'.$locale.'.png"></span>';
+        }
 
         return $langLabel;
     }
