@@ -262,7 +262,7 @@ return [
                                         'name' => 'NotEmpty',
                                         'options' => [
                                             'messages' => [
-                                                \Zend\Validator\NotEmpty::IS_EMPTY => 'Please select a primary database table',
+                                                \Zend\Validator\NotEmpty::IS_EMPTY => 'tr_melistoolcreator_err_select_pri_tbl',
                                             ],
                                         ],
                                     ],
@@ -331,7 +331,7 @@ return [
                                         'name' => 'NotEmpty',
                                         'options' => [
                                             'messages' => [
-                                                \Zend\Validator\NotEmpty::IS_EMPTY => 'Please select a language database table',
+                                                \Zend\Validator\NotEmpty::IS_EMPTY => 'tr_melistoolcreator_err_select_lang_tbl',
                                             ],
                                         ],
                                     ],
@@ -349,7 +349,7 @@ return [
                                         'name' => 'NotEmpty',
                                         'options' => [
                                             'messages' => [
-                                                \Zend\Validator\NotEmpty::IS_EMPTY => 'Please select Foreign key of Primary table from Language table',
+                                                \Zend\Validator\NotEmpty::IS_EMPTY => 'tr_melistoolcreator_err_select_pri_key_tbl',
                                             ],
                                         ],
                                     ],
@@ -367,7 +367,7 @@ return [
                                         'name' => 'NotEmpty',
                                         'options' => [
                                             'messages' => [
-                                                \Zend\Validator\NotEmpty::IS_EMPTY => 'Please select Foreign key of CMS Page languages from Language table',
+                                                \Zend\Validator\NotEmpty::IS_EMPTY => 'tr_melistoolcreator_err_select_lang_key_tbl',
                                             ],
                                         ],
                                     ],

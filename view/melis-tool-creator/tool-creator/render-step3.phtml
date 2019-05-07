@@ -5,8 +5,17 @@
             <p><?php echo $this->translate('tr_melistoolcreator_database_desc') ?></p>
         </div>
         <div class="col-sm-12">
-            <p align="right"> <button class="btn btn-success tc-reload-dbtbl-cached" data-toggle="tooltip" data-placement="left" title="Refreshing database tables list might take a few minutes"><?php echo $this->translate('tr_melistoolcreator_database_reload_cached') ?> <i class="fa fa-refresh"></i></button></p>
+            <p align="right">
+                <i class="fa fa-info-circle tip-info" data-toggle="tooltip" data-placement="left" title="<?php echo $this->translate('tr_melistoolcreator_refresh_db_tooltip') ?>"></i><br>
+                <button class="btn btn-success tc-reload-dbtbl-cached"><?php echo $this->translate('tr_melistoolcreator_database_reload_cached') ?> <i class="fa fa-refresh"></i></button>
+            </p>
         </div>
+
+        <pre>
+            <?php
+                print_r($this->hasError);
+            ?>
+        </pre>
 
         <?php if ($this->hasError){ ?>
             <div class="col-sm-12">
@@ -61,7 +70,28 @@
             <div class="col-sm-12">
                 <div class="row">
                     <div class="col-sm-6">
-                        <h3>
+                        <?php
+                            $langKeys = [
+                                'tcf-db-table-language-tbl',
+                                'tcf-db-table-language-pri-fk',
+                                'tcf-db-table-language-lang-fk',
+                            ];
+
+                            $errCss = '';
+
+                            if (!empty($this->hasError))
+                                foreach ($this->hasError As $key => $err){
+                                    if (in_array($key, $langKeys))
+                                        $errCss = 'style="color: red"';
+
+                                    if ($key == 'tcf-db-table-language-pri-fk')
+                                        echo '<style> .tc-ptfk{color: red} </style>';
+
+                                    if ($key == 'tcf-db-table-language-lang-fk')
+                                        echo '<style> .tc-ltfk{color: red} </style>';
+                                }
+                        ?>
+                        <h3 <?php echo $errCss ?>>
                             <?php echo $this->translate('tr_melistoolcreator_lang_tbl_lst') ?>
                             <small>
                                 <i class="fa fa-info-circle pull-right tip-info" data-toggle="tooltip" data-placement="left" title="" data-original-title="<?php echo $this->translate('tr_melistoolcreator_select_lang_tbl_lst') ?>" style="padding-top: 10px;"></i>

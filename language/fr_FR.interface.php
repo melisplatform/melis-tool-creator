@@ -35,12 +35,12 @@ return [
     // Steps
     'tr_melistoolcreator_module' => 'Outil',
     'tr_melistoolcreator_tcf-name tooltip' => 'Nom de l\'outil. Les caractères autorisés sont alphanumerique et underscore. Le nom de l\'outil ne peut pas commencer par un numéro ni ne contenir d\'espace',
-    'tr_melistoolcreator_tcf_tool_type' => 'Tool type',
+    'tr_melistoolcreator_tcf_tool_type' => 'Type d\'outil',
     'tr_melistoolcreator_tcf_tool_type tooltip' => 'Sélectionnez le type d\'outil que vous souhaitez créer',
-    'tr_melistoolcreator_module_desc' => 'Saisissez le nom de l\'outil',
+    'tr_melistoolcreator_module_desc' => 'Saisissez le nom de l\'outil et sélectionnez son type',
     'tr_melistoolcreator_texts' => 'Textes',
     'tr_melistoolcreator_texts_title' => 'Module de traductions de texte',
-    'tr_melistoolcreator_texts_desc' => 'Saisissez les traductions de texte dans les différentes langues, au moins un champ langue doit être saisi',
+    'tr_melistoolcreator_texts_desc' => 'Saisissez les traductions de texte dans les différentes langues, au moins un champ titre dans une langue doit être saisi',
     'tr_melistoolcreator_database' => 'Base de données',
     'tr_melistoolcreator_database_title' => 'Table du module',
     'tr_melistoolcreator_database_desc' => 'Sélectionnez la table qui sera utilisée par l\'outil',
@@ -98,6 +98,7 @@ return [
     'tr_melistoolcreator_desc_txt' => 'Description',
     'tr_melistoolcreator_activate' => 'Actif',
     'tr_melistoolcreator_deactivate' => 'Inactif',
+    'tr_melistoolcreator_refresh_db_tooltip' => 'Rafraîchir la liste des tables peut prendre quelques minutes',
 
     // Forms
     'tr_melistoolcreator_tcf-name' => 'Nom de l\'outil',
@@ -124,6 +125,10 @@ return [
     'tr_melistoolcreator_err_no_primary_key' => 'La table sélectionnée n\'a pas de clef primaire',
     'tr_melistoolcreator_err_no_selected_col' => 'Veuillez choisir au moins une colonne de table pour procéder à l\'étape suivante',
     'tr_melistoolcreator_err_module_exist' => '"%s" existe déjà, veuillez en choisir un autre',
+    'tr_melistoolcreator_err_select_pri_key_tbl' => 'Dans la table des langues sélectionnez la clef étrangère de la table primaire (PTFK)',
+    'tr_melistoolcreator_err_select_lang_key_tbl' => 'Dans la table des langues sélectionnez la clef étrangère de la table langages des pages (LTFK)',
+    'tr_melistoolcreator_err_select_pri_tbl' => 'Veuillez choisir une table primaire',
+    'tr_melistoolcreator_err_select_lang_tbl' => 'Veuillez choisir une table de langage',
 
     // Target Module translation
     'tr_melistoolcreator_common_id' => 'ID',

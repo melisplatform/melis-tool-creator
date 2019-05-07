@@ -37,10 +37,10 @@ return [
     'tr_melistoolcreator_tcf-name tooltip' => 'Name of the tool. Alphanumeric and underscore are the only valid characters allowed. The tool name cannot start by a number neither contain any space',
     'tr_melistoolcreator_tcf_tool_type' => 'Tool type',
     'tr_melistoolcreator_tcf_tool_type tooltip' => 'Select the tool type you want to create',
-    'tr_melistoolcreator_module_desc' => 'Enter the name of the tool',
+    'tr_melistoolcreator_module_desc' => 'Enter the name of the tool and select its type',
     'tr_melistoolcreator_texts' => 'Texts',
     'tr_melistoolcreator_texts_title' => 'Module text translations',
-    'tr_melistoolcreator_texts_desc' => 'Enter the text translations in different languages, at least one language field should be filled in',
+    'tr_melistoolcreator_texts_desc' => 'Enter the text translations in different languages, at least one title field in one language should be filled in',
     'tr_melistoolcreator_database' => 'Database',
     'tr_melistoolcreator_database_title' => 'Module table',
     'tr_melistoolcreator_database_desc' => 'Select the table that will be used by the tool',
@@ -97,7 +97,8 @@ return [
     'tr_melistoolcreator_name_txt' => 'Name',
     'tr_melistoolcreator_desc_txt' => 'description',
     'tr_melistoolcreator_activate' => 'Active',
-    'tr_melistoolcreator_deactivate' => 'Inactive ',
+    'tr_melistoolcreator_deactivate' => 'Inactive',
+    'tr_melistoolcreator_refresh_db_tooltip' => 'Refreshing database tables list might take a few minutes',
 
     // Forms
     'tr_melistoolcreator_tcf-name' => 'Tool name',
@@ -124,6 +125,10 @@ return [
     'tr_melistoolcreator_err_no_primary_key' => 'The selected table has no primary key',
     'tr_melistoolcreator_err_no_selected_col' => 'Please select at least one table column to proceed to the next step',
     'tr_melistoolcreator_err_module_exist' => '"%s" already exists, please try another one',
+    'tr_melistoolcreator_err_select_pri_key_tbl' => 'In the language table select the foreign key of the the Primary table (PTFK)',
+    'tr_melistoolcreator_err_select_lang_key_tbl' => 'In the language table select the foreign key of the CMS page languages table (LTFK)',
+    'tr_melistoolcreator_err_select_pri_tbl' => 'Please select a primary database table',
+    'tr_melistoolcreator_err_select_lang_tbl' => 'Please select a language table',
 
     // Target Module translation
     'tr_melistoolcreator_common_id' => 'ID',
