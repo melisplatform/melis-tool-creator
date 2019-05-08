@@ -603,7 +603,7 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
 
                     if (!in_array($key, ['tcf-lang-local', 'tcf-tbl-type'])){
                         // Input description
-                        if (strpos($key, 'tcinputdesc')){
+                        if (strpos($key, 'tcinputdesc')){  
                             if (empty($text))
                                 $text = $stepTexts[$lang['lang_cms_locale']][$key];
 
@@ -633,8 +633,9 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
             $strTranslations = '';
             foreach ($texts As $key => $text){
                 $text = $this->sp("'", "\'", $text);
-                $key = $this->sp("-", "_", $key);
-                $key = $this->sp("tcf_", "", $key);
+                $key = $this->sp('-', '_', $key);
+                $key = $this->sp('tcf_', '', $key);
+
                 $strTranslations .= "\t\t".'\'tr_'.strtolower($moduleName).'_'.$key.'\' => \''.$text.'\','."\n";
             }
 

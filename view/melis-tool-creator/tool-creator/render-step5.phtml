@@ -56,7 +56,7 @@
                                             $fieldType->setAttribute('disabled', 'disabled');
 
                                         foreach ($this->inputTypes As $type => $types)
-                                            if (in_array($col['Type'], $types))
+                                            if (in_array(preg_replace("/\([^)]+\)/", '', $col['Type']), $types))
                                                 $fieldType->setValue($type);
                                     }
 
@@ -142,7 +142,7 @@
                                                 $fieldType->setAttribute('disabled', 'disabled');
 
                                             foreach ($this->inputTypes As $type => $types)
-                                                if (in_array($col['Type'], $types))
+                                                if (in_array(preg_replace("/\([^)]+\)/", '', $col['Type']), $types))
                                                     $fieldType->setValue($type);
                                         }
 
