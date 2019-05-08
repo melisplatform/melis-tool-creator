@@ -54,7 +54,7 @@ return [
     'tr_melistoolcreator_add_update_form_desc' => 'Please select the column(s) which will be editable, mandatory and its/their type of field',
     'tr_melistoolcreator_cols_translations' => 'Columns translations',
     'tr_melistoolcreator_cols_translations_title' => 'Module text translations',
-    'tr_melistoolcreator_cols_translations_desc' => 'Enter the text translations in different languages, at least one language field should be filled in',
+    'tr_melistoolcreator_cols_translations_desc' => 'Enter the text translations in the different languages. The texts must be translated in at least one language',
     'tr_melistoolcreator_summary' => 'Summary',
     'tr_melistoolcreator_finalization' => 'Finalization',
     'tr_melistoolcreator_finalization_desc' => 'Tick the box below if you wish to activate the tool upon creation',
