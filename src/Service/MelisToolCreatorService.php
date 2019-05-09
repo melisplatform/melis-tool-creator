@@ -52,7 +52,7 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
      */
     public function createTool()
     {
-        $moduleName = $this->tcSteps['step1']['tcf-name'];
+        $moduleName = $this->moduleName();
 
         /**
          * Module directories
@@ -87,7 +87,6 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
 
         return new JsonModel(['success' => true]);
     }
-
 
     /**
      * This method generate Module.php of the Module
@@ -474,7 +473,7 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
     private function generateModuleViews($targetDir)
     {
         // Generating view module directory
-        mkdir($targetDir.'/'.$this->moduleNameToViewName($this->tcSteps['step1']['tcf-name']), 0777);
+        mkdir($targetDir.'/'.$this->moduleViewName(), 0777);
 
         // Common view file for tool
         $listViews = [
@@ -514,7 +513,7 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
         // Generating Views to the target module directory
         foreach ($toolViews As $ctrl => $files){
 
-            $viewDir = $targetDir.'/'.$this->moduleNameToViewName($this->tcSteps['step1']['tcf-name']).'/'.$ctrl;
+            $viewDir = $targetDir.'/'.$this->moduleViewName().'/'.$ctrl;
             mkdir($viewDir, 0777);
 
             foreach ($files As $file){
@@ -566,9 +565,6 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
      */
     private function generateModuleLanguages($targetDir)
     {
-        // Tool creator session container
-        $moduleName = $this->tcSteps['step1']['tcf-name'];
-
         $cmsLang = $this->getServiceLocator()->get('MelisEngineTableCmsLang');
         $languages = $cmsLang->fetchAll()->toArray();
 
@@ -636,7 +632,7 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
                 $key = $this->sp('-', '_', $key);
                 $key = $this->sp('tcf_', '', $key);
 
-                $strTranslations .= "\t\t".'\'tr_'.strtolower($moduleName).'_'.$key.'\' => \''.$text.'\','."\n";
+                $strTranslations .= "\t\t".'\'tr_'.strtolower($this->moduleName()).'_'.$key.'\' => \''.$text.'\','."\n";
             }
 
             $fileContent = $this->fgc('/Language/language-tpl.php');
@@ -652,11 +648,8 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
      */
     private function generateModuleModel($targetDir)
     {
-        // Tool creator session container
-        $moduleName = $this->tcSteps['step1']['tcf-name'];
-
         $moduleModelFiles = '/Model/ModuleTpl';
-        $this->generateFile($moduleName.'.php', $moduleModelFiles, $targetDir);
+        $this->generateFile($this->moduleName().'.php', $moduleModelFiles, $targetDir);
     }
 
     /**
@@ -667,7 +660,7 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
     {
         $adapter = $this->getServiceLocator()->get('Zend\Db\Adapter\Adapter');
 
-        $moduleName = $this->tcSteps['step1']['tcf-name'];
+        $moduleName = $this->moduleName();
 
         $fileContent = $this->fgc('/Model/Tables/ModuleTplTable');
 
@@ -734,7 +727,7 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
     private function generateModuleModelTablesFactory($targetDir)
     {
         // Tool creator session container
-        $moduleName = $this->tcSteps['step1']['tcf-name'];
+        $moduleName = $this->moduleName();
         $tcfDbTbl = $this->tcSteps['step3']['tcf-db-table'];
 
         $fileContent = $this->fgc('/Model/Tables/Factory/ModuleTplTableFactory');
@@ -762,7 +755,7 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
         // Tool creator session container
         $container = new Container('melistoolcreator');
         $tcfDbTbl = $container['melis-toolcreator'];
-        $moduleName = $tcfDbTbl['step1']['tcf-name'];
+        $moduleName = $this->moduleName();
 
         if (is_null($fileContent))
             $fileContent = $this->fgc($sourceDir);
@@ -780,6 +773,16 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
             fwrite($targetFile, $fileContent);
             fclose($targetFile);
         }
+    }
+
+    public function moduleName()
+    {
+        return $this->generateModuleNameCase($this->tcSteps['step1']['tcf-name']);
+    }
+
+    public function moduleViewName()
+    {
+        return $this->moduleNameToViewName($this->generateModuleNameCase($this->tcSteps['step1']['tcf-name']));
     }
 
     private function getToolType()
@@ -849,7 +852,24 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
             }
         }
 
+        new \Zend\View\Renderer\PhpRenderer;
+
         return $primaryKey;
+    }
+
+    /**
+     * This will modified a string to valid zf2 module name
+     * @param string $str
+     * @return string
+     */
+    public function generateModuleNameCase($str) {
+        $str = preg_replace('/([a-z])([A-Z])/', "$1 $2", $str);
+        $str = str_replace(['-', '_'], ' ', $str);
+        $str = str_replace(' ', '', ucwords(strtolower($str)));
+        $str = strtolower(substr($str,0,1)).substr($str,1);
+        $str = ucfirst($str);
+        $str = $this->cleanString($str);
+        return $str;
     }
 
     /**
@@ -860,6 +880,35 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
     private function moduleNameToViewName($string)
     {
         return strtolower(preg_replace('/([a-z])([A-Z])/', '$1-$2', $string));
+    }
+
+    /**
+     * Clean strings from special characters
+     *
+     * @param string $str
+     */
+    public function cleanString($str)
+    {
+        $str = preg_replace("/[áàâãªä]/u", "a", $str);
+        $str = preg_replace("/[ÁÀÂÃÄ]/u", "A", $str);
+        $str = preg_replace("/[ÍÌÎÏ]/u", "I", $str);
+        $str = preg_replace("/[íìîï]/u", "i", $str);
+        $str = preg_replace("/[éèêë]/u", "e", $str);
+        $str = preg_replace("/[ÉÈÊË]/u", "E", $str);
+        $str = preg_replace("/[óòôõºö]/u", "o", $str);
+        $str = preg_replace("/[ÓÒÔÕÖ]/u", "O", $str);
+        $str = preg_replace("/[úùûü]/u", "u", $str);
+        $str = preg_replace("/[ÚÙÛÜ]/u", "U", $str);
+        $str = preg_replace("/[’‘‹›‚]/u", "'", $str);
+        $str = preg_replace("/[“”«»„]/u", '"', $str);
+        $str = str_replace("–", "-", $str);
+        $str = str_replace(" ", " ", $str);
+        $str = str_replace("ç", "c", $str);
+        $str = str_replace("Ç", "C", $str);
+        $str = str_replace("ñ", "n", $str);
+        $str = str_replace("Ñ", "N", $str);
+
+        return ($str);
     }
 
     private function fgc($path)

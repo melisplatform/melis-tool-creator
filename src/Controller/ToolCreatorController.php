@@ -209,7 +209,10 @@ class ToolCreatorController extends AbstractActionController
                 $modulesSvc = $this->getServiceLocator()->get('ModulesService');
                 $existingModules = array_merge($modulesSvc->getModulePlugins(), \MelisCore\MelisModuleManager::getModules());
 
-                if (in_array($formData['step-form']['tcf-name'], $existingModules)){
+                $toolCreatorSrv = $this->getServiceLocator()->get('MelisToolCreatorService');
+                $targetModuleName = $toolCreatorSrv->generateModuleNameCase($formData['step-form']['tcf-name']);
+
+                if (in_array($targetModuleName, $existingModules)){
 
                     // Adding error message to module input
                     $translator = $this->getServiceLocator()->get('translator');
@@ -1228,14 +1231,9 @@ class ToolCreatorController extends AbstractActionController
 
             if ($activateModule){
 
-                // Tool creator session container
-                $container = new Container('melistoolcreator');
-                $tcfDbTbl = $container['melis-toolcreator'];
-                $moduleName = $tcfDbTbl['step1']['tcf-name'];
-
                 // Activating module
                 $moduleSvc = $this->getServiceLocator()->get('ModulesService');
-                $moduleSvc->activateModule($moduleName);
+                $moduleSvc->activateModule($toolCreatorSrv->moduleName());
 
                 // Reloading module paths
                 unlink($_SERVER['DOCUMENT_ROOT'].'/../config/melis.modules.path.php');
@@ -1311,6 +1309,15 @@ class ToolCreatorController extends AbstractActionController
         die();
     }
 
+    public function chAction()
+    {
+        // Tool creator session container
+        $container = new Container('melistoolcreator');
+
+        $container['melis-toolcreator']['step1']['tcf-name'] = 'IDDTDoíl';
+//        $container['melis-toolcreator']['step1']['tcf-tool-type'] = 'tab';
+        exit;
+    }
 
     public function testAction()
     {
@@ -1318,15 +1325,5 @@ class ToolCreatorController extends AbstractActionController
         $res = $toolCreatorSrv->createTool();
         print_r($res->getVariables());
         die();
-    }
-
-    public function chAction()
-    {
-        // Tool creator session container
-        $container = new Container('melistoolcreator');
-
-//        $container['melis-toolcreator']['step1']['tcf-name'] = 'CalendarToolTab';
-        $container['melis-toolcreator']['step1']['tcf-tool-type'] = 'tab';
-        exit;
     }
 }
