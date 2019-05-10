@@ -84,9 +84,6 @@ class PropertiesController extends AbstractActionController
         $request = $this->getRequest();
         $formData = $request->getPost()->toArray();
 
-        if (!empty($formData['#TCKEY']))
-            $id = $formData['#TCKEY'];
-
         $moduleTplForm = $this->getForm();
 
 #TCFILEINPTPARAMS
@@ -98,6 +95,13 @@ class PropertiesController extends AbstractActionController
             $formData = $moduleTplForm->getData();
 
 #TCFILEINPTDATA
+
+#TCDATEINPTDATA
+
+            if (is_numeric($formData['cnews_id']))
+                $id = $formData['#TCKEY'];
+            else
+                unset($formData['#TCKEY']);
 
             $moduleTplLangTable = $this->getServiceLocator()->get('ModuleTplTable');
             $res = $moduleTplLangTable->save($formData, $id);

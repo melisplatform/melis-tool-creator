@@ -71,12 +71,16 @@ class LanguageController extends AbstractActionController
 
                 if (!empty($fkId) && $fkSuccess){
                     $id = null;
-                    if (!empty($formData['#TCFKEYID']))
-                        $id = $formData['#TCFKEYID'];
-
                     $formData = $langForm->getData();
 
+                    if (!empty($formData['#TCFKEYID']))
+                        $id = $formData['#TCFKEYID'];
+                    else
+                        unset($formData['#TCFKEYID']);
+
 #TCFILEINPTDATA
+
+#TCDATEINPTDATA
 
                     // Assign foreign key value
                     $formData['#TCKEYPRIID'] = $fkId;

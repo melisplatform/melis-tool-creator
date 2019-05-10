@@ -413,6 +413,20 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
             $modulePropCtrlFile = $this->sp('#TCFILEINPTDATA', $fileData, $modulePropCtrlFile);
             $modulePropCtrlFile = $this->sp('#TCFILEINPTFILTER', $fileFilter, $modulePropCtrlFile);
 
+
+            // Date input field data filter
+            $dateFields = [];
+            foreach ($this->tcSteps['step5']['tcf-db-table-col-type'] As $key => $type)
+                if (strpos($type, 'Date') !== false && strpos($this->tcSteps['step5']['tcf-db-table-col-editable'][$key], 'tclangtblcol') === false)
+                    $dateFields[] = '\''.$this->tcSteps['step5']['tcf-db-table-col-editable'][$key].'\'';
+
+            if (!empty($dateFields)){
+                $dateDataFilter = $this->fgc('/Code/date-input-data');
+                $dateDataFilter = $this->sp('#TCDATEINPUTNAME', implode(', ', $dateFields), $dateDataFilter);
+                $modulePropCtrlFile = $this->sp('#TCDATEINPTDATA', $dateDataFilter, $modulePropCtrlFile);
+            }
+
+
             $modulePropCtrlFile = $this->sp('#TCKEY', $pk['Field'], $modulePropCtrlFile);
             $this->generateFile('PropertiesController.php', null, $targetDir, $modulePropCtrlFile);
 
@@ -432,6 +446,19 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
                 $langCtrlContent = $this->sp('#TCFILEINPTPARAMS', $fileParams, $langCtrlContent);
                 $langCtrlContent = $this->sp('#TCFILEINPTDATA', $fileData, $langCtrlContent);
                 $langCtrlContent = $this->sp('#TCFILEINPTFILTER', $fileFilter, $langCtrlContent);
+
+
+                // Date input field data filter
+                $dateFields = [];
+                foreach ($this->tcSteps['step5']['tcf-db-table-col-type'] As $key => $type)
+                    if (strpos($type, 'Date') !== false && strpos($this->tcSteps['step5']['tcf-db-table-col-editable'][$key], 'tclangtblcol') !== false)
+                        $dateFields[] = '\''.$this->tcSteps['step5']['tcf-db-table-col-editable'][$key].'\'';
+
+                if (!empty($dateFields)){
+                    $dateDataFilter = $this->fgc('/Code/date-input-data');
+                    $dateDataFilter = $this->sp('#TCDATEINPUTNAME', implode(', ', $dateFields), $dateDataFilter);
+                    $langCtrlContent = $this->sp('#TCDATEINPTDATA', "\t\t".$dateDataFilter, $langCtrlContent);
+                }
 
                 $langTblPK = $this->getTablePK($this->tcSteps['step3']['tcf-db-table-language-tbl']);
                 $langCtrlContent = $this->sp('#TCFKEYID', $langTblPK['Field'], $langCtrlContent);
