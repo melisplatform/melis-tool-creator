@@ -81,6 +81,10 @@ class LanguageController extends AbstractActionController
 #TCFILEINPTDATA
 
 #TCDATEINPTDATA
+                    
+                    foreach ($formData As $input => $val)
+                        if (empty($val) && !is_numeric($val))
+                            $formData[$input] = null;
 
                     // Assign foreign key value
                     $formData['#TCKEYPRIID'] = $fkId;

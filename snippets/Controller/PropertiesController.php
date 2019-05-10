@@ -98,6 +98,10 @@ class PropertiesController extends AbstractActionController
 
 #TCDATEINPTDATA
 
+            foreach ($formData As $input => $val)
+                if (empty($val) && !is_numeric($val))
+                    $formData[$input] = null;
+
             if (is_numeric($formData['cnews_id']))
                 $id = $formData['#TCKEY'];
             else
