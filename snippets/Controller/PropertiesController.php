@@ -102,7 +102,7 @@ class PropertiesController extends AbstractActionController
                 if (empty($val) && !is_numeric($val))
                     $formData[$input] = null;
 
-            if (is_numeric($formData['cnews_id']))
+            if (is_numeric($formData['#TCKEY']))
                 $id = $formData['#TCKEY'];
             else
                 unset($formData['#TCKEY']);
