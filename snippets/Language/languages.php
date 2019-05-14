@@ -22,6 +22,8 @@
         // Delete title and confirmation message transtions
         'delete_title' => 'tr_melistoolcreator_delete_title',
         'delete_confirm_msg' => 'tr_melistoolcreator_delete_confirm_msg',
+        'delete_item' => 'tr_melistoolcreator_delete_item',
+        'delete_success' => 'tr_melistoolcreator_delete_success',
 
         'properties' => 'tr_melistoolcreator_properties',
         'language' => 'tr_melistoolcreator_language',

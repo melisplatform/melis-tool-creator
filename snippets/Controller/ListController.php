@@ -120,6 +120,10 @@ class ListController extends AbstractActionController
     {
         $this->getEventManager()->trigger('moduletpl_delete_end', $this, $this->getRequest());
 
-        return new JsonModel(['success' => true]);
+        return new JsonModel([
+            'success' => true,
+            'textTitle' => 'tr_moduletpl_delete_item',
+            'textMessage' => 'tr_moduletpl_delete_success',
+        ]);
     }
 }

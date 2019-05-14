@@ -148,4 +148,6 @@ return [
     'tr_melistoolcreator_properties' => 'Propriétés',
     'tr_melistoolcreator_language' => 'Langue',
     'tr_melistoolcreator_choose_file' => 'Choisir un fichier',
+    'tr_melistoolcreator_delete_item' => 'Supprimer l\'élément',
+    'tr_melistoolcreator_delete_success' => 'L\'élément à été supprimé avec succès',
 ];

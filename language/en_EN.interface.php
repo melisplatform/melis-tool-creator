@@ -148,4 +148,6 @@ return [
     'tr_melistoolcreator_properties' => 'Properties',
     'tr_melistoolcreator_language' => 'Language',
     'tr_melistoolcreator_choose_file' => 'Choose file',
+    'tr_melistoolcreator_delete_item' => 'Delete item',
+    'tr_melistoolcreator_delete_success' => 'tem has been successfully deleted',
 ];
