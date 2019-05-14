@@ -147,4 +147,5 @@ return [
     'tr_melistoolcreator_delete_confirm_msg' => 'Etes-vous sûr de vouloir supprimer cet élément ?',
     'tr_melistoolcreator_properties' => 'Propriétés',
     'tr_melistoolcreator_language' => 'Langue',
+    'tr_melistoolcreator_choose_file' => 'Choisir un fichier',
 ];

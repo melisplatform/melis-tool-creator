@@ -7,6 +7,7 @@
                                             'tooltip' => 'tr_moduletpl_#TCKEY_tooltip',
                                             'filestyle_options' => [
                                                 'buttonBefore' => true,
+                                                'buttonText' => 'tr_moduletpl_common_choose_file',
                                             ]
                                         ],
                                         'attributes' => [

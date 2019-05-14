@@ -25,10 +25,9 @@ class LanguageController extends AbstractActionController
         $view = new ViewModel();
         $id = $this->params()->fromQuery('id', 'add');
         $view->id = $id;
-        $view->languages = $languages;
 
         $langForm = [];
-        foreach ($languages As $lang){
+        foreach ($languages As $key => $lang){
             $form = $this->getForm();
 
             $form->setAttribute('class', $id. '_' . $form->getAttribute('name'));
@@ -39,8 +38,12 @@ class LanguageController extends AbstractActionController
                 $form->bind($data);
 
             $langForm[$lang['lang_cms_locale']] = $form;
+
+            // Language label
+            $languages[$key]['lang_label'] = $this->langLabel($lang['lang_cms_locale'], $lang['lang_cms_name']);
         }
 
+        $view->languages = $languages;
         $view->langForm = $langForm;
 
         return $view;
@@ -135,5 +138,25 @@ class LanguageController extends AbstractActionController
         $form = $factory->createForm($appConfigForm);
 
         return $form;
+    }
+
+    /**
+     * This method return the language name with flag image
+     * if exist
+     *
+     * @param $locale
+     * @param $langName
+     * @return string
+     */
+    private function langLabel($locale, $langName)
+    {
+        $langLabel = '<span>'. $langName .'</span>';
+
+        $moduleSvc = $this->getServiceLocator()->get('ModulesService');
+        if (file_exists($moduleSvc->getModulePath('MelisCms').'/public/images/lang-flags/'.$locale.'.png')){
+            $langLabel .= '<span class="pull-right"><img src="/MelisCms/images/lang-flags/'.$locale.'.png"></span>';
+        }
+
+        return $langLabel;
     }
 }

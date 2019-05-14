@@ -2,7 +2,7 @@
                                                                             'conf' => [
                                                                                 'id' => 'id_moduletpl_language',
                                                                                 'melisKey' => 'moduletpl_language',
-                                                                                'name' => 'Language',
+                                                                                'name' => 'tr_moduletpl_language',
                                                                                 'icon' => 'glyphicons font'
                                                                             ],
                                                                             'forward' => [

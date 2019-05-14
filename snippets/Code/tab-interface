@@ -44,7 +44,7 @@
                                                                             'conf' => [
                                                                                 'id' => 'id_moduletpl_properties_main',
                                                                                 'melisKey' => 'moduletpl_properties_main',
-                                                                                'name' => 'Properties',
+                                                                                'name' => 'tr_moduletpl_properties',
                                                                                 'icon' => 'glyphicons tag'
                                                                             ],
                                                                             'forward' => [
