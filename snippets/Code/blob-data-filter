@@ -1,0 +1,4 @@
+            // Blob data filter
+            foreach ($tableData As $key => $val){
+#TCBLOBFIELD
+            }

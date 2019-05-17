@@ -129,6 +129,11 @@ return [
     'tr_melistoolcreator_err_select_lang_key_tbl' => 'Dans la table des langages sélectionnez la clef étrangère de la table langages des pages (LTFK)',
     'tr_melistoolcreator_err_select_pri_tbl' => 'Veuillez choisir une table primaire',
     'tr_melistoolcreator_err_select_lang_tbl' => 'Veuillez choisir une table de langage',
+    'tr_melistoolcreator_err_no_primary_key' => 'La table principale n\'a pas de clef primaire',
+    'tr_melistoolcreator_err_primary_key_not_ai' => 'La clef primaire de la table principale doit être en auto increment',
+    'tr_melistoolcreator_err_lang_no_primary_key' => 'La table secondaire n\'a pas de clef primaire',
+    'tr_melistoolcreator_err_lang_primary_key_not_ai' => 'La clef primaire de la table secondaire doit être en auto increment',
+    'tr_melistoolcreator_warning_tbl_has_blob' => 'Cette table possède une colonne avec un type blob. Si vous procédez avec cette table, les colonnes ayant un type blob ne seront pas inclues dans l\'outil généré',
 
     // Target Module translation
     'tr_melistoolcreator_common_id' => 'ID',
@@ -150,4 +155,5 @@ return [
     'tr_melistoolcreator_choose_file' => 'Choisir un fichier',
     'tr_melistoolcreator_delete_item' => 'Supprimer l\'élément',
     'tr_melistoolcreator_delete_success' => 'L\'élément à été supprimé avec succès',
+    'tr_melistoolcreator_must_numeric' => 'Champ requis doit être un nombre',
 ];

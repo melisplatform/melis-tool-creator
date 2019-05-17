@@ -4,13 +4,27 @@
     </div>
     <div class="widget-body list">
         <?php if ($this->tblType == 'language-db'){?>
-            <div class="melis-tooc-reator-lang-cols-info">
+            <div class="melis-toolreator-lang-cols-alert">
                 <div class="alert alert-info">
                     <p><?php echo $this->translate('tr_melistoolcreator_pk_fk_pri_tbl_lbl') ?></p>
                     <p><?php echo $this->translate('tr_melistoolcreator_pk_fk_lang_tbl_lbl') ?></p>
                 </div>
             </div>
         <?php }?>
+
+        <?php if (!$this->hasPrimaryKey || $this->hasBlobType){ ?>
+            <div class="melis-toolreator-lang-cols-alert">
+                <div class="alert alert-danger">
+                    <?php if (!$this->hasPrimaryKey){ ?>
+                        <p><?php echo $this->translate('tr_melistoolcreator_err_no_primary_key') ?></p>
+                    <?php } ?>
+                    <?php if ($this->hasBlobType){ ?>
+                        <p><?php echo $this->translate('tr_melistoolcreator_warning_tbl_has_blob') ?></p>
+                    <?php } ?>
+                </div>
+            </div>
+        <?php } ?>
+
         <div class="table-responsive">
             <table class="table table-striped">
                 <tr>
@@ -32,7 +46,11 @@
                         foreach ($this->table As $col){
                             $pk = in_array($col['Key'], array('PRI')) ? ' <i class="fa fa-key fa-lg fa-rotate-90"></i>': '';
 
-                            echo '<tr>
+                            $warnHghlght = '';
+                            if (strpos($col['Type'], 'blob'))
+                                $warnHghlght = 'style="color: red"';
+
+                            echo '<tr '. $warnHghlght .'>
                             <td>'.$ctr++.'</td>';
 
                             if ($this->tblType == 'language-db'){
@@ -65,13 +83,7 @@
                 ?>
             </table>
 
-            <?php if (!$this->hasPrimaryKey){ ?>
-                <div class="col-sm-12">
-                    <div class="alert alert-danger">
-                        <p><?php echo $this->translate('tr_melistoolcreator_err_no_primary_key') ?></p>
-                    </div>
-                </div>
-            <?php } ?>
+
         </div>
     </div>
 </div>

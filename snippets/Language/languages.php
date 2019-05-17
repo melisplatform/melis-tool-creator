@@ -19,6 +19,8 @@
         'unable_to_save' => 'tr_melistoolcreator_unable_to_save',
         'save_success' => 'tr_melistoolcreator_save_success',
         'value_must_not_is_empty' => 'tr_melistoolcreator_value_must_not_is_empty',
+        'value_must_numeric' => 'tr_melistoolcreator_must_numeric',
+
         // Delete title and confirmation message transtions
         'delete_title' => 'tr_melistoolcreator_delete_title',
         'delete_confirm_msg' => 'tr_melistoolcreator_delete_confirm_msg',

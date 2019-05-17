@@ -129,6 +129,11 @@ return [
     'tr_melistoolcreator_err_select_lang_key_tbl' => 'In the language table select the foreign key of the CMS page languages table (LTFK)',
     'tr_melistoolcreator_err_select_pri_tbl' => 'Please select a primary database table',
     'tr_melistoolcreator_err_select_lang_tbl' => 'Please select a language table',
+    'tr_melistoolcreator_err_no_primary_key' => 'The main table has no primary key',
+    'tr_melistoolcreator_err_primary_key_not_ai' => 'The primary key of the main table must be in auto increment',
+    'tr_melistoolcreator_err_lang_no_primary_key' => 'The secondary table has no primary key',
+    'tr_melistoolcreator_err_lang_primary_key_not_ai' => 'The primary key in the secondary table must be in auto increment',
+    'tr_melistoolcreator_warning_tbl_has_blob' => 'This table has a column with a blob type. If you proceed with this table, the column(s) that has a blob type will not be included in the generated tool',
 
     // Target Module translation
     'tr_melistoolcreator_common_id' => 'ID',
@@ -149,5 +154,6 @@ return [
     'tr_melistoolcreator_language' => 'Language',
     'tr_melistoolcreator_choose_file' => 'Choose file',
     'tr_melistoolcreator_delete_item' => 'Delete item',
-    'tr_melistoolcreator_delete_success' => 'tem has been successfully deleted',
+    'tr_melistoolcreator_delete_success' => 'Item has been successfully deleted',
+    'tr_melistoolcreator_must_numeric' => 'The input must be numeric',
 ];

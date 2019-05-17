@@ -34,13 +34,17 @@
                                     if (isset($this->tblColumns)){
                                         $ctr = 0;
                                         foreach ($this->priTblCols As $col){
-                                            if (in_array($col['Field'], $this->tblColumns)){
+                                            if (in_array($col['Field'], $this->tblColumns))
                                                 $ctr++;
-                                            }
+
+                                            // Counting field with Blob type
+                                            if (strpos($col['Type'], 'blob'))
+                                                $ctr++;
+
                                         }
-                                        if (count($this->priTblCols) != $ctr){
+
+                                        if (count($this->priTblCols) != $ctr)
                                             $checkBoxIcon = "fa-square-o";
-                                        }
                                     }
                                 ?>
                                 <th><i class="fa <?php echo $checkBoxIcon ?> fa-lg tcf-fa-checkbox tcf-fa-checkall" data-col-type="pri-cols"></i></th>
@@ -56,6 +60,11 @@
                         <?php
                             $ctr = 1;
                             foreach ($this->priTblCols As $col){
+
+                                // Excluding field with Blob type
+                                if (strpos($col['Type'], 'blob'))
+                                    continue;
+
                                 $pk = in_array($col['Key'], array('PRI')) ? '<i class="fa fa-key fa-lg fa-rotate-90"></i>': '';
 
                                 $checkBox = $form->get('tcf-db-table-cols')->setCheckedValue($col['Field']);
@@ -103,13 +112,16 @@
                                 if (isset($this->tblColumns)){
                                     $ctr = 0;
                                     foreach ($this->langTblCols As $col){
-                                        if (in_array('tclangtblcol_'.$col['Field'], $this->tblColumns)){
+                                        if (in_array('tclangtblcol_'.$col['Field'], $this->tblColumns))
                                             $ctr++;
-                                        }
+
+                                        // Counting field with Blob type
+                                        if (strpos($col['Type'], 'blob'))
+                                            $ctr++;
                                     }
-                                    if (count($this->langTblCols) != $ctr){
+
+                                    if (count($this->langTblCols) != $ctr)
                                         $checkBoxIcon = "fa-square-o";
-                                    }
                                 }
                                 ?>
                                 <th><i class="fa <?php echo $checkBoxIcon ?> fa-lg tcf-fa-checkbox tcf-fa-checkall" data-col-type="lang-cols"></i></th>
@@ -126,6 +138,11 @@
                             <?php
                             $ctr = 1;
                             foreach ($this->langTblCols As $col){
+
+                                // Excluding field with Blob type
+                                if (strpos($col['Type'], 'blob'))
+                                    continue;
+
                                 $pk = in_array($col['Key'], array('PRI')) ? '<i class="fa fa-key fa-lg fa-rotate-90"></i>': '';
 
                                 // Adding prefix "tclangtblcol_" for language columns

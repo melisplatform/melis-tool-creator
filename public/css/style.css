@@ -145,9 +145,16 @@
     cursor: pointer;
 }
 
-.melis-tooc-reator-lang-cols-info{
+.melis-toolreator-lang-cols-alert{
     padding: 10px;
 }
+
+.melis-toolreator-lang-cols-alert p{
+    display: list-item;
+    list-style-type: disc;
+    list-style-position: inside;
+}
+
 
 .melis-toolcreator-disable-db-tbl-item{
     display: none;

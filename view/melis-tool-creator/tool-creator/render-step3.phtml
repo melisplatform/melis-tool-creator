@@ -28,7 +28,13 @@
         <div class="col-sm-12">
             <div class="row">
                 <div class="col-sm-6">
-                    <h3>
+                    <?php
+                        $errCss = '';
+                        if (!empty($this->hasError['tcf-db-table']))
+                            $errCss = 'style="color: red"';
+                    ?>
+
+                    <h3 <?php echo $errCss ?>>
                         <?php echo $this->translate('tr_melistoolcreator_pri_db_tbl') ?>
                         <small>
                             <i class="fa fa-info-circle pull-right tip-info" data-toggle="tooltip" data-placement="left" title="" data-original-title="<?php echo $this->translate('tr_melistoolcreator_pri_tbl_cols_select') ?>" style="padding-top: 10px;"></i>
@@ -71,9 +77,9 @@
                             ];
 
                             $errCss = '';
-
                             if (!empty($this->hasError))
                                 foreach ($this->hasError As $key => $err){
+
                                     if (in_array($key, $langKeys))
                                         $errCss = 'style="color: red"';
 

@@ -97,7 +97,7 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
         // Create module
         mkdir($moduleDir, 0777);
         $moduleFile = $this->fgc('/Module/Module.php');
-        $this->generateFile('Module.php', null, $moduleDir, $moduleFile);
+        $this->generateFile('Module.php', $moduleDir, $moduleFile);
     }
 
     /**
@@ -168,7 +168,7 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
                     $this->generateModuleConfig($targetDir);
                 }elseif ($file == 'app.interface.php'){
                     $interfaceContent = $this->fgc('/Config/app.interface.php');
-                    $this->generateFile('app.interface.php', null, $targetDir, $interfaceContent);
+                    $this->generateFile('app.interface.php', $targetDir, $interfaceContent);
                 }
             }
         }
@@ -189,7 +189,7 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
             $toolInterface = $this->sp('#TCTOOLINTERFACE', $this->fgc('/Code/'.$this->getToolType().'-lang-interface'), $toolInterface);
 
         $toolsTreeContent = $this->sp('#TCTOOLINTERFACE', $toolInterface, $toolsTreeContent);
-        $this->generateFile('app.toolstree.php', null, $targetDir, $toolsTreeContent);
+        $this->generateFile('app.toolstree.php', $targetDir, $toolsTreeContent);
     }
 
     /**
@@ -268,6 +268,13 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
         $langInputs = [];
         $langInputFilters = [];
 
+        $priTable = $this->describeTable($this->tcSteps['step3']['tcf-db-table']);
+        $langTable = [];
+        if ($this->hasLanguage()){
+            $langTable = $this->describeTable($this->tcSteps['step3']['tcf-db-table-language-tbl']);
+        }
+
+
         $formHiddenInputTplContent = $this->fgc('/Form/input-hidden');
 
         foreach ($this->tcSteps['step5']['tcf-db-table-col-editable'] As $key => $col){
@@ -319,12 +326,41 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
                 $formInputFilterTplContent = $this->fgc('/Form/input-filter');
                 $formInputFilterTplContent = $this->sp('#TCKEY', $col, $formInputFilterTplContent);
 
-                $formInputNotEmptyTplTplContent = '';
+                $formInputValidator = [];
                 if (in_array($col, $this->tcSteps['step5']['tcf-db-table-col-required'])){
                     $inputIsRequired = 'true';
-                    $formInputNotEmptyTplTplContent = $this->fgc('/Form/not-empty-filter');
+                    array_push($formInputValidator, $this->fgc('/Form/not-empty-validator'));
                 }
-                $formInputFilterTplContent = $this->sp('#TCVALIDATORS', $formInputNotEmptyTplTplContent, $formInputFilterTplContent);
+
+                $colNumTypes = [
+                    'int',
+                    'smallint',
+                    'mediumint',
+                    'tinyint',
+                    'bigint',
+                    'decimal',
+                    'float',
+                    'double',
+                    'real',
+                    'bit',
+                    'serial',
+                ];
+
+                $table = [];
+                if (is_bool(strpos($col, 'tclangtblcol_')))
+                    $table = $priTable;
+                else
+                    if ($this->hasLanguage())
+                        $table = $langTable;
+
+                if (!empty($table))
+                    foreach ($table As $ccol)
+                        if ($ccol['Field'] == $col)
+                            if (in_array(preg_replace("/\([^)]+\)/", '', $ccol['Type']), $colNumTypes))
+                                array_push($formInputValidator, $this->fgc('/Form/number-validator'));
+
+                $formInputFilterTplContent = $this->sp('#TCVALIDATORS', implode(','."\n", $formInputValidator), $formInputFilterTplContent);
+
                 $formInputFilterTplContent = $this->sp('#TCISREQUIRED', $inputIsRequired, $formInputFilterTplContent);
 
                 if (is_bool(strpos($col, 'tclangtblcol_')))
@@ -361,7 +397,7 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
         $fileContent = $this->sp('#TCFORMELEMENTS', $moduleForm, $fileContent);
         $fileContent = $this->sp('#TCTABLEACTIONBUTTONS', $tblActionButtons, $fileContent);
 
-        $this->generateFile('app.tools.php', null, $targetDir, $fileContent);
+        $this->generateFile('app.tools.php', $targetDir, $fileContent);
     }
 
     /**
@@ -384,7 +420,7 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
         $fileContent = $this->sp('#TCSERVICES', $services, $fileContent);
         $fileContent = $this->sp('#TCCONTROLLERS', $controllers, $fileContent);
 
-        $this->generateFile('module.config.php', null, $targetDir, $fileContent);
+        $this->generateFile('module.config.php', $targetDir, $fileContent);
     }
 
     /**
@@ -413,22 +449,23 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
             $modulePropCtrlFile = $this->sp('#TCFILEINPTDATA', $fileData, $modulePropCtrlFile);
             $modulePropCtrlFile = $this->sp('#TCFILEINPTFILTER', $fileFilter, $modulePropCtrlFile);
 
-
             // Date input field data filter
             $dateFields = [];
             foreach ($this->tcSteps['step5']['tcf-db-table-col-type'] As $key => $type)
-                if (strpos($type, 'Date') !== false && strpos($this->tcSteps['step5']['tcf-db-table-col-editable'][$key], 'tclangtblcol') === false)
+                if (strpos($type, 'date') !== false && strpos($this->tcSteps['step5']['tcf-db-table-col-editable'][$key], 'tclangtblcol') === false)
                     $dateFields[] = '\''.$this->tcSteps['step5']['tcf-db-table-col-editable'][$key].'\'';
 
+
+
+            $dateDataFilter = '';
             if (!empty($dateFields)){
                 $dateDataFilter = $this->fgc('/Code/date-input-data');
                 $dateDataFilter = $this->sp('#TCDATEINPUTNAME', implode(', ', $dateFields), $dateDataFilter);
-                $modulePropCtrlFile = $this->sp('#TCDATEINPTDATA', $dateDataFilter, $modulePropCtrlFile);
             }
-
+            $modulePropCtrlFile = $this->sp('#TCDATEINPTDATA', $dateDataFilter, $modulePropCtrlFile);
 
             $modulePropCtrlFile = $this->sp('#TCKEY', $pk['Field'], $modulePropCtrlFile);
-            $this->generateFile('PropertiesController.php', null, $targetDir, $modulePropCtrlFile);
+            $this->generateFile('PropertiesController.php', $targetDir, $modulePropCtrlFile);
 
             if ($this->hasLanguage()){
 
@@ -447,30 +484,56 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
                 $langCtrlContent = $this->sp('#TCFILEINPTDATA', $fileData, $langCtrlContent);
                 $langCtrlContent = $this->sp('#TCFILEINPTFILTER', $fileFilter, $langCtrlContent);
 
-
                 // Date input field data filter
                 $dateFields = [];
                 foreach ($this->tcSteps['step5']['tcf-db-table-col-type'] As $key => $type)
                     if (strpos($type, 'Date') !== false && strpos($this->tcSteps['step5']['tcf-db-table-col-editable'][$key], 'tclangtblcol') !== false)
                         $dateFields[] = '\''.$this->tcSteps['step5']['tcf-db-table-col-editable'][$key].'\'';
 
+                $dateDataFilter = '';
                 if (!empty($dateFields)){
                     $dateDataFilter = $this->fgc('/Code/date-input-data');
                     $dateDataFilter = $this->sp('#TCDATEINPUTNAME', implode(', ', $dateFields), $dateDataFilter);
-                    $langCtrlContent = $this->sp('#TCDATEINPTDATA', "\t\t".$dateDataFilter, $langCtrlContent);
                 }
+                $langCtrlContent = $this->sp('#TCDATEINPTDATA', "\t\t".$dateDataFilter, $langCtrlContent);
 
                 $langTblPK = $this->getTablePK($this->tcSteps['step3']['tcf-db-table-language-tbl']);
                 $langCtrlContent = $this->sp('#TCFKEYID', $langTblPK['Field'], $langCtrlContent);
 
-                $this->generateFile('LanguageController.php', null, $targetDir, $langCtrlContent);
+                $this->generateFile('LanguageController.php', $targetDir, $langCtrlContent);
             }
         }
 
         $listCtrlFile = $this->fgc('/Controller/ListController.php');
         $modalAction = ($this->getToolType() == 'modal') ? $this->fgc('/Code/modal-action') : '';
         $listCtrlFile = $this->sp('#TCMODALVIEWMODEL', $modalAction, $listCtrlFile);
-        $this->generateFile('ListController.php', null, $targetDir, $listCtrlFile);
+
+        // Blob input field data filter
+        $blobFields = [];
+        // Primary talbe
+        foreach ($this->describeTable($this->tcSteps['step3']['tcf-db-table']) As $col)
+            if (!is_bool(strpos($col['Type'], 'blob')))
+                array_push($blobFields, $col['Field']);
+        // language table
+        if ($this->hasLanguage())
+            foreach ($this->describeTable($this->tcSteps['step3']['tcf-db-table-language-tbl']) As $col)
+                if (!is_bool(strpos($col['Type'], 'blob')))
+                    array_push($blobFields, $col['Field']);
+
+        $blobFilter = '';
+        if (!empty($blobFields)){
+            $blobFilter = $this->fgc('/Code/blob-data-filter');
+            $blobData = [];
+            foreach ($blobFields As $col)
+                array_push($blobData, "\t\t\t\t".'unset($tableData[$key][\''.$col.'\']);');
+
+            $blobDataStr = implode("\n", $blobData);
+            $blobFilter = $this->sp('#TCBLOBFIELD', $blobDataStr, $blobFilter);
+        }
+
+        $listCtrlFile = $this->sp('#TCBLOBDATAFILTER', $blobFilter, $listCtrlFile);
+
+        $this->generateFile('ListController.php', $targetDir, $listCtrlFile);
     }
 
     private function generateModuleListeners($targetDir)
@@ -481,7 +544,7 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
         if ($this->hasLanguage())
             $saveLangDispatch = $this->fgc('/Code/save-lang-dispatch');
         $saveListener = $this->sp('#TCSAVELISTENER', $saveLangDispatch, $saveListener);
-        $this->generateFile('SavePropertiesListener.php', null, $targetDir, $saveListener);
+        $this->generateFile('SavePropertiesListener.php', $targetDir, $saveListener);
 
         // Delete Listener
         $deleteListener = $this->fgc('/Listener/DeleteListener');
@@ -489,7 +552,7 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
         if ($this->hasLanguage())
             $deleteLangDispatch = $this->fgc('/Code/delete-lang-dispatch');
         $deleteListener = $this->sp('#TCDELETELISTENER', $deleteLangDispatch, $deleteListener);
-        $this->generateFile('DeleteListener.php', null, $targetDir, $deleteListener);
+        $this->generateFile('DeleteListener.php', $targetDir, $deleteListener);
     }
 
 
@@ -550,7 +613,7 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
                     $fileContent = $this->fgc('/View/'.$fileName);
                     // Renaming view file for tool properties
                     $fileName = str_replace('prop-', '', $fileName);
-                    $this->generateFile($fileName, null, $viewDir, $fileContent);
+                    $this->generateFile($fileName, $viewDir, $fileContent);
                 }
             }
         }
@@ -581,7 +644,7 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
         $fileContent = $this->sp('#TCSAVE', $saveScript, $fileContent);
         $fileContent = $this->sp('#TCEDIT', $ediBtnScript, $fileContent);
         $fileContent = $this->sp('#TCCLOSETABDELETE', $closeTabDelete, $fileContent);
-        $this->generateFile('tool.js', null, $targetDir, $fileContent);
+        $this->generateFile('tool.js', $targetDir, $fileContent);
     }
 
     /**
@@ -665,7 +728,7 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
             $fileContent = $this->fgc('/Language/language-tpl.php');
             $fileContent = $this->sp('#TCTRANSLATIONS', $strTranslations, $fileContent);
 
-            $this->generateFile($locale.'.interface.php', null, $targetDir, $fileContent);
+            $this->generateFile($locale.'.interface.php', $targetDir, $fileContent);
         }
     }
 
@@ -675,8 +738,9 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
      */
     private function generateModuleModel($targetDir)
     {
-        $moduleModelFiles = '/Model/ModuleTpl';
-        $this->generateFile($this->moduleName().'.php', $moduleModelFiles, $targetDir);
+        $fileContent = $this->fgc('/Model/ModuleTpl');
+
+        $this->generateFile($this->moduleName().'.php', $targetDir, $fileContent);
     }
 
     /**
@@ -720,7 +784,7 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
 
         $fileContent = $this->sp('#TCPJOINSYNTX', $JoinSyntx, $fileContent);
         $fileContent = $this->sp('#TCPPRIMARYTABLE', $this->tcSteps['step3']['tcf-db-table'], $fileContent);
-        $this->generateFile($moduleName.'Table.php', null, $targetDir, $fileContent);
+        $this->generateFile($moduleName.'Table.php', $targetDir, $fileContent);
 
         if ($this->hasLanguage()){
 
@@ -743,7 +807,7 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
             $fileContent = $this->sp('#TCPFKEY', $this->tcSteps['step3']['tcf-db-table-language-pri-fk'], $fileContent);
             $fileContent = $this->sp('#TCPLANGFKEY', $this->tcSteps['step3']['tcf-db-table-language-lang-fk'], $fileContent);
 
-            $this->generateFile($moduleName.'LangTable.php', null, $targetDir, $fileContent);
+            $this->generateFile($moduleName.'LangTable.php', $targetDir, $fileContent);
         }
     }
 
@@ -760,12 +824,12 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
         $fileContent = $this->fgc('/Model/Tables/Factory/ModuleTplTableFactory');
         $fileContent = str_replace('#TCDATABASETABLE', $tcfDbTbl, $fileContent);
 
-        $this->generateFile($moduleName.'TableFactory.php', null, $targetDir, $fileContent);
+        $this->generateFile($moduleName.'TableFactory.php', $targetDir, $fileContent);
 
         if ($this->hasLanguage()){
             $fileContent = $this->fgc('/Model/Tables/Factory/ModuleTplLangTableFactory');
             $fileContent = str_replace('#TCDATABASETABLE', $this->tcSteps['step3']['tcf-db-table-language-tbl'], $fileContent);
-            $this->generateFile($moduleName.'LangTableFactory.php', null, $targetDir, $fileContent);
+            $this->generateFile($moduleName.'LangTableFactory.php', $targetDir, $fileContent);
         }
     }
 
@@ -773,11 +837,10 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
      * This method generate files to the directory
      *
      * @param string $fileName - file name
-     * @param string $sourceDir - directory of the source
      * @param string $targetDir - the target directory where the file will created
      * @param string $fileContent - will be the content of the file created
      */
-    private function generateFile($fileName, $sourceDir = null, $targetDir, $fileContent = null)
+    private function generateFile($fileName, $targetDir, $fileContent = null)
     {
         // Tool creator session container
         $container = new Container('melistoolcreator');
@@ -841,17 +904,13 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
         // Tool creator session container
         $container = new Container('melistoolcreator');
         $tcSteps = $container['melis-toolcreator'];
-
-        /**
-         * Checking if the database table selected ha a primary key,
-         * else the update and delete feature would not be available to the
-         * generated tool
-         */
         $tcfDbTbl = $tcSteps['step3']['tcf-db-table'];
-        $sql = 'DESCRIBE '.$tcfDbTbl;
-        $adapter = $this->getServiceLocator()->get('Zend\Db\Adapter\Adapter');
-        $table = $adapter->query($sql, [5]);
-        $selectedTbl = $table->toArray();
+        return $this->getTablePK($tcfDbTbl);
+    }
+
+    private function getTablePK($table)
+    {
+        $selectedTbl = $this->describeTable($table);
 
         $primaryKey = [];
         foreach ($selectedTbl As $col){
@@ -864,24 +923,12 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
         return $primaryKey;
     }
 
-    private function getTablePK($table)
+    public function describeTable($table)
     {
         $sql = 'DESCRIBE '.$table;
         $adapter = $this->getServiceLocator()->get('Zend\Db\Adapter\Adapter');
         $tableAdapter = $adapter->query($sql, [5]);
-        $selectedTbl = $tableAdapter->toArray();
-
-        $primaryKey = [];
-        foreach ($selectedTbl As $col){
-            if ($col['Key'] == 'PRI'){
-                $primaryKey = $col;
-                break;
-            }
-        }
-
-        new \Zend\View\Renderer\PhpRenderer;
-
-        return $primaryKey;
+        return $tableAdapter->toArray();
     }
 
     /**

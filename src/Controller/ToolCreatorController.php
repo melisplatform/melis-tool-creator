@@ -507,12 +507,22 @@ class ToolCreatorController extends AbstractActionController
                 $table = $adapter->query($sql, [5]);
 
                 $hasPrimaryKey = false;
+                $hasPrimaryKeyIdAI = false;
+                $hasNotNullableBlobType = false;
                 foreach ($table->toArray() As $tbl){
-                    if ($tbl['Key'] == 'PRI')
+                    if ($tbl['Key'] == 'PRI'){
                         $hasPrimaryKey = true;
+                        if ($tbl['Extra'] == 'auto_increment')
+                            $hasPrimaryKeyIdAI = true;
+                    }
+
+                    if (strpos($tbl['Type'], 'blob'))
+                        if ($tbl['Null'] == 'No')
+                            $hasNotNullableBlobType = true;
+
                 }
 
-                if ($hasPrimaryKey){
+                if ($hasPrimaryKey && $hasPrimaryKeyIdAI && !$hasNotNullableBlobType){
                     if (!empty($container['melis-toolcreator']['step3']['tcf-db-table'])){
                         /**
                          * If the selected table is changed,
@@ -531,10 +541,22 @@ class ToolCreatorController extends AbstractActionController
                     $container['melis-toolcreator']['step3']['tcf-db-table'] = $formData['tcf-db-table'];
                 }else{
                     $translator = $this->getServiceLocator()->get('translator');
+
                     // adding a variable to ViewModel to flag an error
-                    $results['hasError']['tcf-db-table'] = [
-                        'noPrimaryKey' => $translator->translate('Primary table has no Primary key')
-                    ];
+                    if (!$hasPrimaryKey)
+                        $results['hasError']['tcf-db-table'] = [
+                            'priTblNoPrimaryKey' => $translator->translate('tr_melistoolcreator_err_no_primary_key')
+                        ];
+
+                    if (!$hasPrimaryKeyIdAI)
+                        $results['hasError']['tcf-db-table'] = [
+                            'priTblNoPrimaryKeyNotAI' => $translator->translate('tr_melistoolcreator_err_primary_key_not_ai')
+                        ];
+
+                    if ($hasNotNullableBlobType)
+                        $results['hasError']['tcf-db-table'] = [
+                            'notNullableBlobType' => $translator->translate('Table column that has BLOB type will ignore and will appear on the created tool')
+                        ];
                 }
             }
 
@@ -638,19 +660,30 @@ class ToolCreatorController extends AbstractActionController
                 $adapter = $this->getServiceLocator()->get('Zend\Db\Adapter\Adapter');
                 $table = $adapter->query($sql, [5]);
 
+                $hasPrimaryKeyIdAI = false;
                 $hasPrimaryKey = false;
                 foreach ($table->toArray() As $tbl){
-                    if ($tbl['Key'] == 'PRI')
+                    if ($tbl['Key'] == 'PRI'){
                         $hasPrimaryKey = true;
+                        if ($tbl['Extra'] == 'auto_increment')
+                            $hasPrimaryKeyIdAI = true;
+                    }
                 }
 
                 if (!$hasPrimaryKey){
                     $results['hasError'] = [];
                     $translator = $this->getServiceLocator()->get('translator');
                     // adding a variable to ViewModel to flag an error
-                    $results['hasError']['tcf-db-table'] = [
-                        'noPrimaryKey' => $translator->translate('Language table has no Primary key')
-                    ];
+
+                    if (!$hasPrimaryKey)
+                        $results['hasError']['tcf-db-table'] = [
+                            'langTblNoPrimaryKey' => $translator->translate('tr_melistoolcreator_err_lang_no_primary_key')
+                        ];
+
+                    if (!$hasPrimaryKeyIdAI)
+                        $results['hasError']['tcf-db-table'] = [
+                            'langTblNoPrimaryKeyNotAI' => $translator->translate('tr_melistoolcreator_err_lang_primary_key_not_ai')
+                        ];
                 }
             }
 
@@ -710,13 +743,18 @@ class ToolCreatorController extends AbstractActionController
             $tables = $adapter->query($sql, [5])->toArray();
 
             $hasPrimaryKey = false;
+            $hasBlobType = false;
             foreach ($tables As $tbl){
                 if ($tbl['Key'] == 'PRI')
                     $hasPrimaryKey = true;
+
+                if (strpos($tbl['Type'], 'blob'))
+                    $hasBlobType = true;
             }
 
             $view->table = $tables;
             $view->hasPrimaryKey = $hasPrimaryKey;
+            $view->hasBlobType = $hasBlobType;
         }
 
 
@@ -876,6 +914,9 @@ class ToolCreatorController extends AbstractActionController
          * and also the type of the field if it s editable
          */
         foreach($tableCols As $key => $val){
+
+
+
             $editableIcon = 'fa fa-lg tcf-fa-checkbox-editable';
             $requiredIcon = 'fa fa-lg tcf-fa-checkbox-required';
             $iconTag = '<i class="%s"></i>';
@@ -1324,6 +1365,14 @@ class ToolCreatorController extends AbstractActionController
         $toolCreatorSrv = $this->getServiceLocator()->get('MelisToolCreatorService');
         $res = $toolCreatorSrv->createTool();
         print_r($res->getVariables());
+        die();
+    }
+
+    public function desAction()
+    {
+        $toolCreatorSrv = $this->getServiceLocator()->get('MelisToolCreatorService');
+        $res = $toolCreatorSrv->describeTable('melis_cms_lang');
+        print_r($res);
         die();
     }
 }
