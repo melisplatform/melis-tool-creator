@@ -34,7 +34,7 @@ return [
 
     // Steps
     'tr_melistoolcreator_module' => 'Tool',
-    'tr_melistoolcreator_tcf-name tooltip' => 'Name of the tool. Alphanumeric and underscore are the only valid characters allowed. The tool name cannot start by a number neither contain any space',
+    'tr_melistoolcreator_tcf-name tooltip' => 'Name of the tool. Only alphabetic characters are authorized',
     'tr_melistoolcreator_tcf_tool_type' => 'Tool type',
     'tr_melistoolcreator_tcf_tool_type tooltip' => 'Select the tool type you want to create',
     'tr_melistoolcreator_module_desc' => 'Enter the name of the tool and select its type',

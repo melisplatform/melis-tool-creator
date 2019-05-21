@@ -34,7 +34,7 @@ return [
 
     // Steps
     'tr_melistoolcreator_module' => 'Outil',
-    'tr_melistoolcreator_tcf-name tooltip' => 'Nom de l\'outil. Les caractères autorisés sont alphanumerique et underscore. Le nom de l\'outil ne peut pas commencer par un numéro ni ne contenir d\'espace',
+    'tr_melistoolcreator_tcf-name tooltip' => 'Nom de l\'outil. Seul les caractères alphabétiques sont autorisés',
     'tr_melistoolcreator_tcf_tool_type' => 'Type d\'outil',
     'tr_melistoolcreator_tcf_tool_type tooltip' => 'Sélectionnez le type d\'outil que vous souhaitez créer',
     'tr_melistoolcreator_module_desc' => 'Saisissez le nom de l\'outil et sélectionnez son type',
