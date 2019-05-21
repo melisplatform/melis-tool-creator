@@ -92,22 +92,19 @@ $(function(){
     }
 
     $body.on("click", ".tc-reload-dbtbl-cached", function(){
-        var reloadBtn = $(this);
-        reloadBtn.attr("disabled", true);
 
-        $(".melis-toolcreator-steps-table-list").append(loader);
+        $("#id_melistoolcreator_steps").append(loader);
 
-        $.post('/melis/tool-creator-reload-dbtbl-cached', {reloadDbTblCached : true, selectedTbl: $(".melis-toolcreator-steps-table-list input[name='tcf-db-table']").val()}).done(function(res){
-
-            reloadBtn.attr("disabled", false);
-
-            $(".melis-toolcreator-steps-table-list #loader img").removeClass('spinning-cog').addClass('shrinking-cog');
+        $.post('/melis/tool-creator-validate-cur-step', {
+            reloadDbTblCached: true,
+            curStep: 2,
+            nxtStep: 3
+        }).done(function(res){
 
             setTimeout(function(){
+                $("#id_melistoolcreator_steps #loader").remove();
 
-                $(".melis-toolcreator-steps-table-list #loader").remove();
-
-                $(".melis-toolcreator-steps-table-list").html(res.html);
+                $("#id_melistoolcreator_steps").html(res);
 
             }, 500);
         });

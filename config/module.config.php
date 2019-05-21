@@ -55,16 +55,6 @@ return [
                             ],
                         ],
                     ],
-                    'tool-creator-reload-dbtbl-cached' => [
-                        'type' => 'Segment',
-                        'options' => [
-                            'route' => 'tool-creator-reload-dbtbl-cached',
-                            'defaults' => [
-                                'controller' => 'MelisToolCreator\Controller\ToolCreator',
-                                'action' => 'renderStep3PrimaryDbTables',
-                            ],
-                        ],
-                    ],
                 ],
             ],
         ],
