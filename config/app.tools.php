@@ -85,7 +85,7 @@ return [
                                 [
                                     'name' => 'regex',
                                     'options' => [
-                                        'pattern' => '/^[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$/',
+                                        'pattern' => '/^[a-zA-Z\x7f-\xff][a-zA-Z\x7f-\xff]*$/',
                                         'messages' => [\Zend\Validator\Regex::NOT_MATCH => 'tr_melistoolcreator_err_invalid_module'],
                                         'encoding' => 'UTF-8',
                                     ],

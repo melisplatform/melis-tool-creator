@@ -116,7 +116,7 @@ return [
 
     // Error messages
     'tr_melistoolcreator_err_message' => 'Impossible de passer à l\'étape suivante, veuillez réessayer',
-    'tr_melistoolcreator_err_invalid_module' => 'Les caractères autorisés sont alphanumerique et underscore. Le nom de l\'outil ne peut pas commencer par un numéro ni ne contenir d\'espace',
+    'tr_melistoolcreator_err_invalid_module' => 'Seul les caractères alphabétiques sont autorisés',
     'tr_melistoolcreator_err_empty' => 'Champ requis, ne peut être vide',
     'tr_melistoolcreator_err_long_50' => 'Valeur trop longue, elle doit être de moins de 50 caractères',
     'tr_melistoolcreator_err_long_100' => 'Valeur trop longue, elle doit être de moins de 100 caractères',
@@ -134,6 +134,8 @@ return [
     'tr_melistoolcreator_err_lang_no_primary_key' => 'La table secondaire n\'a pas de clef primaire',
     'tr_melistoolcreator_err_lang_primary_key_not_ai' => 'La clef primaire de la table secondaire doit être en auto increment',
     'tr_melistoolcreator_warning_tbl_has_blob' => 'Cette table possède une colonne avec un type blob. Si vous procédez avec cette table, les colonnes ayant un type blob ne seront pas inclues dans l\'outil généré',
+    'tr_melistoolcreator_err_blob_type_found' => 'La table principale sélectionnée à une colonne de type blob réglée sur NOT NULL. Cet outil ne prend pas en charge ce type de colonne. Pour continuer, vous devez changer sa valeur à NULL en DB',
+    'tr_melistoolcreator_err_blob_type_found_lang_tbl' => 'La table secondaire sélectionnée à une colonne de type blob réglée sur NOT NULL. Cet outil ne prend pas en charge ce type de colonne. Pour continuer, vous devez changer sa valeur à NULL en DB',
 
     // Target Module translation
     'tr_melistoolcreator_common_id' => 'ID',

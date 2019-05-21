@@ -116,7 +116,7 @@ return [
 
     // Error messages
     'tr_melistoolcreator_err_message' => 'Unable to proceed to the next step, please try again',
-    'tr_melistoolcreator_err_invalid_module' => 'Alphanumeric and underscore are the only valid characters allowed. The tool name cannot start by a number neither contain any space',
+    'tr_melistoolcreator_err_invalid_module' => 'Only alphabetic characters are authorized',
     'tr_melistoolcreator_err_empty' => 'The input is required and cannot be empty',
     'tr_melistoolcreator_err_long_50' => 'Value is too long, it should be less than 50 characters',
     'tr_melistoolcreator_err_long_100' => 'Value is too long, it should be less than 100 characters',
@@ -134,6 +134,8 @@ return [
     'tr_melistoolcreator_err_lang_no_primary_key' => 'The secondary table has no primary key',
     'tr_melistoolcreator_err_lang_primary_key_not_ai' => 'The primary key in the secondary table must be in auto increment',
     'tr_melistoolcreator_warning_tbl_has_blob' => 'This table has a column with a blob type. If you proceed with this table, the column(s) that has a blob type will not be included in the generated tool',
+    'tr_melistoolcreator_err_blob_type_found_pri_tbl' => 'The main table selected has a blob type column%s that is set to NOT NULL. This tool doesn\'t support this type of column. To continue, you must set it to NULL only in DB',
+    'tr_melistoolcreator_err_blob_type_found_lang_tbl' => 'The secondary table selected has a blob type column%s that is set to NOT NULL. This tool doesn\'t support this type of column. To continue, you must set it to NULL only in DB',
 
     // Target Module translation
     'tr_melistoolcreator_common_id' => 'ID',

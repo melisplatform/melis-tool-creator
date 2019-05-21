@@ -38,7 +38,7 @@
                                                 $ctr++;
 
                                             // Counting field with Blob type
-                                            if (strpos($col['Type'], 'blob'))
+                                            if (!is_bool(strpos($col['Type'], 'blob')))
                                                 $ctr++;
 
                                         }
@@ -62,7 +62,7 @@
                             foreach ($this->priTblCols As $col){
 
                                 // Excluding field with Blob type
-                                if (strpos($col['Type'], 'blob'))
+                                if (!is_bool(strpos($col['Type'], 'blob')))
                                     continue;
 
                                 $pk = in_array($col['Key'], array('PRI')) ? '<i class="fa fa-key fa-lg fa-rotate-90"></i>': '';
@@ -108,21 +108,21 @@
                             <thead>
                             <tr>
                                 <?php
-                                $checkBoxIcon = "fa-check-square-o text-success";
-                                if (isset($this->tblColumns)){
-                                    $ctr = 0;
-                                    foreach ($this->langTblCols As $col){
-                                        if (in_array('tclangtblcol_'.$col['Field'], $this->tblColumns))
-                                            $ctr++;
+                                    $checkBoxIcon = "fa-check-square-o text-success";
+                                    if (isset($this->tblColumns)){
+                                        $ctr = 0;
+                                        foreach ($this->langTblCols As $col){
+                                            if (in_array('tclangtblcol_'.$col['Field'], $this->tblColumns))
+                                                $ctr++;
 
-                                        // Counting field with Blob type
-                                        if (strpos($col['Type'], 'blob'))
-                                            $ctr++;
+                                            // Counting field with Blob type
+                                            if (!is_bool(strpos($col['Type'], 'blob')))
+                                                $ctr++;
+                                        }
+
+                                        if (count($this->langTblCols) != $ctr)
+                                            $checkBoxIcon = "fa-square-o";
                                     }
-
-                                    if (count($this->langTblCols) != $ctr)
-                                        $checkBoxIcon = "fa-square-o";
-                                }
                                 ?>
                                 <th><i class="fa <?php echo $checkBoxIcon ?> fa-lg tcf-fa-checkbox tcf-fa-checkall" data-col-type="lang-cols"></i></th>
                                 <th>#</th>
@@ -136,51 +136,51 @@
                             </tr>
                             </thead>
                             <?php
-                            $ctr = 1;
-                            foreach ($this->langTblCols As $col){
+                                $ctr = 1;
+                                foreach ($this->langTblCols As $col){
 
-                                // Excluding field with Blob type
-                                if (strpos($col['Type'], 'blob'))
-                                    continue;
+                                    // Excluding field with Blob type
+                                    if (!is_bool(strpos($col['Type'], 'blob')))
+                                        continue;
 
-                                $pk = in_array($col['Key'], array('PRI')) ? '<i class="fa fa-key fa-lg fa-rotate-90"></i>': '';
+                                    $pk = in_array($col['Key'], array('PRI')) ? '<i class="fa fa-key fa-lg fa-rotate-90"></i>': '';
 
-                                // Adding prefix "tclangtblcol_" for language columns
-                                $langCOls = 'tclangtblcol_'.$col['Field'];
-                                $checkBox = $form->get('tcf-db-table-cols')->setCheckedValue($langCOls);
+                                    // Adding prefix "tclangtblcol_" for language columns
+                                    $langCOls = 'tclangtblcol_'.$col['Field'];
+                                    $checkBox = $form->get('tcf-db-table-cols')->setCheckedValue($langCOls);
 
-                                $checkBoxIcon = "fa-check-square-o text-success";
-                                $checkBox->setChecked(true);
+                                    $checkBoxIcon = "fa-check-square-o text-success";
+                                    $checkBox->setChecked(true);
 
-                                if (!empty($this->tblColumns)){
-                                    if (!in_array($langCOls, $this->tblColumns)){
-                                        $checkBox->setChecked(false);
-                                        $checkBoxIcon = "fa-square-o";
+                                    if (!empty($this->tblColumns)){
+                                        if (!in_array($langCOls, $this->tblColumns)){
+                                            $checkBox->setChecked(false);
+                                            $checkBoxIcon = "fa-square-o";
+                                        }
                                     }
-                                }
 
-                                $fk = null;
-                                if (!empty($this->fkCols)){
-                                    if (in_array('tclangtblcol_'.$col['Field'], $this->fkCols)){
-                                        $fk = '<i class="fa fa-key fa-lg fa-rotate-90 fa-key-fk"></i>';
+                                    $fk = null;
+                                    if (!empty($this->fkCols)){
+                                        if (in_array('tclangtblcol_'.$col['Field'], $this->fkCols)){
+                                            $fk = '<i class="fa fa-key fa-lg fa-rotate-90 fa-key-fk"></i>';
+                                        }
                                     }
-                                }
 
-                                echo '<tr>
-                                        <td>
-                                            <i class="fa '.$checkBoxIcon.' fa-lg tcf-fa-checkbox tcf-fa-checkitem" data-col-type="lang-cols"></i>
-                                            '.$this->formElement($checkBox).'
-                                        </td>
-                                        <td>'.$ctr++.'</td>
-                                        <td>'.$pk.'</td>
-                                        <td>'.$fk.'</td>
-                                        <td><b>'.$col['Field'].'</b></td>
-                                        <td>'.$col['Type'].'</td>
-                                        <td>'.$col['Null'].'</td>
-                                        <td>'.$col['Default'].'</td>
-                                        <td>'.$col['Extra'].'</td>
-                                    </tr>';
-                            }
+                                    echo '<tr>
+                                            <td>
+                                                <i class="fa '.$checkBoxIcon.' fa-lg tcf-fa-checkbox tcf-fa-checkitem" data-col-type="lang-cols"></i>
+                                                '.$this->formElement($checkBox).'
+                                            </td>
+                                            <td>'.$ctr++.'</td>
+                                            <td>'.$pk.'</td>
+                                            <td>'.$fk.'</td>
+                                            <td><b>'.$col['Field'].'</b></td>
+                                            <td>'.$col['Type'].'</td>
+                                            <td>'.$col['Null'].'</td>
+                                            <td>'.$col['Default'].'</td>
+                                            <td>'.$col['Extra'].'</td>
+                                        </tr>';
+                                }
                             ?>
                         </table>
                     </div>

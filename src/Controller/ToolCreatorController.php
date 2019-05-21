@@ -508,21 +508,22 @@ class ToolCreatorController extends AbstractActionController
 
                 $hasPrimaryKey = false;
                 $hasPrimaryKeyIdAI = false;
-                $hasNotNullableBlobType = false;
+                $notNullableBlobType = [];
                 foreach ($table->toArray() As $tbl){
+
                     if ($tbl['Key'] == 'PRI'){
                         $hasPrimaryKey = true;
                         if ($tbl['Extra'] == 'auto_increment')
                             $hasPrimaryKeyIdAI = true;
                     }
 
-                    if (strpos($tbl['Type'], 'blob'))
-                        if ($tbl['Null'] == 'No')
-                            $hasNotNullableBlobType = true;
-
+                    if (!is_bool(strpos($tbl['Type'], 'blob')))
+                        if ($tbl['Null'] == 'NO'){
+                            array_push($notNullableBlobType, '<b>'. $tbl['Field'] .'</b>');
+                        }
                 }
 
-                if ($hasPrimaryKey && $hasPrimaryKeyIdAI && !$hasNotNullableBlobType){
+                if ($hasPrimaryKey && $hasPrimaryKeyIdAI && empty($notNullableBlobType)){
                     if (!empty($container['melis-toolcreator']['step3']['tcf-db-table'])){
                         /**
                          * If the selected table is changed,
@@ -549,14 +550,16 @@ class ToolCreatorController extends AbstractActionController
                         ];
 
                     if (!$hasPrimaryKeyIdAI)
-                        $results['hasError']['tcf-db-table'] = [
-                            'priTblNoPrimaryKeyNotAI' => $translator->translate('tr_melistoolcreator_err_primary_key_not_ai')
-                        ];
+                        $results['hasError']['tcf-db-table']['priTblNoPrimaryKeyNotAI'] = $translator->translate('tr_melistoolcreator_err_primary_key_not_ai');
 
-                    if ($hasNotNullableBlobType)
-                        $results['hasError']['tcf-db-table'] = [
-                            'notNullableBlobType' => $translator->translate('Table column that has BLOB type will ignore and will appear on the created tool')
-                        ];
+                    if (!empty($notNullableBlobType)){
+                        if (count($notNullableBlobType) > 1)
+                            $errMsg = 's '.implode(', ', $notNullableBlobType);
+                        else
+                            $errMsg = ' '.implode(',', $notNullableBlobType);
+
+                        $results['hasError']['tcf-db-table']['notNullableBlobType'] = sprintf($translator->translate('tr_melistoolcreator_err_blob_type_found_pri_tbl'), $errMsg);
+                    }
                 }
             }
 
@@ -662,28 +665,42 @@ class ToolCreatorController extends AbstractActionController
 
                 $hasPrimaryKeyIdAI = false;
                 $hasPrimaryKey = false;
+                $notNullableBlobType = [];
                 foreach ($table->toArray() As $tbl){
                     if ($tbl['Key'] == 'PRI'){
                         $hasPrimaryKey = true;
                         if ($tbl['Extra'] == 'auto_increment')
                             $hasPrimaryKeyIdAI = true;
                     }
+
+                    if (!is_bool(strpos($tbl['Type'], 'blob')))
+                        if ($tbl['Null'] == 'NO'){
+                            array_push($notNullableBlobType, '<b>'. $tbl['Field'] .'</b>');
+                        }
                 }
 
-                if (!$hasPrimaryKey){
-                    $results['hasError'] = [];
+                if (!$hasPrimaryKey || !$hasPrimaryKeyIdAI || !empty($notNullableBlobType)){
+
+                    if (empty($results['hasError']))
+                        $results['hasError'] = [];
+
                     $translator = $this->getServiceLocator()->get('translator');
                     // adding a variable to ViewModel to flag an error
 
                     if (!$hasPrimaryKey)
-                        $results['hasError']['tcf-db-table'] = [
-                            'langTblNoPrimaryKey' => $translator->translate('tr_melistoolcreator_err_lang_no_primary_key')
-                        ];
+                        $results['hasError']['tcf-db-table']['langTblNoPrimaryKey'] = $translator->translate('tr_melistoolcreator_err_lang_no_primary_key');
 
                     if (!$hasPrimaryKeyIdAI)
-                        $results['hasError']['tcf-db-table'] = [
-                            'langTblNoPrimaryKeyNotAI' => $translator->translate('tr_melistoolcreator_err_lang_primary_key_not_ai')
-                        ];
+                        $results['hasError']['tcf-db-table']['langTblNoPrimaryKeyNotAI'] = $translator->translate('tr_melistoolcreator_err_lang_primary_key_not_ai');
+
+                    if (!empty($notNullableBlobType)){
+                        if (count($notNullableBlobType) > 1)
+                            $errMsg = 's '.implode(', ', $notNullableBlobType);
+                        else
+                            $errMsg = ' '.implode(',', $notNullableBlobType);
+
+                        $results['hasError']['tcf-db-table']['notNullableBlobType'] = sprintf($translator->translate('tr_melistoolcreator_err_blob_type_found_lang_tbl'), $errMsg);
+                    }
                 }
             }
 
@@ -748,7 +765,7 @@ class ToolCreatorController extends AbstractActionController
                 if ($tbl['Key'] == 'PRI')
                     $hasPrimaryKey = true;
 
-                if (strpos($tbl['Type'], 'blob'))
+                if (!is_bool(strpos($tbl['Type'], 'blob')))
                     $hasBlobType = true;
             }
 
@@ -1360,6 +1377,13 @@ class ToolCreatorController extends AbstractActionController
         exit;
     }
 
+    public function strAction()
+    {
+        $toolCreatorSrv = $this->getServiceLocator()->get('MelisToolCreatorService');
+        echo 'meLisModuLe: '.$toolCreatorSrv->generateModuleNameCase('MelisModuleJeJejE');
+        exit;
+    }
+
     public function testAction()
     {
         $toolCreatorSrv = $this->getServiceLocator()->get('MelisToolCreatorService');
@@ -1371,7 +1395,7 @@ class ToolCreatorController extends AbstractActionController
     public function desAction()
     {
         $toolCreatorSrv = $this->getServiceLocator()->get('MelisToolCreatorService');
-        $res = $toolCreatorSrv->describeTable('melis_cms_lang');
+        $res = $toolCreatorSrv->describeTable('melis_cms_page_published');
         print_r($res);
         die();
     }

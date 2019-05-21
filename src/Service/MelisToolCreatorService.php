@@ -937,10 +937,8 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
      * @return string
      */
     public function generateModuleNameCase($str) {
-        $str = preg_replace('/([a-z])([A-Z])/', "$1 $2", $str);
-        $str = str_replace(['-', '_'], ' ', $str);
-        $str = str_replace(' ', '', ucwords(strtolower($str)));
-        $str = strtolower(substr($str,0,1)).substr($str,1);
+        $str = preg_replace('/([a-z])([A-Z])/', "$1$2", $str);
+        $str = str_replace(['-', '_'], '', ucwords(strtolower($str)));
         $str = ucfirst($str);
         $str = $this->cleanString($str);
         return $str;

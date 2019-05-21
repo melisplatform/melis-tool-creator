@@ -34,7 +34,7 @@
                                 foreach ($this->tableCols As $col){
 
                                     // Excluding field with Blob type
-                                    if (strpos($col['Type'], 'blob'))
+                                    if (!is_bool(strpos($col['Type'], 'blob')))
                                         continue;
 
                                     $editableCheckBox = $form->get('tcf-db-table-col-editable')->setCheckedValue($col['Field']);
@@ -121,7 +121,7 @@
                                     foreach ($this->langTblCols As $col){
 
                                         // Excluding field with Blob type
-                                        if (strpos($col['Type'], 'blob'))
+                                        if (!is_bool(strpos($col['Type'], 'blob')))
                                             continue;
 
                                         // Adding prefix "tclangtblcol_" for language columns

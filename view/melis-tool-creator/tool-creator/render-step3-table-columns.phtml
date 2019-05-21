@@ -47,7 +47,7 @@
                             $pk = in_array($col['Key'], array('PRI')) ? ' <i class="fa fa-key fa-lg fa-rotate-90"></i>': '';
 
                             $warnHghlght = '';
-                            if (strpos($col['Type'], 'blob'))
+                            if (!is_bool(strpos($col['Type'], 'blob')))
                                 $warnHghlght = 'style="color: red"';
 
                             echo '<tr '. $warnHghlght .'>
@@ -63,7 +63,7 @@
                                 if ($this->ltfk == $col['Field'])
                                     $ltfkCheck = 'fa-check-square-o text-success';
 
-                                if ($this->hasPrimaryKey){
+                                if ($this->hasPrimaryKey && $col['Extra'] != 'auto_increment'){
                                     echo '<td class="text-center"><i class="fa '.$ptfkCheck.' fa-lg melis-tc-lang-tbl-pt-fk" data-tbl-name="'. $col['Field'] .'" data-field-name="tcf-db-table-language-pri-fk"></i></td>';
                                     echo '<td class="text-center"><i class="fa '.$ltfkCheck.' fa-lg melis-tc-lang-tbl-lt-fk" data-tbl-name="'. $col['Field'] .'" data-field-name="tcf-db-table-language-lang-fk"></i></td>';
                                 }else{
