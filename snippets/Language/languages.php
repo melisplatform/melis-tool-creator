@@ -14,6 +14,7 @@
         'common_activate' => 'tr_melistoolcreator_activate',
         'common_deactivate' => 'tr_melistoolcreator_deactivate',
         'common_choose_file' => 'tr_melistoolcreator_choose_file',
+        'common_choose' => 'tr_melistoolcreator_choose',
 
         // Message translations for Form validation
         'unable_to_save' => 'tr_melistoolcreator_unable_to_save',

@@ -99,6 +99,7 @@ return [
     'tr_melistoolcreator_activate' => 'Active',
     'tr_melistoolcreator_deactivate' => 'Inactive',
     'tr_melistoolcreator_refresh_db_tooltip' => 'Refreshing database tables list might take a few minutes',
+    'tr_melistoolcreator_choose' => 'Choose',
 
     // Forms
     'tr_melistoolcreator_tcf-name' => 'Tool name',

@@ -1379,8 +1379,13 @@ class ToolCreatorController extends AbstractActionController
 
     public function strAction()
     {
-        $toolCreatorSrv = $this->getServiceLocator()->get('MelisToolCreatorService');
-        echo 'meLisModuLe: '.$toolCreatorSrv->generateModuleNameCase('MelisModuleJeJejE');
+//        $toolCreatorSrv = $this->getServiceLocator()->get('MelisToolCreatorService');
+//        echo 'meLisModuLe: '.$toolCreatorSrv->generateModuleNameCase('MelisModuleJeJejE');
+
+        $text = 'ignore everything except this ("1", "2")';
+        preg_match('#\((.*?)\)#', $text, $match);
+        print_r($match);
+
         exit;
     }
 
@@ -1395,7 +1400,7 @@ class ToolCreatorController extends AbstractActionController
     public function desAction()
     {
         $toolCreatorSrv = $this->getServiceLocator()->get('MelisToolCreatorService');
-        $res = $toolCreatorSrv->describeTable('melis_cms_page_published');
+        $res = $toolCreatorSrv->describeTable('aaa');
         print_r($res);
         die();
     }

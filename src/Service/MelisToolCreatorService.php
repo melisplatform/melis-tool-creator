@@ -288,6 +288,30 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
                 case 'File':
                     $formInputsTplContent = $this->fgc('/Form/file-input');
                     break;
+                case 'Select':
+                    $formInputsTplContent = $this->fgc('/Form/select');
+
+                    $selectVals = '';
+                    if (is_bool(strpos($col, 'tclangtblcol_'))){
+                        // Checking from primary table
+                        foreach ($priTable As $dCol)
+                            if ($dCol['Field'] == $col){
+                                preg_match('#\((.*?)\)#', $dCol['Type'], $match);
+                                if (!empty($match[1]))
+                                    $selectVals = $match[1];
+                            }
+                    }else{
+                        // Checking from language table
+                        foreach ($langTable As $dCol)
+                            if ($dCol['Field'] == str_replace('tclangtblcol_', '', $col)){
+                                preg_match('#\((.*?)\)#', $dCol['Type'], $match);
+                                if (!empty($match[1]))
+                                    $selectVals = $match[1];
+                            }
+                    }
+
+                    $formInputsTplContent = $this->sp('#TCSELECTVALUES', $selectVals, $formInputsTplContent);
+                    break;
                 default:
                     $formInputsTplContent = $this->fgc('/Form/input');
                     break;
@@ -332,6 +356,7 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
                     array_push($formInputValidator, $this->fgc('/Form/not-empty-validator'));
                 }
 
+                // Numeric validation
                 $colNumTypes = [
                     'int',
                     'smallint',
