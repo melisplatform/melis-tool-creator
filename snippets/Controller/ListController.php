@@ -80,7 +80,10 @@ class ListController extends AbstractActionController
             $tableData = $moduleTplTable->getList($start, $length, $melisTool->getSearchableColumns(), $search, $selCol, $sortOrder, $langId)->toArray();
             $dataCount = count($moduleTplTable->getList(null, null, $melisTool->getSearchableColumns(), null, null, 'ASC', $langId)->toArray());
 
+#TCDATAEMPTYFILTER
+
 #TCBLOBDATAFILTER
+
         }
 
         return new JsonModel([

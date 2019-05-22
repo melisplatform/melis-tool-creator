@@ -18,7 +18,7 @@ class LanguageController extends AbstractActionController
 {
     public function renderLanguageFormAction()
     {
-        $myToolTabLangTable = $this->getServiceLocator()->get('ModuleTplLangTable');
+        $langTable = $this->getServiceLocator()->get('ModuleTplLangTable');
         $cmsLang = $this->getServiceLocator()->get('MelisEngineTableCmsLang');
         $languages = $cmsLang->fetchAll()->toArray();
 
@@ -33,7 +33,7 @@ class LanguageController extends AbstractActionController
             $form->setAttribute('class', $id. '_' . $form->getAttribute('name'));
             $form->get('#TCKEYLANGID')->setValue($lang['lang_cms_id']);
 
-            $data = $myToolTabLangTable->getLangByFKID($id, $lang['lang_cms_id'])->current();
+            $data = $langTable->getLangByFKID($id, $lang['lang_cms_id'])->current();
             if (!empty($data))
                 $form->bind($data);
 
@@ -92,8 +92,8 @@ class LanguageController extends AbstractActionController
                     // Assign foreign key value
                     $formData['#TCKEYPRIID'] = $fkId;
 
-                    $myToolTabLangTable = $this->getServiceLocator()->get('ModuleTplLangTable');
-                    $myToolTabLangTable->save($formData, $id);
+                    $langTable = $this->getServiceLocator()->get('ModuleTplLangTable');
+                    $langTable->save($formData, $id);
                 }
 
                 $success = 1;

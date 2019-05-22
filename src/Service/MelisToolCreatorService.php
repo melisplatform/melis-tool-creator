@@ -533,6 +533,22 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
         $modalAction = ($this->getToolType() == 'modal') ? $this->fgc('/Code/modal-action') : '';
         $listCtrlFile = $this->sp('#TCMODALVIEWMODEL', $modalAction, $listCtrlFile);
 
+        // Data empty filter
+        $emptyDataFilter = '';
+        if ($this->hasLanguage()){
+            $requiredLangFields = [];
+
+            foreach ($this->tcSteps['step5']['tcf-db-table-col-required'] As $val)
+                if (!is_bool(strpos($val, 'tclangtblcol_')))
+                    array_push($requiredLangFields, '\''. $this->sp('tclangtblcol_', '', $val .'\''));
+
+            $emptyDataFilter = $this->sp('#TCREQUIRETBLFIELDS', implode(', ', $requiredLangFields), $this->fgc('/Code/empty-columns'));
+            $emptyDataFilter = $this->sp('#TCPFKEY', $this->tcSteps['step3']['tcf-db-table-language-pri-fk'], $emptyDataFilter);
+            $emptyDataFilter = $this->sp('#TCLANGFKEY', $this->tcSteps['step3']['tcf-db-table-language-lang-fk'], $emptyDataFilter);
+        }
+        $listCtrlFile = $this->sp('#TCDATAEMPTYFILTER', $emptyDataFilter, $listCtrlFile);
+
+
         // Blob input field data filter
         $blobFields = [];
         // Primary talbe
@@ -545,6 +561,7 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
                 if (!is_bool(strpos($col['Type'], 'blob')))
                     array_push($blobFields, $col['Field']);
 
+
         $blobFilter = '';
         if (!empty($blobFields)){
             $blobFilter = $this->fgc('/Code/blob-data-filter');
@@ -555,7 +572,6 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
             $blobDataStr = implode("\n", $blobData);
             $blobFilter = $this->sp('#TCBLOBFIELD', $blobDataStr, $blobFilter);
         }
-
         $listCtrlFile = $this->sp('#TCBLOBDATAFILTER', $blobFilter, $listCtrlFile);
 
         $this->generateFile('ListController.php', $targetDir, $listCtrlFile);
