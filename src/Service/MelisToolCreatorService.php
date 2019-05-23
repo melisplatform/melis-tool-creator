@@ -949,7 +949,7 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
         return $this->getTablePK($tcfDbTbl);
     }
 
-    private function getTablePK($table)
+    public function getTablePK($table)
     {
         $selectedTbl = $this->describeTable($table);
 

@@ -1344,11 +1344,20 @@ class ToolCreatorController extends AbstractActionController
         $melisEngineCacheSystem = $this->serviceLocator->get('MelisEngineCacheSystem');
         $results = $melisEngineCacheSystem->getCacheByKey($this->cacheKey, $this->cacheConfig, true);
         if (!$results || $reloadCached){
+
+            $toolCreatorSrv = $this->getServiceLocator()->get('MelisToolCreatorService');
+
             $adapter = $this->getServiceLocator()->get('Zend\Db\Adapter\Adapter');
             $metadata = new Metadata($adapter);
             $tables = $metadata->getTables();
-            $melisEngineCacheSystem->setCacheByKey($this->cacheKey, $this->cacheConfig, $tables, true);
-            $results = $tables;
+
+            // Only table that has Primary key and auto increment
+            $results = [];
+            foreach ($tables As $tbl)
+                if (!empty($toolCreatorSrv->getTablePK($tbl->getName())))
+                    $results[] = $tbl;
+
+            $melisEngineCacheSystem->setCacheByKey($this->cacheKey, $this->cacheConfig, $results, true);
         }
 
         return $results;
