@@ -23,7 +23,7 @@ $(function(){
                     url         : '/melis/ModuleTpl/List/deleteItem?id='+id,
                     dataType    : 'json',
                     encode		: true,
-                    success		: function(){
+                    success		: function(data){
                         // refresh the table after deleting an item
                         melisHelper.zoneReload("id_moduletpl_content", "moduletpl_content");
 
