@@ -148,8 +148,9 @@ return [
     'tr_melistoolcreator_common_button_save' => 'Save',
     'tr_melistoolcreator_common_button_yes' => 'Yes',
     'tr_melistoolcreator_common_button_no' => 'No',
+    'tr_melistoolcreator_created_success' => 'Item created succesfully',
     'tr_melistoolcreator_unable_to_save' => 'Unable to save',
-    'tr_melistoolcreator_save_success' => 'Successfully saved',
+    'tr_melistoolcreator_save_success' => 'Item saved successfully',
     'tr_melistoolcreator_value_must_not_is_empty' => 'The input is required and cannot be empty',
     'tr_melistoolcreator_delete_title' => 'Delete item',
     'tr_melistoolcreator_delete_confirm_msg' => 'Are you sure you want to delete this item?',
@@ -157,6 +158,6 @@ return [
     'tr_melistoolcreator_language' => 'Texts',
     'tr_melistoolcreator_choose_file' => 'Choose file',
     'tr_melistoolcreator_delete_item' => 'Delete item',
-    'tr_melistoolcreator_delete_success' => 'Item has been successfully deleted',
+    'tr_melistoolcreator_delete_success' => 'Item deleted successfully',
     'tr_melistoolcreator_must_numeric' => 'The input must be numeric',
 ];

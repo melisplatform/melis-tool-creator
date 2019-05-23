@@ -148,8 +148,9 @@ return [
     'tr_melistoolcreator_common_button_save' => 'Enregistrer',
     'tr_melistoolcreator_common_button_yes' => 'Oui',
     'tr_melistoolcreator_common_button_no' => 'Non',
+    'tr_melistoolcreator_created_success' => 'Elément créé avec succès',
     'tr_melistoolcreator_unable_to_save' => 'Impossible d\'enregistrer',
-    'tr_melistoolcreator_save_success' => 'Enregistré avec succès',
+    'tr_melistoolcreator_save_success' => 'Elément enregistré avec succès',
     'tr_melistoolcreator_value_must_not_is_empty' => 'Champ requis, ne peut être vide',
     'tr_melistoolcreator_delete_title' => 'Supprimer l\'élément',
     'tr_melistoolcreator_delete_confirm_msg' => 'Etes-vous sûr de vouloir supprimer cet élément ?',
@@ -157,6 +158,6 @@ return [
     'tr_melistoolcreator_language' => 'Textes',
     'tr_melistoolcreator_choose_file' => 'Choisir un fichier',
     'tr_melistoolcreator_delete_item' => 'Supprimer l\'élément',
-    'tr_melistoolcreator_delete_success' => 'L\'élément à été supprimé avec succès',
+    'tr_melistoolcreator_delete_success' => 'Elément supprimé avec succès',
     'tr_melistoolcreator_must_numeric' => 'Champ requis doit être un nombre',
 ];

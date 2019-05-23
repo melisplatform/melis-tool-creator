@@ -50,7 +50,11 @@ class PropertiesController extends AbstractActionController
                 $success = 1;
 
                 $entryTitle = $translator->translate('tr_moduletpl_common_entry_id').': '.$id;
-                $textMessage = $translator->translate('tr_moduletpl_save_success');
+
+                if ($request->getPost()['#TCKEY'] == 'add')
+                    $textMessage = $translator->translate('tr_moduletpl_created_success');
+                else
+                    $textMessage = $translator->translate('tr_moduletpl_save_success');
             }
 
             // Unset temporary data on session
