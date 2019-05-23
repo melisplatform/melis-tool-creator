@@ -52,7 +52,7 @@ class PropertiesController extends AbstractActionController
                 $entryTitle = $translator->translate('tr_moduletpl_common_entry_id').': '.$id;
 
                 if ($request->getPost()['#TCKEY'] == 'add')
-                    $textMessage = $translator->translate('tr_moduletpl_created_success');
+                    $textMessage = $translator->translate('tr_moduletpl_create_success');
                 else
                     $textMessage = $translator->translate('tr_moduletpl_save_success');
             }

@@ -17,7 +17,7 @@
         'common_choose' => 'tr_melistoolcreator_choose',
 
         // Message translations for Form validation
-        'created_success' => 'tr_melistoolcreator_created_success',
+        'create_success' => 'tr_melistoolcreator_created_success',
         'save_success' => 'tr_melistoolcreator_save_success',
         'unable_to_save' => 'tr_melistoolcreator_unable_to_save',
         'value_must_not_is_empty' => 'tr_melistoolcreator_value_must_not_is_empty',
