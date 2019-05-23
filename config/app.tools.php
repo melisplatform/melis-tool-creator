@@ -289,7 +289,7 @@ return [
                                     'name' => 'tcf-db-table-has-language',
                                     'type' => 'Hidden',
                                     'attributes' => [
-                                        'value' => true
+                                        'value' => false
                                     ]
                                 ],
                             ],
