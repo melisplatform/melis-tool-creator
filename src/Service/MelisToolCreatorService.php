@@ -955,7 +955,7 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
 
         $primaryKey = [];
         foreach ($selectedTbl As $col){
-            if ($col['Key'] == 'PRI'){
+            if ($col['Key'] == 'PRI' && $col['Extra'] == 'auto_increment'){
                 $primaryKey = $col;
                 break;
             }
