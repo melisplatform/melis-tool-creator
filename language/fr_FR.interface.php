@@ -43,7 +43,7 @@ return [
     'tr_melistoolcreator_texts_desc' => 'Saisissez les traductions de texte dans les différents langages, au moins un champ titre dans un langage doit être saisi',
     'tr_melistoolcreator_database' => 'Base de données',
     'tr_melistoolcreator_database_title' => 'Table du module',
-    'tr_melistoolcreator_database_desc' => 'Sélectionnez la table qui sera utilisée par l\'outil',
+    'tr_melistoolcreator_database_desc' => 'Les tables n\'ayant pas d\'auto increment dans leur clef primaire ne sont pas supportées par l\'outil',
     'tr_melistoolcreator_database_reload_cached' => 'Rafraîchir la liste des tables',
     'tr_melistoolcreator_database_reload_cached_tooltip' => 'Rafraîchir la liste des tables peut prendre quelques minutes',
     'tr_melistoolcreator_table_cols' => 'Colonnes des tables',

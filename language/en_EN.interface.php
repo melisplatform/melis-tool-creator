@@ -43,7 +43,7 @@ return [
     'tr_melistoolcreator_texts_desc' => 'Enter the text translations in different languages, at least one title field in one language should be filled in',
     'tr_melistoolcreator_database' => 'Database',
     'tr_melistoolcreator_database_title' => 'Module table',
-    'tr_melistoolcreator_database_desc' => 'Select the table that will be used by the tool',
+    'tr_melistoolcreator_database_desc' => 'The tables with no auto increment in the primary key are not supported by the tool',
     'tr_melistoolcreator_database_reload_cached' => 'Refresh the table list',
     'tr_melistoolcreator_database_reload_cached_tooltip' => 'Refreshing the table list may take a few minutes',
     'tr_melistoolcreator_table_cols' => 'Table columns',
