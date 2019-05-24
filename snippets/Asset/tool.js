@@ -10,7 +10,7 @@ $(function(){
     });
 
     $("body").on("click", ".btnDeleteModuleTpl", function(){
-        var id = $(this).parents("tr").children(":first").text();
+        var id = $(this).parents("tr").attr("id");
 
         melisCoreTool.confirm(
             translations.tr_moduletpl_common_button_yes,
