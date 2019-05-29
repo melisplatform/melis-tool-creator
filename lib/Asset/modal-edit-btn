@@ -1,3 +1,3 @@
-        var id = $(this).parents("tr").attr("id").;
+        var id = $(this).parents("tr").attr("id");
         var modalUrl = '/melis/MelisCore/MelisGenericModal/emptyGenericModal';
         melisHelper.createModal("id_moduletpl_modal", "moduletpl_modal", false, {id : id}, modalUrl);

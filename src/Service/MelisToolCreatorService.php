@@ -26,7 +26,7 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
 
     public function __construct()
     {
-        $this->moduleTplDir = __DIR__ .'/../../snippets';
+        $this->moduleTplDir = __DIR__ .'/../../lib';
 
         // Tool creator session container
         $container = new Container('melistoolcreator');
