@@ -696,8 +696,8 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
      */
     private function generateModuleLanguages($targetDir)
     {
-        $cmsLang = $this->getServiceLocator()->get('MelisEngineTableCmsLang');
-        $languages = $cmsLang->fetchAll()->toArray();
+        $coreLang = $this->getServiceLocator()->get('MelisCoreTableLang');
+        $languages = $coreLang->fetchAll()->toArray();
 
         $translationsSrv = $this->getServiceLocator()->get('MelisCoreTranslation');
         $commonTransTpl = require $this->moduleTplDir.'/Language/languages.php';
@@ -706,13 +706,13 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
         $commonTranslations = [];
         foreach ($languages As $lang){
             foreach ($commonTransTpl As $cKey => $cText)
-                $commonTranslations[$lang['lang_cms_locale']][$cKey] = $translationsSrv->getMessage($cText, $lang['lang_cms_locale']);
+                $commonTranslations[$lang['lang_locale']][$cKey] = $translationsSrv->getMessage($cText, $lang['lang_locale']);
 
-            if (!empty($this->tcSteps['step6'][$lang['lang_cms_locale']])){
-                $commonTranslations[$lang['lang_cms_locale']] = array_merge($commonTranslations[$lang['lang_cms_locale']], $this->tcSteps['step6'][$lang['lang_cms_locale']]['pri_tbl']);
+            if (!empty($this->tcSteps['step6'][$lang['lang_locale']])){
+                $commonTranslations[$lang['lang_locale']] = array_merge($commonTranslations[$lang['lang_locale']], $this->tcSteps['step6'][$lang['lang_locale']]['pri_tbl']);
 
-                if (!empty($this->tcSteps['step6'][$lang['lang_cms_locale']]['lang_tbl']))
-                    $commonTranslations[$lang['lang_cms_locale']] = array_merge($commonTranslations[$lang['lang_cms_locale']], $this->tcSteps['step6'][$lang['lang_cms_locale']]['lang_tbl']);
+                if (!empty($this->tcSteps['step6'][$lang['lang_locale']]['lang_tbl']))
+                    $commonTranslations[$lang['lang_locale']] = array_merge($commonTranslations[$lang['lang_locale']], $this->tcSteps['step6'][$lang['lang_locale']]['lang_tbl']);
             }
         }
 
@@ -724,21 +724,21 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
 
         // Default value setter
         foreach ($languages As $lang){
-            $translations[$lang['lang_cms_locale']] = [];
-            if (!empty($stepTexts[$lang['lang_cms_locale']])){
-                foreach($stepTexts[$lang['lang_cms_locale']]  As $key => $text){
+            $translations[$lang['lang_locale']] = [];
+            if (!empty($stepTexts[$lang['lang_locale']])){
+                foreach($stepTexts[$lang['lang_locale']]  As $key => $text){
 
                     if (!in_array($key, ['tcf-lang-local', 'tcf-tbl-type'])){
                         // Input description
                         if (strpos($key, 'tcinputdesc')){  
                             if (empty($text))
-                                $text = $stepTexts[$lang['lang_cms_locale']][$key];
+                                $text = $stepTexts[$lang['lang_locale']][$key];
 
                             $key = $this->sp('tcinputdesc', 'tooltip', $key);
                             $key = $this->sp('tclangtblcol_', '', $key);
                         }
 
-                        $translations[$lang['lang_cms_locale']][$key] = $text;
+                        $translations[$lang['lang_locale']][$key] = $text;
                     }else
                         $text = '';
 
