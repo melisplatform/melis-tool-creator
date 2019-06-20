@@ -50,9 +50,9 @@ return [
     'tr_melistoolcreator_table_cols' => 'Colonnes des tables',
     'tr_melistoolcreator_table_cols_title' => 'Colonnes des tables',
     'tr_melistoolcreator_table_cols_desc' => 'Veuillez choisir la ou les colonnes à afficher dans le tableau de l\'outil',
-    'tr_melistoolcreator_add_update_form' => 'Ajouter/mettre à jour le formulaire',
-    'tr_melistoolcreator_add_update_form_title' => 'Ajouter/Mettre à jour les champs du formulaire',
-    'tr_melistoolcreator_add_update_form_desc' => 'Veuillez sélectionner les colonnes qui seront éditables, obligatoires ainsi que leur type de champ',
+    'tr_melistoolcreator_add_update_form' => 'Champs à éditer',
+    'tr_melistoolcreator_add_update_form_title' => 'Choix des champs à éditer',
+    'tr_melistoolcreator_add_update_form_desc' => 'Merci de choisir les colonnes qui pourront être éditées et/ou sont obligatoires. Puis choisissez quel type de champs (input) permettra de l\'éditer', 
     'tr_melistoolcreator_cols_translations' => 'Traductions des colonnes',
     'tr_melistoolcreator_cols_translations_title' => 'Traductions des colonnes de la table',
     'tr_melistoolcreator_cols_translations_desc' => 'Ces colonnes sont utilisées soit dans la liste de l\'outil, soit dans le formulaire d\'édition. Saisissez les traductions dans les différents langages. Les colonnes doivent être traduites dans au moins une langue',
@@ -101,6 +101,8 @@ return [
     'tr_melistoolcreator_deactivate' => 'Inactif',
     'tr_melistoolcreator_refresh_db_tooltip' => 'Rafraîchir la liste des tables peut prendre quelques minutes',
     'tr_melistoolcreator_choose' => 'Choisissez',
+    'tr_melistoolcreator_select_text' => 'Texte / Champs normal',
+    'tr_melistoolcreator_select_textarea_tinymce' => 'Rich HTML (TinyMCE)',
 
     // Forms
     'tr_melistoolcreator_tcf-name' => 'Nom de l\'outil',

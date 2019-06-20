@@ -464,11 +464,11 @@ return [
                                 'type' => 'Select',
                                 'options' => [
                                     'value_options' => [
-                                        'MelisText' => 'Text',
-                                        'Switch' => 'Switch',
+                                        'MelisText' => 'tr_melistoolcreator_select_text',
+                                        'Switch' => 'ENUM / Switch',
                                         'File' => 'File upload',
                                         'TextArea' => 'Textarea',
-                                        'MelisCoreTinyMCE' => 'Textarea (TinyMCE)',
+                                        'MelisCoreTinyMCE' => 'tr_melistoolcreator_select_textarea_tinymce',
                                         'Datepicker' => 'Date Picker',
                                         'Datetimepicker' => 'Datetime Picker',
                                         'MelisCmsPluginSiteSelect' => 'Melis site',
