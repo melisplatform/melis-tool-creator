@@ -254,8 +254,8 @@ class ToolCreatorController extends AbstractActionController
         $container = new Container('melistoolcreator');
 
         // Meliscore languages
-        $cmsLang = $this->getServiceLocator()->get('MelisEngineTableCmsLang');
-        $languages = $cmsLang->fetchAll()->toArray();
+        $coreLang = $this->getServiceLocator()->get('MelisCoreTableLang');
+        $languages = $coreLang->fetchAll()->toArray();
 
         // Step form fields
         $melisMelisCoreConfig = $this->getServiceLocator()->get('MelisCoreConfig');
@@ -278,16 +278,16 @@ class ToolCreatorController extends AbstractActionController
             $step2Formtmp = $factory->createForm($appConfigForm);
 
             if (!empty($container['melis-toolcreator']['step2'])){
-                if (!empty($container['melis-toolcreator']['step2'][$lang['lang_cms_locale']])){
-                    $step2Formtmp->setData($container['melis-toolcreator']['step2'][$lang['lang_cms_locale']]);
+                if (!empty($container['melis-toolcreator']['step2'][$lang['lang_locale']])){
+                    $step2Formtmp->setData($container['melis-toolcreator']['step2'][$lang['lang_locale']]);
                 }
             }
 
-            $step2Formtmp->get('tcf-lang-local')->setValue($lang['lang_cms_locale']);
+            $step2Formtmp->get('tcf-lang-local')->setValue($lang['lang_locale']);
 
             if ($validate){
                 foreach ($formData['step-form'] As $val){
-                    if ($val['tcf-lang-local'] == $lang['lang_cms_locale']){
+                    if ($val['tcf-lang-local'] == $lang['lang_locale']){
                         $step2Formtmp->setData($val);
                     }
                 }
@@ -312,14 +312,14 @@ class ToolCreatorController extends AbstractActionController
                         array_push($inputHasValue, $key);
                 }
 
-                $container['melis-toolcreator']['step2'][$lang['lang_cms_locale']] = $step2Formtmp->getData();
+                $container['melis-toolcreator']['step2'][$lang['lang_locale']] = $step2Formtmp->getData();
             }
 
             // Adding language form
-            $step2Form[$lang['lang_cms_locale']] = $step2Formtmp;
+            $step2Form[$lang['lang_locale']] = $step2Formtmp;
 
             // Language label
-            $languages[$key]['lang_label'] = $this->langLabel($lang['lang_cms_locale'], $lang['lang_cms_name']);
+            $languages[$key]['lang_label'] = $this->langLabel($lang['lang_locale'], $lang['lang_name']);
         }
 
         // Removing input with data on any Form fieldset
@@ -1035,8 +1035,8 @@ class ToolCreatorController extends AbstractActionController
         $container = new Container('melistoolcreator');
         $tcfDbTbl = $container['melis-toolcreator'];
 
-        $cmsLang = $this->getServiceLocator()->get('MelisEngineTableCmsLang');
-        $languages = $cmsLang->fetchAll()->toArray();
+        $coreLang = $this->getServiceLocator()->get('MelisCoreTableLang');
+        $languages = $coreLang->fetchAll()->toArray();
 
         /**
          * Merging the columns the selected on step 4, 5 and 6
@@ -1153,12 +1153,12 @@ class ToolCreatorController extends AbstractActionController
 
                 if (!$validate){
                     if (!empty($container['melis-toolcreator']['step6'])){
-                        if (!empty($container['melis-toolcreator']['step6'][$lang['lang_cms_locale']][$tblType])){
-                            $step6FormTmp->setData($container['melis-toolcreator']['step6'][$lang['lang_cms_locale']][$tblType]);
+                        if (!empty($container['melis-toolcreator']['step6'][$lang['lang_locale']][$tblType])){
+                            $step6FormTmp->setData($container['melis-toolcreator']['step6'][$lang['lang_locale']][$tblType]);
                         }
                     }
 
-                    $step6FormTmp->get('tcf-lang-local')->setValue($lang['lang_cms_locale']);
+                    $step6FormTmp->get('tcf-lang-local')->setValue($lang['lang_locale']);
                     $step6FormTmp->get('tcf-tbl-type')->setValue($tblType);
                 }
 
@@ -1166,7 +1166,7 @@ class ToolCreatorController extends AbstractActionController
                     $formData = $request->getPost()->toArray();
 
                     foreach ($formData['step-form'] As $val){
-                        if ($val['tcf-lang-local'] == $lang['lang_cms_locale'] && $val['tcf-tbl-type'] == $tblType){
+                        if ($val['tcf-lang-local'] == $lang['lang_locale'] && $val['tcf-tbl-type'] == $tblType){
                             $step6FormTmp->setData($val);
                         }
                     }
@@ -1189,14 +1189,14 @@ class ToolCreatorController extends AbstractActionController
                         }
                     }
 
-                    $formDatas[$lang['lang_cms_locale']][$tblType] = $step6FormTmp->getData();
+                    $formDatas[$lang['lang_locale']][$tblType] = $step6FormTmp->getData();
                 }
 
-                $step6Form[$lang['lang_cms_locale']][$tblType] = $step6FormTmp;
+                $step6Form[$lang['lang_locale']][$tblType] = $step6FormTmp;
             }
 
             // Language label
-            $languages[$key]['lang_label'] = $this->langLabel($lang['lang_cms_locale'], $lang['lang_cms_name']);
+            $languages[$key]['lang_label'] = $this->langLabel($lang['lang_locale'], $lang['lang_name']);
         }
 
         // Removing input with data on any Form Fieldset
@@ -1254,8 +1254,8 @@ class ToolCreatorController extends AbstractActionController
         }
 
         // Languages
-        $cmsLang = $this->getServiceLocator()->get('MelisEngineTableCmsLang');
-        $viewStp->languages = $cmsLang->fetchAll()->toArray();
+        $coreLang = $this->getServiceLocator()->get('MelisCoreTableLang');
+        $viewStp->languages = $coreLang->fetchAll()->toArray();
 
         return $viewStp;
     }
@@ -1321,10 +1321,10 @@ class ToolCreatorController extends AbstractActionController
     {
         $langLabel = '<span>'. $langName .'</span>';
 
-        $moduleSvc = $this->getServiceLocator()->get('ModulesService');
-        if (file_exists($moduleSvc->getModulePath('MelisCms').'/public/images/lang-flags/'.$locale.'.png')){
-            $langLabel .= '<span class="pull-right"><img src="/MelisCms/images/lang-flags/'.$locale.'.png"></span>';
-        }
+        // $moduleSvc = $this->getServiceLocator()->get('ModulesService');
+        // if (file_exists($moduleSvc->getModulePath('MelisCms').'/public/images/lang-flags/'.$locale.'.png')){
+        //     $langLabel .= '<span class="pull-right"><img src="/MelisCms/images/lang-flags/'.$locale.'.png"></span>';
+        // }
 
         return $langLabel;
     }
