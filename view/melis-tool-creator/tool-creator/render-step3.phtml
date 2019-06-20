@@ -8,7 +8,7 @@
                 <?php echo $this->translate('tr_melistoolcreator_database_desc_2') ?>
             </p>
         </div>
-        <div class="col-sm-12">
+        <div class="col-sm-6">
             <p align="right">
                 <i class="fa fa-info-circle tip-info" data-toggle="tooltip" data-placement="left" title="<?php echo $this->translate('tr_melistoolcreator_refresh_db_tooltip') ?>"></i><br>
                 <button class="btn btn-success tc-reload-dbtbl-cached"><?php echo $this->translate('tr_melistoolcreator_database_reload_cached') ?> <i class="fa fa-refresh"></i></button>
@@ -38,12 +38,12 @@
                             $errCss = 'style="color: red"';
                     ?>
 
-                    <h3 <?php echo $errCss ?>>
+                    <h4 <?php echo $errCss ?>>
                         <?php echo $this->translate('tr_melistoolcreator_pri_db_tbl') ?>
                         <small>
                             <i class="fa fa-info-circle pull-right tip-info" data-toggle="tooltip" data-placement="left" title="" data-original-title="<?php echo $this->translate('tr_melistoolcreator_pri_tbl_cols_select') ?>" style="padding-top: 10px;"></i>
                         </small>
-                    </h3>
+                    </h4>
                 </div>
                 <div class="col-sm-6"></div>
             </div>
@@ -94,12 +94,12 @@
                                         echo '<style> .tc-ltfk{color: red} </style>';
                                 }
                         ?>
-                        <h3 <?php echo $errCss ?>>
+                        <h4 <?php echo $errCss ?>>
                             <?php echo $this->translate('tr_melistoolcreator_lang_tbl_lst') ?>
                             <small>
                                 <i class="fa fa-info-circle pull-right tip-info" data-toggle="tooltip" data-placement="left" title="" data-original-title="<?php echo $this->translate('tr_melistoolcreator_select_lang_tbl_lst') ?>" style="padding-top: 10px;"></i>
                             </small>
-                        </h3>
+                        </h4>
                     </div>
                     <div class="col-sm-6"></div>
                 </div>
