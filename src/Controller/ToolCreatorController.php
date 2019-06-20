@@ -1109,6 +1109,7 @@ class ToolCreatorController extends AbstractActionController
                  */
                 foreach ($tblCols As $col){
 
+                    // Column name
                     $step6FormTmp->add([
                         'name' => $col,
                         'type' => 'MelisText',
@@ -1119,24 +1120,12 @@ class ToolCreatorController extends AbstractActionController
                         'attributes' => [
                             'required' => 'required',
                             'placeholder' => $translator->translate('tr_melistoolcreator_inpt_name')
-                        ],
+                        ]
                     ]);
 
-                    $step6FormTmp->add([
-                        'name' => $col.'_tcinputdesc',
-                        'type' => 'MelisText',
-                        'options' => [
-                            'col-desc' => true,
-                        ],
-                        'attributes' => [
-                            'required' => 'required',
-                            'placeholder' => $translator->translate('tr_melistoolcreator_inpt_name tooltip'),
-                        ],
-                    ]);
-
+                    // Column validator nad filter
                     $input = new Input($col);
                     $input->setRequired(true);
-
                     $input->getValidatorChain()
                         ->attachByName(
                             'NotEmpty',
@@ -1146,8 +1135,37 @@ class ToolCreatorController extends AbstractActionController
                                 ]
                             ]
                         );
-
+                    $input->getFilterChain()
+                        ->attachByName(
+                            'StripTags',
+                            'StringTrim'
+                        );
                     $inputFilter->add($input);
+
+                    // Column name tooltip description
+                    $step6FormTmp->add([
+                        'name' => $col.'_tcinputdesc',
+                        'type' => 'MelisText',
+                        'options' => [
+                            'col-desc' => true,
+                        ],
+                        'attributes' => [
+                            'required' => 'required',
+                            'placeholder' => $translator->translate('tr_melistoolcreator_inpt_name tooltip'),
+                        ]
+                    ]);
+
+                    // Column name tooltip description validator and filters
+                    $inputDesc = new Input($col.'_tcinputdesc');
+                    $inputDesc->setRequired(false);
+                    $inputDesc->getFilterChain()
+                        ->attachByName(
+                            'StripTags',
+                            'StringTrim'
+                        );
+                    $inputFilter->add($inputDesc);
+
+                    // Setup input filters to Form
                     $step6FormTmp->setInputFilter($inputFilter);
                 }
 
