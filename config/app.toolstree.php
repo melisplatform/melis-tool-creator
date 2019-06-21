@@ -15,64 +15,80 @@ return [
                     'interface' => [
                         'meliscore_toolstree_section' => [
                             'interface' => [
-                                'meliscore_tool_system_config' => [
+                                'meliscore_tool_creatrion_designs' => [
+                                    'conf' => [
+                                        'id' => 'id_meliscore_tool_creatrion_designs',
+                                        'melisKey' => 'meliscore_tool_creatrion_designs',
+                                        'name' => 'tr_meliscore_tool_creatrion_designs',
+                                        'icon' => 'fa fa-paint-brush',
+                                    ],
                                     'interface' => [
-                                        'melistoolcreator_conf' => [
+                                        'meliscore_tool_tools' => [
                                             'conf' => [
-                                                'id' => 'id_melistoolcreator_tool',
-                                                'melisKey' => 'melistoolcreator_tool',
-                                                'name' => 'tr_melistoolcreator',
+                                                'id' => 'id_meliscore_tool_tools',
+                                                'melisKey' => 'meliscore_tool_tools',
+                                                'name' => 'tr_meliscore_tool_tools',
                                                 'icon' => 'fa fa-magic',
                                             ],
-                                            'forward' => [
-                                                'module' => 'MelisToolCreator',
-                                                'controller' => 'ToolCreator',
-                                                'action' => 'render-tool-creator',
-                                                'jscallback' => '',
-                                                'jsdatas' => []
-                                            ],
                                             'interface' => [
-                                                'melistoolcreator_header' => [
+                                                'melistoolcreator_conf' => [
                                                     'conf' => [
-                                                        'id' => 'id_melistoolcreator_header',
-                                                        'melisKey' => 'melistoolcreator_header',
-                                                        'name' => 'tr_melistoolcreator_header',
+                                                        'id' => 'id_melistoolcreator_tool',
+                                                        'melisKey' => 'melistoolcreator_tool',
+                                                        'name' => 'tr_melistoolcreator',
+                                                        'icon' => 'fa fa-magic',
                                                     ],
                                                     'forward' => [
                                                         'module' => 'MelisToolCreator',
                                                         'controller' => 'ToolCreator',
-                                                        'action' => 'render-tool-creator-header',
-                                                        'jscallback' => '',
-                                                        'jsdatas' => []
-                                                    ],
-                                                ],
-                                                'melistoolcreator_content' => [
-                                                    'conf' => [
-                                                        'id' => 'id_melistoolcreator_content',
-                                                        'melisKey' => 'melistoolcreator_content',
-                                                        'name' => 'tr_melistoolcreator_content',
-                                                    ],
-                                                    'forward' => [
-                                                        'module' => 'MelisToolCreator',
-                                                        'controller' => 'ToolCreator',
-                                                        'action' => 'render-tool-creator-content',
+                                                        'action' => 'render-tool-creator',
                                                         'jscallback' => '',
                                                         'jsdatas' => []
                                                     ],
                                                     'interface' => [
-                                                        'melistoolcreator_steps' => [
+                                                        'melistoolcreator_header' => [
                                                             'conf' => [
-                                                                'id' => 'id_melistoolcreator_steps',
-                                                                'melisKey' => 'melistoolcreator_steps',
-                                                                'name' => 'tr_melistoolcreator_steps',
+                                                                'id' => 'id_melistoolcreator_header',
+                                                                'melisKey' => 'melistoolcreator_header',
+                                                                'name' => 'tr_melistoolcreator_header',
                                                             ],
                                                             'forward' => [
                                                                 'module' => 'MelisToolCreator',
                                                                 'controller' => 'ToolCreator',
-                                                                'action' => 'render-tool-creator-steps',
+                                                                'action' => 'render-tool-creator-header',
                                                                 'jscallback' => '',
                                                                 'jsdatas' => []
                                                             ],
+                                                        ],
+                                                        'melistoolcreator_content' => [
+                                                            'conf' => [
+                                                                'id' => 'id_melistoolcreator_content',
+                                                                'melisKey' => 'melistoolcreator_content',
+                                                                'name' => 'tr_melistoolcreator_content',
+                                                            ],
+                                                            'forward' => [
+                                                                'module' => 'MelisToolCreator',
+                                                                'controller' => 'ToolCreator',
+                                                                'action' => 'render-tool-creator-content',
+                                                                'jscallback' => '',
+                                                                'jsdatas' => []
+                                                            ],
+                                                            'interface' => [
+                                                                'melistoolcreator_steps' => [
+                                                                    'conf' => [
+                                                                        'id' => 'id_melistoolcreator_steps',
+                                                                        'melisKey' => 'melistoolcreator_steps',
+                                                                        'name' => 'tr_melistoolcreator_steps',
+                                                                    ],
+                                                                    'forward' => [
+                                                                        'module' => 'MelisToolCreator',
+                                                                        'controller' => 'ToolCreator',
+                                                                        'action' => 'render-tool-creator-steps',
+                                                                        'jscallback' => '',
+                                                                        'jsdatas' => []
+                                                                    ],
+                                                                ]
+                                                            ]
                                                         ]
                                                     ]
                                                 ]
