@@ -56,7 +56,7 @@ return [
     'tr_melistoolcreator_add_update_form_desc' => 'Please select the column(s) which will be editable and/or mandatory. Then choose what kind of edition input will be used to edit them',
     'tr_melistoolcreator_cols_translations' => 'Columns translations',
     'tr_melistoolcreator_cols_translations_title' => 'Table columns\' translations',
-    'tr_melistoolcreator_cols_translations_desc' => 'These columns are used in the tool\'s list or in the edition form. Enter the translations in the different languages. The texts must be translated in at least one language',
+    'tr_melistoolcreator_cols_translations_desc' => 'These columns are used in the tool\'s list or in the edition form. <br>Enter the translations in the different languages. <br>The texts must be translated in at least one language',
     'tr_melistoolcreator_summary' => 'Summary',
     'tr_melistoolcreator_finalization' => 'Finalization',
     'tr_melistoolcreator_finalization_desc' => 'Tick the box below if you wish to activate the tool upon creation',

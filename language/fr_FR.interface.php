@@ -56,7 +56,7 @@ return [
     'tr_melistoolcreator_add_update_form_desc' => 'Merci de choisir les colonnes qui pourront être éditées et/ou sont obligatoires. Puis choisissez quel type de champs (input) permettra de l\'éditer', 
     'tr_melistoolcreator_cols_translations' => 'Traductions des colonnes',
     'tr_melistoolcreator_cols_translations_title' => 'Traductions des colonnes de la table',
-    'tr_melistoolcreator_cols_translations_desc' => 'Ces colonnes sont utilisées soit dans la liste de l\'outil, soit dans le formulaire d\'édition. Saisissez les traductions dans les différents langages. Les colonnes doivent être traduites dans au moins une langue',
+    'tr_melistoolcreator_cols_translations_desc' => 'Ces colonnes sont utilisées soit dans la liste de l\'outil, soit dans le formulaire d\'édition. <br>Saisissez les traductions dans les différents langages. <br>Les colonnes doivent être traduites dans au moins une langue',
     'tr_melistoolcreator_summary' => 'Récapitulatif',
     'tr_melistoolcreator_finalization' => 'Finalisation',
     'tr_melistoolcreator_finalization_desc' => 'Cochez la case ci-dessous pour activer l\'outil lors de sa création',
