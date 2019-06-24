@@ -1337,12 +1337,20 @@ class ToolCreatorController extends AbstractActionController
      */
     private function langLabel($locale, $langName)
     {
+        
         $langLabel = '<span>'. $langName .'</span>';
 
-        // $moduleSvc = $this->getServiceLocator()->get('ModulesService');
-        // if (file_exists($moduleSvc->getModulePath('MelisCms').'/public/images/lang-flags/'.$locale.'.png')){
-        //     $langLabel .= '<span class="pull-right"><img src="/MelisCms/images/lang-flags/'.$locale.'.png"></span>';
-        // }
+        $lang = explode('_', $locale);
+        if (!empty($lang[0])) {
+
+            $moduleSvc = $this->getServiceLocator()->get('ModulesService');
+            $imgPath = $moduleSvc->getModulePath('MelisCore').'/public/assets/images/lang/'.$lang[0].'.png';
+
+            if (file_exists($imgPath)) 
+                $langLabel .= '<span class="pull-right"><img src="/MelisCore/assets/images/lang/'.$lang[0].'.png"></span>';
+            else
+                $langLabel .= '<span style="border: 1px solid #fff;padding: 4px 4px;line-height: 10px;float: right;margin: 5px;">'. strtoupper($lang[0]) .'</span>';
+        }
 
         return $langLabel;
     }
