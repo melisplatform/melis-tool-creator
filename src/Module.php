@@ -68,6 +68,7 @@ class Module
         {
             $translationType = array(
                 'interface',
+//                'forms',
             );
 
             $translationList = array();

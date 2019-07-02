@@ -1,0 +1,2 @@
+            'ModuleTpl\Controller\List' => 'ModuleTpl\Controller\ListController',
+            'ModuleTpl\Controller\Properties' => 'ModuleTpl\Controller\PropertiesController',

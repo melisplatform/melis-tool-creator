@@ -1,0 +1,9 @@
+                    // File data
+                    if (!empty($filesInpt['language']))
+                        if (!empty($filesInpt['language'][$key]))
+                            foreach ($filesInpt['language'][$key] As $input => $file){
+                                if (!empty($formData[$input]['tmp_name']))
+                                    $formData[$input] = $formData[$input]['tmp_name'];
+                                else
+                                    unset($formData[$input]);
+                            }

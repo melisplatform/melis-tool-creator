@@ -15,6 +15,9 @@
 #id_melistoolcreator_steps .fa-key{
     color: #ffa700;
 }
+#id_melistoolcreator_steps .fa-key.fa-key-fk{
+    color: inherit;
+}
 
 .fancytree-title .fa{
     width: 20px;
@@ -67,7 +70,7 @@
     border-top: 20px inset transparent;
     content: "";
     z-index: 2;
-    border-left-color: #981a1f;
+    border-left-color: #e61c23;
 }
 
 .melis-toolcreator-steps li span {
@@ -91,7 +94,7 @@
 }
 
 .melis-tool-creator .btn-steps:hover{
-    background: #981a1f;
+    background: #e61c23;
     color: #fff;
 }
 
@@ -129,52 +132,65 @@
     cursor: pointer;
 }
 
-.tcf-radio-box{
-    display: block;
-    position: relative;
+#id_melistoolcreator_content .widget.widget-tabs>.widget-head ul li.active a {
+    color: #e61c23;
+}
+
+#id_melistoolcreator_content .widget.widget-tabs>.widget-head ul li.active a i:before {
+    color: #e61c23;
+}
+
+.melis-tc-tool-language.fa{
+    width: 28px;
     cursor: pointer;
-    font-family: sans-serif;
-    user-select: none;
-    padding-left: 24px;
-    margin-bottom: 7px;
-}
-.tcf-radio-box input{
-    display: none;
-}
-.tcf-radio-box .tcf-radio-box-circle{
-    display: inline-block;
-    width: 15px;
-    height: 15px;
-    background-color: #eee;
-    position: absolute;
-    left: 0;
-    top: 0;
-    border-radius: 50%;
-}
-.tcf-radio-box:hover .tcf-radio-box-circle{
-    background-color: #ccc;
-}
-.tcf-radio-box input:checked + .tcf-radio-box-circle{
-    background-color: #981a1f;
-}
-.tcf-radio-box input:checked + .tcf-radio-box-circle:after{
-    content: "";
-    height: 8px;
-    width: 8px;
-    background-color: white;
-    position: absolute;
-    border-radius: 50%;
-    left: 50%;
-    top: 50%;
-    transform: translate(-55%, -55%);
 }
 
-.melis-tool-creator-display-warning{
+.melis-toolreator-lang-cols-alert{
+    padding: 10px;
+}
+
+.melis-toolreator-lang-cols-alert p{
+    display: list-item;
+    list-style-type: disc;
+    list-style-position: inside;
+}
+
+
+.melis-toolcreator-disable-db-tbl-item{
     display: none;
 }
 
-@media (max-width: 1743px){
-    .melis-tool-creator-display-warning{
-        display: block;
-    }
+.melis-toolcreator-disable-db-tbl-item .alert{
+    margin-bottom: 0px;
+}
+
+.melis-toolcreator-db-step.alert p{
+    display: list-item;
+    margin-left: 15px;
+}
+
+.melis-toolcreator-steps li span {
+    padding: 0px 8px 0 40px;
+    padding-left: 10px;
+}
+
+.melis-toolcreator-steps li.active span {
+    padding-left: inherit;
+}
+
+.melis-toolcreator-steps .bwizard-steps li:before {
+    border-left: 10px solid #fff;
+}
+
+.melis-toolcreator-steps li.active:after {
+    right: -10px;
+    border-left: 10px solid #fafafa;
+}
+
+.melis-tc-lang-tbl-pt-fk, .melis-tc-lang-tbl-lt-fk{
+    cursor: pointer;
+}
+
+.tcf-fa-checkbox-editable.fa-check-square-o:not(.text-success){
+    cursor: no-drop;
 }

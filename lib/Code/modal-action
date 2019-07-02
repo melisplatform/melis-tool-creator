@@ -1,0 +1,9 @@
+    public function renderModalFormAction()
+    {
+        $view = new ViewModel();
+
+        $id = $this->params()->fromQuery('id', 'add');
+        $view->id = $id;
+
+        return $view;
+    }

@@ -1,8 +1,0 @@
-                                        array(
-                                            'name' => 'NotEmpty',
-                                            'options' => array(
-                                                'messages' => array(
-                                                    \Zend\Validator\NotEmpty::IS_EMPTY => 'tr_moduletpl_value_must_not_is_empty',
-                                                ),
-                                            ),
-                                        )

@@ -1,0 +1,5 @@
+            // Date values
+            foreach ($formData As $input => $val)
+                if (in_array($input, [#TCDATEINPUTNAME]))
+                    if (empty($val))
+                        unset($formData[$input]);

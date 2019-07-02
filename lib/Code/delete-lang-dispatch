@@ -1,0 +1,5 @@
+                $this->dispatchPlugin(
+                    $e,
+                    'ModuleTpl\Controller\Language',
+                    ['action' => 'delete']
+                );

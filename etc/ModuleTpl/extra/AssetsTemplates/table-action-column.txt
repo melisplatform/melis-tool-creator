@@ -1,2 +1,0 @@
-        $translator = $this->getServiceLocator()->get('translator');
-        $columns['actions'] = array('text' => $translator->translate('tr_moduletpl_common_table_column_action'), 'width' => '10%');

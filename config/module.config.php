@@ -1,135 +1,85 @@
 <?php
 
 /**
- * Melis Technology (http://www.melistechnology.com)
+ * Melis Technology (http://www.melistechnology.com]
  *
- * @copyright Copyright (c) 2015 Melis Technology (http://www.melistechnology.com)
+ * @copyright Copyright (c] 2015 Melis Technology (http://www.melistechnology.com]
  *
  */
 
-return array(
-    'router' => array(
-        'routes' => array(
-        	'melis-backoffice' => array(
-                'child_routes' => array(
-                    'application-MelisToolCreator' => array(
+return [
+    'router' => [
+        'routes' => [
+            'melis-backoffice' => [
+                'child_routes' => [
+                    'application-MelisToolCreator' => [
                         'type'    => 'Literal',
-                        'options' => array(
+                        'options' => [
                             'route'    => 'MelisToolCreator',
-                            'defaults' => array(
+                            'defaults' => [
                                 '__NAMESPACE__' => 'MelisToolCreator\Controller',
-                                'controller'    => 'Index',
-                                'action'        => 'index',
-                            ),
-                        ),
+                            ],
+                        ],
                         'may_terminate' => true,
-                        'child_routes' => array(
-                            'default' => array(
+                        'child_routes' => [
+                            'default' => [
                                 'type'    => 'Segment',
-                                'options' => array(
+                                'options' => [
                                     'route'    => '/[:controller[/:action]]',
-                                    'constraints' => array(
+                                    'constraints' => [
                                         'controller' => '[a-zA-Z][a-zA-Z0-9_-]*',
                                         'action'     => '[a-zA-Z][a-zA-Z0-9_-]*',
-                                    ),
-                                    'defaults' => array(
-                                    ),
-                                ),
-                            ),
-                        ),
-                    ),
-                    'tool-creator-validate-cur-step' => array(
+                                    ],
+                                    'defaults' => [],
+                                ],
+                            ],
+                        ],
+                    ],
+                    'tool-creator-validate-cur-step' => [
                         'type' => 'Segment',
-                        'options' => array(
+                        'options' => [
                             'route' => 'tool-creator-validate-cur-step',
-                            'defaults' => array(
+                            'defaults' => [
                                 'controller' => 'MelisToolCreator\Controller\ToolCreator',
                                 'action' => 'renderToolCreatorSteps',
-                            ),
-                        ),
-                    ),
-                    'tool-creator-get-tbl-cols' => array(
+                            ],
+                        ],
+                    ],
+                    'tool-creator-get-tbl-cols' => [
                         'type' => 'Segment',
-                        'options' => array(
+                        'options' => [
                             'route' => 'tool-creator-get-tbl-cols',
-                            'defaults' => array(
+                            'defaults' => [
                                 'controller' => 'MelisToolCreator\Controller\ToolCreator',
                                 'action' => 'renderStep3TableColumns',
-                            ),
-                        ),
-                    ),
-                    'tool-creator-reload-dbtbl-cached' => array(
-                        'type' => 'Segment',
-                        'options' => array(
-                            'route' => 'tool-creator-reload-dbtbl-cached',
-                            'defaults' => array(
-                                'controller' => 'MelisToolCreator\Controller\ToolCreator',
-                                'action' => 'renderStep3DbTables',
-                            ),
-                        ),
-                    ),
-                ),    
-        	),
-            /*
-            * This route will handle the
-            * alone setup of a module
-            */
-            /*'setup-melis-calendar' => array(
-                'type'    => 'Literal',
-                'options' => array(
-                    'route'    => '/MelisCalendar',
-                    'defaults' => array(
-                        '__NAMESPACE__' => 'MelisCalendar\Controller',
-                        'controller'    => '',
-                        'action'        => '',
-                    ),
-                ),
-                'may_terminate' => true,
-                'child_routes' => array(
-                    'default' => array(
-                        'type'    => 'Segment',
-                        'options' => array(
-                            'route'    => '/[:controller[/:action]]',
-                            'constraints' => array(
-                                'controller' => '[a-zA-Z][a-zA-Z0-9_-]*',
-                                'action'     => '[a-zA-Z][a-zA-Z0-9_-]*',
-                            ),
-                            'defaults' => array(
-                            ),
-                        ),
-                    ),
-                    'setup' => array(
-                        'type' => 'Segment',
-                        'options' => array(
-                            'route' => '/setup',
-                            'defaults' => array(
-                                'controller' => 'MelisCalendar\Controller\MelisSetup',
-                                'action' => 'setup-form',
-                            ),
-                        ),
-                    ),
-                ),
-            ),*/
-        ),
-    ),
-    'translator' => array(
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ],
+    'translator' => [
         'locale' => 'en_EN',
-    ),
-    'service_manager' => array(
-        'aliases' => array(
+    ],
+    'service_manager' => [
+        'aliases' => [
             'translator' => 'MvcTranslator',
-        ),
-    ),
-    'controllers' => array(
-        'invokables' => array(
+        ],
+        'factories' => [
+            'MelisToolCreatorService' => 'MelisToolCreator\Service\Factory\MelisToolCreatorServiceFactory',
+        ],
+    ],
+    'controllers' => [
+        'invokables' => [
             'MelisToolCreator\Controller\ToolCreator' => 'MelisToolCreator\Controller\ToolCreatorController',
-        ),
-    ),
-    'view_manager' => array(
+        ],
+    ],
+    'view_manager' => [
         'display_not_found_reason' => true,
         'display_exceptions'       => true,
         'doctype'                  => 'HTML5',
-        'template_map' => array(
+        'template_map' => [
             'melis-tool-creator/step1'          => __DIR__ . '/../view/melis-tool-creator/tool-creator/render-step1.phtml',
             'melis-tool-creator/step2'          => __DIR__ . '/../view/melis-tool-creator/tool-creator/render-step2.phtml',
             'melis-tool-creator/step3'          => __DIR__ . '/../view/melis-tool-creator/tool-creator/render-step3.phtml',
@@ -140,29 +90,31 @@ return array(
             'melis-tool-creator/step6'          => __DIR__ . '/../view/melis-tool-creator/tool-creator/render-step6.phtml',
             'melis-tool-creator/step7'          => __DIR__ . '/../view/melis-tool-creator/tool-creator/render-step7.phtml',
             'melis-tool-creator/step8'          => __DIR__ . '/../view/melis-tool-creator/tool-creator/render-step8.phtml',
-        ),
-        'template_path_stack' => array(
+        ],
+        'template_path_stack' => [
             __DIR__ . '/../view',
-        ),
-        'strategies' => array(
+        ],
+        'strategies' => [
             'ViewJsonStrategy',
-        ),
-    ),
-    'caches' => array(
-        'toolcreator_database' => array(
+        ],
+    ],
+    'caches' => [
+        'toolcreator_database' => [
             'active' => true, // activate or deactivate Melis Cache for this conf
-            'adapter' => array(
+            'adapter' => [
                 'name'    => 'Filesystem',
-                'options' => array(
+                'options' => [
                     'ttl' => 0, // 24hrs
                     'namespace' => 'melistoolcreator',
                     'cache_dir' => $_SERVER['DOCUMENT_ROOT'] . '/../cache'
-                ),
-            ),
-            'plugins' => array(
-                'exception_handler' => array('throw_exceptions' => false),
+                ],
+            ],
+            'plugins' => [
+                'exception_handler' => [
+                    'throw_exceptions' => false
+                ],
                 'Serializer'
-            ),
-        ),
-    )
-);
+            ],
+        ],
+    ]
+];

@@ -1,0 +1,53 @@
+    public function renderToolAction()
+    {
+        $id = $this->params()->fromQuery('id', 'add');
+        $view = new ViewModel();
+        $view->id = $id;
+        return $view;
+    }
+
+    public function renderToolHeaderAction()
+    {
+        $view = new ViewModel();
+        $id = $this->params()->fromQuery('id', 'add');
+
+        $translator = $this->getServiceLocator()->get('translator');
+        $title = $translator->translate('tr_moduletpl_common_button_add');
+
+        if (is_numeric($id)){
+            $title = $translator->translate('tr_moduletpl_title').' / '.$id;
+        }
+
+        $view->id = $id;
+        $view->title = $title;
+        return $view;
+    }
+
+    public function renderToolContentAction()
+    {
+        $view = new ViewModel();
+        $id = $this->params()->fromQuery('id', 'add');
+        $view->id = $id;
+        return $view;
+    }
+
+    public function renderToolMainContentAction()
+    {
+        $view = new ViewModel();
+        $moduleTplForm = $this->getForm();
+
+        $id = $this->params()->fromQuery('id', 'add');
+        $view->id = $id;
+
+        $moduleTplForm->setAttribute('id', $id. '_' . $moduleTplForm->getAttribute('id'));
+
+        if ($id != 'add'){
+            $moduleTplTable = $this->getServiceLocator()->get('ModuleTplTable');
+            $data = $moduleTplTable->getEntryById($id)->current();
+            $moduleTplForm->bind($data);
+        }
+
+        $view->moduleTplForm = $moduleTplForm;
+
+        return $view;
+    }

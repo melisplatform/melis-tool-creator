@@ -1,0 +1,16 @@
+<?php
+    $id = $this->id . '_' . $this->zoneconfig['conf']['id'];
+    $melisKey = $this->zoneconfig['conf']['melisKey'];
+?>
+<div id="<?php echo $id ?>" data-melisKey="<?php echo $melisKey; ?>">
+    <div class="me-heading bg-white border-bottom">
+        <div class="row">
+            <div class="me-hl col-xs-8 col-sm-8 col-md-8">
+                <h1 class="content-heading"><?php echo $this->title ?></h1>
+            </div>
+            <div class="me-hl col-xs-4 col-sm-4 col-md-4">
+                <button class="btn btn-success btnSaveModuleTpl pull-right"  data-id="<?php echo $this->id ?>" title="<?php echo $this->translate('tr_moduletpl_common_button_save'); ?>"><i class="fa fa-save"></i> <?php echo $this->translate('tr_moduletpl_common_button_save'); ?></button>
+            </div>
+        </div>
+    </div>
+</div>

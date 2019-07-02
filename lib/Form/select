@@ -1,0 +1,18 @@
+                                [
+                                    'spec' => [
+                                        'name' => '#TCKEY',
+                                        'type' => 'Select',
+                                        'options' => [
+                                            'label' => 'tr_moduletpl_#TCKEY',
+                                            'tooltip' => 'tr_moduletpl_#TCKEY_tooltip',
+                                            'empty_option' => 'tr_moduletpl_common_choose',
+                                            'disable_inarray_validator' => true,
+                                            'value_options' => [
+                                                #TCSELECTVALUES
+                                            ],
+                                        ],
+                                        'attributes' => [
+                                            'class' => 'form-control',
+                                        ],
+                                    ],
+                                ]

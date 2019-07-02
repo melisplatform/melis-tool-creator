@@ -1,0 +1,18 @@
+<?php
+    $id = $this->id . '_' . $this->zoneconfig['conf']['id'];
+    $melisKey = $this->zoneconfig['conf']['melisKey'];
+?>
+<div class="tab-pane active" id="<?php echo $id ?>" data-melisKey="<?php echo $melisKey; ?>">
+    <div  style="margin-bottom: 20px;">
+        <div class="melis-news-heading border-bottom">
+            <h3 style="margin-bottom: inherit"><?php echo $this->translate('tr_moduletpl_properties') ?></h3>
+        </div>
+    </div>
+    <?php
+        $form = $this->moduleTplForm;
+        $form->prepare();
+        echo $this->form()->openTag($form);
+        echo $this->melisFieldCollection($form);
+        echo $this->form()->closeTag();
+    ?>
+</div>

@@ -1,0 +1,2 @@
+        var id = $(this).parents("tr").attr("id");
+        melisHelper.tabOpen(translations.tr_moduletpl_title+" / "+id, 'fa fa-puzzle-piece', id+'_id_moduletpl_properties_tool', 'moduletpl_properties_tool', {id: id}, 'id_moduletpl_tool');

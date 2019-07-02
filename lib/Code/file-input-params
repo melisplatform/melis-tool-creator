@@ -1,0 +1,13 @@
+        // File input
+        $filesInpt = $this->params()->fromFiles();
+        if (!empty($filesInpt)){
+            foreach ($filesInpt As $input => $file){
+                if ($moduleTplForm->has($input))
+                    if (!empty($file['tmp_name'])){
+                        $this->fileInput($input, $moduleTplForm->getInputFilter());
+                        $formData[$input] = $file;
+                    }else
+                        if (is_numeric($formData['#TCKEY']))
+                            $moduleTplForm->getInputFilter()->get($input)->setRequired(false);
+            }
+        }

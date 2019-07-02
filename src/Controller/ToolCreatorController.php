@@ -20,14 +20,9 @@ use Zend\Db\Metadata\Metadata;
 
 class ToolCreatorController extends AbstractActionController
 {
-    private $moduleTplDir;
+
     private $cacheKey = 'toolcreator_database_tables';
     private $cacheConfig = 'toolcreator_database';
-
-    public function __construct()
-    {
-        $this->moduleTplDir = __DIR__ .'/../../etc/ModuleTpl';
-    }
 
     /**
      * Render tool creator
@@ -39,7 +34,7 @@ class ToolCreatorController extends AbstractActionController
 
         // Initializing the Tool creator session container
         $container = new Container('melistoolcreator');
-        $container['melis-toolcreator'] = array();
+        $container['melis-toolcreator'] = [];
 
         return $view;
     }
@@ -50,8 +45,7 @@ class ToolCreatorController extends AbstractActionController
      */
     public function renderToolCreatorHeaderAction()
     {
-        $view = new ViewModel();
-        return $view;
+        return new ViewModel();
     }
 
     /**
@@ -65,7 +59,7 @@ class ToolCreatorController extends AbstractActionController
         /**
          * Checking file permission to file and directories needed to create and activate the tool
          */
-        $filePermissionErr = array();
+        $filePermissionErr = [];
         if (!is_writable($_SERVER['DOCUMENT_ROOT'] . '/../config/melis.module.load.php'))
             $filePermissionErr[] = 'tr_melistoolcreator_fp_config';
 
@@ -94,7 +88,7 @@ class ToolCreatorController extends AbstractActionController
     }
 
     /**
-     * This methos render the steps of the tool
+     * This method render the steps of the tool
      * this will call dynamically the requested step ViewModel
      * @return ViewModel
      */
@@ -119,7 +113,6 @@ class ToolCreatorController extends AbstractActionController
          * with the current view and the flag for validation
          */
         $viewVars = $this->$stpFunction($viewStp, $validate);
-
         /**
          * Checking if the view returns with error this view will display to show the errors message(s)
          * else this will call the next step and return to render
@@ -132,10 +125,9 @@ class ToolCreatorController extends AbstractActionController
             $viewStp = $this->$stpFunction($viewStp);
         }
 
-
         $viewRender = $this->getServiceLocator()->get('ViewRenderer');
 
-        if ($validate || ( $curStep > $nxtStep) ){
+        if ($validate || ( $curStep > $nxtStep)){
 
             // Retrieving steps form config
             $config = $this->getServiceLocator()->get('config');
@@ -144,19 +136,21 @@ class ToolCreatorController extends AbstractActionController
             // translating error modal title
             $translator = $this->getServiceLocator()->get('translator');
 
-            $results = array(
+            $results = [
                 'textTitle' => $translator->translate($stepsConfig['melistoolcreator_step'.$curStep]['name']),
                 'html' => $viewRender->render($viewStp) // Sending the step view without container
-            );
+            ];
 
-            if (isset($viewVars->hasError) && !isset($viewVars->skipErrModal)){
+            if (isset($viewVars->hasError) && !isset($viewVars->skipErrModal) && !isset($viewVars->finalized)){
                 $results['errors'] = $translator->translate($stepsConfig['melistoolcreator_step'.$nxtStep]['name']);
 
                 // Translating error input name
-                $stepErrors = array();
+                $stepErrors = [];
                 foreach ($viewVars->hasError As $key => $val){
                     $stepErrors[$key] = $val;
-                    $stepErrors[$key]['label'] = ($curStep != 6) ? $translator->translate('tr_melistoolcreator_'.$key) : $key; // Skipping step 6. ask your self y then find an answer.
+                    $colLabel = ($translator->translate('tr_melistoolcreator_'.$key) != 'tr_melistoolcreator_'.$key) ? $translator->translate('tr_melistoolcreator_'.$key) : $key;
+                    // Removing prefix for language table columns
+                    $stepErrors[$key]['label'] = str_replace('tclangtblcol_', '', $colLabel);
                 }
 
                 $results['errors'] = $stepErrors;
@@ -215,13 +209,16 @@ class ToolCreatorController extends AbstractActionController
                 $modulesSvc = $this->getServiceLocator()->get('ModulesService');
                 $existingModules = array_merge($modulesSvc->getModulePlugins(), \MelisCore\MelisModuleManager::getModules());
 
-                if (in_array($formData['step-form']['tcf-name'], $existingModules)){
+                $toolCreatorSrv = $this->getServiceLocator()->get('MelisToolCreatorService');
+                $targetModuleName = $toolCreatorSrv->generateModuleNameCase($formData['step-form']['tcf-name']);
+
+                if (in_array($targetModuleName, $existingModules)){
 
                     // Adding error message to module input
                     $translator = $this->getServiceLocator()->get('translator');
-                    $step1Form->get('tcf-name')->setMessages(array(
+                    $step1Form->get('tcf-name')->setMessages([
                         'ModuleExist' => sprintf($translator->translate('tr_melistoolcreator_err_module_exist'), $formData['step-form']['tcf-name'])
-                    ));
+                    ]);
 
                     // adding a variable to viewmodel to flag an error
                     $viewStp->hasError = $step1Form->getMessages();
@@ -258,7 +255,7 @@ class ToolCreatorController extends AbstractActionController
 
         // Meliscore languages
         $coreLang = $this->getServiceLocator()->get('MelisCoreTableLang');
-        $languages = $coreLang->getLanguageInOrdered()->toArray();
+        $languages = $coreLang->fetchAll()->toArray();
 
         // Step form fields
         $melisMelisCoreConfig = $this->getServiceLocator()->get('MelisCoreConfig');
@@ -270,11 +267,11 @@ class ToolCreatorController extends AbstractActionController
         $request = $this->getRequest();
         $formData = $request->getPost()->toArray();
 
-        $step2Form = array();
+        $step2Form = [];
 
-        $hasErrorForm = array();
+        $hasErrorForm = [];
         $hasValidForm = false;
-        $inputHasValue = array();
+        $inputHasValue = [];
 
         foreach ($languages As $key => $lang){
             // Generating form for each language
@@ -303,14 +300,10 @@ class ToolCreatorController extends AbstractActionController
                     $hasValidForm = true;
 
                 }else{
-                    if (empty($hasErrorForm))
+                    if (empty($step2Formtmp))
                         $hasErrorForm = $step2Formtmp->getMessages();
                     else
                         $hasErrorForm = ArrayUtils::merge($hasErrorForm, $step2Formtmp->getMessages());
-
-                    foreach ($hasErrorForm as $keyError => $valueError){
-                        $hasErrorForm[$keyError]['form'][] = $lang['lang_locale'].'-tool-creator-step-2';
-                    }
                 }
 
                 // Getting input with data for Error preparation
@@ -359,10 +352,28 @@ class ToolCreatorController extends AbstractActionController
         // Tool creator session container
         $container = new Container('melistoolcreator');
 
-        $tcfDbTbl = null;
-        if (!empty($container['melis-toolcreator']['step3'])){
-            $tcfDbTbl = $container['melis-toolcreator']['step3']['tcf-db-table'];
+        $toolType = $container['melis-toolcreator']['step1']['tcf-tool-type'];
+        $viewStp->toolType = $toolType;
 
+        /**
+         * ========================================================
+         * ============= Primary database table ===================
+         * ========================================================
+         */
+        $dbTablesHtml = $this->forward()->dispatch(
+            'MelisToolCreator\Controller\ToolCreator',
+            [
+                'action' => 'renderStep3PrimaryDbTables',
+                'validate' => $validate,
+            ]
+        )->getVariables();
+
+        if (isset($dbTablesHtml['hasError'])){
+            $viewStp->hasError = $dbTablesHtml['hasError'];
+            $viewStp->skipErrModal = true;
+        }
+
+        if (!empty($dbTablesHtml['selectedTbl'])) {
             /**
              * If this step has selected table this will
              * get the view of the column details to show directly
@@ -370,92 +381,190 @@ class ToolCreatorController extends AbstractActionController
              */
             $tblColsHtml = $this->forward()->dispatch(
                 'MelisToolCreator\Controller\ToolCreator',
-                array(
+                [
                     'action' => 'renderStep3TableColumns',
-                    'tableName' => $tcfDbTbl
-                )
+                    'tableName' => $dbTablesHtml['selectedTbl']
+                ]
             )->getVariables();
 
             $viewStp->tblCols = $tblColsHtml['html'];
         }
 
-        $dbTablesHtml = $this->forward()->dispatch(
+        $viewStp->dbTables = $dbTablesHtml['html'];
+
+        /**
+         * ========================================================
+         * ============= Language database table ==================
+         * ========================================================
+         */
+        $dbLangTablesHtml = $this->forward()->dispatch(
             'MelisToolCreator\Controller\ToolCreator',
-            array(
-                'action' => 'renderStep3DbTables',
-                'selectedTbl' => $tcfDbTbl,
+            [
+                'action' => 'renderStep3LanguageDbTables',
+                'priTableName' => $dbTablesHtml['selectedTbl'],
                 'validate' => $validate,
-            )
+            ]
         )->getVariables();
 
-        if (isset($dbTablesHtml['hasError'])){
-            $viewStp->hasError = true;
-            $viewStp->skipErrModal = true;
+        if ($dbLangTablesHtml['hasLanguage']){
+
+            // Merging error messages
+            if (isset($dbLangTablesHtml['hasError'])){
+                if (!empty($dbTablesHtml['hasError'])){
+                    $viewStp->hasError = ArrayUtils::merge($dbTablesHtml['hasError'], $dbLangTablesHtml['hasError']);
+                }else{
+                    $viewStp->hasError = $dbLangTablesHtml['hasError'];
+                }
+                $viewStp->skipErrModal = true;
+            }
+
+            if (!empty($dbLangTablesHtml['selectedTbl'])){
+                /**
+                 * If this step has selected table this will
+                 * get the view of the column details to show directly
+                 * to the step view
+                 */
+                $tblColsHtml = $this->forward()->dispatch(
+                    'MelisToolCreator\Controller\ToolCreator',
+                    [
+                        'action' => 'renderStep3TableColumns',
+                        'type' => 'language-db',
+                        'tableName' => $dbLangTablesHtml['selectedTbl'],
+                        'ptfk' => $dbLangTablesHtml['ptfk'],
+                        'ltfk' => $dbLangTablesHtml['ltfk'],
+                    ]
+                )->getVariables();
+
+                $viewStp->langTblCols = $tblColsHtml['html'];
+            }
+
         }
 
-        $viewStp->dbTables = $dbTablesHtml['html'];
+        $viewStp->hasLanguage = $dbLangTablesHtml['hasLanguage'];
+        $viewStp->dbLangTables = $dbLangTablesHtml['html'];
 
         return $viewStp;
     }
 
-    public function renderStep3DbTablesAction()
+    /**
+     * This methos render the Database tables list
+     * @return JsonModel
+     */
+    public function renderStep3PrimaryDbTablesAction()
     {
-        $results = array();
+        $results = [];
 
         // Tool creator session container
         $container = new Container('melistoolcreator');
 
         $view = new ViewModel();
         $view->setTemplate('melis-tool-creator/step3-db_tble');
+        $view->type = 'primary-db';
 
-        $tcfDbTbl = null;
-        if (!empty($container['melis-toolcreator']['step3']))
-            $tcfDbTbl = $container['melis-toolcreator']['step3']['tcf-db-table'];
+        $selectedTbl = null;
+        if (!empty($container['melis-toolcreator']['step3']['tcf-db-table']))
+            $selectedTbl = $container['melis-toolcreator']['step3']['tcf-db-table'];
 
         $validate = $this->params()->fromRoute('validate', false);
-        $selectedTbl = $this->params()->fromRoute('selectedTbl', $this->params()->fromPost('selectedTbl', $tcfDbTbl));
         $reloadDbCache = $this->params()->fromPost('reloadDbTblCached', false);
 
         // Step form fields
         $melisCoreConfig = $this->getServiceLocator()->get('MelisCoreConfig');
-        $appConfigForm = $melisCoreConfig->getFormMergedAndOrdered('melistoolcreator/forms/melistoolcreator_step3_form', 'melistoolcreator_step3_form');
+        $appConfigForm = $melisCoreConfig->getFormMergedAndOrdered('melistoolcreator/forms/melistoolcreator_step3_form/melistoolcreator_step3_primary_tbl', 'melistoolcreator_step3_primary_tbl');
         $factory = new \Zend\Form\Factory();
         $formElements = $this->getServiceLocator()->get('FormElementManager');
         $factory->setFormElementManager($formElements);
         $step3Form = $factory->createForm($appConfigForm);
 
-        if (!empty($container['melis-toolcreator']['step3'])) {
+        if (!empty($container['melis-toolcreator']['step3']['tcf-db-table'])) {
             $step3Form->setData($container['melis-toolcreator']['step3']);
         }elseif (!empty($selectedTbl)){
             $step3Form->get('tcf-db-table')->setValue($selectedTbl);
         }
 
         if ($validate){
+
             $request = $this->getRequest();
             $formData = $request->getPost()->toArray();
-            $step3Form->setData($formData['step-form']);
+
+            // if Module type is Tabulation
+            // the form submitted with language db details also
+            if (empty($formData['step-form'][0])){
+                $step3Form->setData($formData['step-form']);
+            }else{
+                $step3Form->setData($formData['step-form'][0]);
+            }
 
             if(!$step3Form->isValid()){
-                // adding a variable to viewmodel to flag an error
-                $results['hasError'] = true;
+                // adding a variable to ViewModel to flag an error
+                $results['hasError'] = $step3Form->getMessages();
             }else{
                 $formData = $step3Form->getData();
-                if (!empty($container['melis-toolcreator']['step3'])){
-                    /**
-                     * If the selected table is changed,
-                     * this will reset the related data store in session
-                     */
-                    if ($formData['tcf-db-table'] != $container['melis-toolcreator']['step3']['tcf-db-table']){
-                        // Reset step 4, 5 and 6
-                        unset($container['melis-toolcreator']['step4']);
-                        unset($container['melis-toolcreator']['step5']);
-                        unset($container['melis-toolcreator']['step5']);
-                        unset($container['melis-toolcreator']['step6']);
+
+                // Describe query to get the details of the Database table
+                $sql = 'DESCRIBE '.$formData['tcf-db-table'];
+                $adapter = $this->getServiceLocator()->get('Zend\Db\Adapter\Adapter');
+                $table = $adapter->query($sql, [5]);
+
+                $hasPrimaryKey = false;
+                $hasPrimaryKeyIdAI = false;
+                $notNullableBlobType = [];
+                foreach ($table->toArray() As $tbl){
+
+                    if ($tbl['Key'] == 'PRI'){
+                        $hasPrimaryKey = true;
+                        if ($tbl['Extra'] == 'auto_increment')
+                            $hasPrimaryKeyIdAI = true;
                     }
+
+                    if (!is_bool(strpos($tbl['Type'], 'blob')))
+                        if ($tbl['Null'] == 'NO'){
+                            array_push($notNullableBlobType, '<b>'. $tbl['Field'] .'</b>');
+                        }
                 }
 
-                $container['melis-toolcreator']['step3'] = $formData;
+                if ($hasPrimaryKey && $hasPrimaryKeyIdAI && empty($notNullableBlobType)){
+                    if (!empty($container['melis-toolcreator']['step3']['tcf-db-table'])){
+                        /**
+                         * If the selected table is changed,
+                         * this will reset the related data store in session
+                         */
+                        if ($formData['tcf-db-table'] != $container['melis-toolcreator']['step3']['tcf-db-table']){
+                            // Reset step 4, 5 and 6
+                            unset($container['melis-toolcreator']['step4']);
+                            unset($container['melis-toolcreator']['step5']);
+                            unset($container['melis-toolcreator']['step5']);
+                            unset($container['melis-toolcreator']['step6']);
+                        }
+                    }
+
+                    unset($container['melis-toolcreator']['step3']);
+                    $container['melis-toolcreator']['step3']['tcf-db-table'] = $formData['tcf-db-table'];
+                }else{
+                    $translator = $this->getServiceLocator()->get('translator');
+
+                    // adding a variable to ViewModel to flag an error
+                    if (!$hasPrimaryKey)
+                        $results['hasError']['tcf-db-table'] = [
+                            'priTblNoPrimaryKey' => $translator->translate('tr_melistoolcreator_err_no_primary_key')
+                        ];
+
+                    if (!$hasPrimaryKeyIdAI)
+                        $results['hasError']['tcf-db-table']['priTblNoPrimaryKeyNotAI'] = $translator->translate('tr_melistoolcreator_err_primary_key_not_ai');
+
+                    if (!empty($notNullableBlobType)){
+                        if (count($notNullableBlobType) > 1)
+                            $errMsg = 's '.implode(', ', $notNullableBlobType);
+                        else
+                            $errMsg = ' '.implode(',', $notNullableBlobType);
+
+                        $results['hasError']['tcf-db-table']['notNullableBlobType'] = sprintf($translator->translate('tr_melistoolcreator_err_blob_type_found_pri_tbl'), $errMsg);
+                    }
+                }
             }
+
+            if (!empty($formData['tcf-db-table']))
+                $selectedTbl = $formData['tcf-db-table'];
         }
 
         // Re-caching database tables
@@ -467,8 +576,158 @@ class ToolCreatorController extends AbstractActionController
             $view->selectedTbl = $selectedTbl;
         }
 
+        $results['selectedTbl'] = $selectedTbl;
+
         $view->step3Form = $step3Form;
         $view->tables = $this->getDBTablesCached();
+
+        // Rendering the ViewModel to return html string
+        $viewRenderer = $this->getServiceLocator()->get('ViewRenderer');
+        $html = $viewRenderer->render($view);
+
+        $results['html'] = $html;
+        return new JsonModel($results);
+    }
+
+    public function renderStep3LanguageDbTablesAction()
+    {
+        $results = [];
+
+        // Tool creator session container
+        $container = new Container('melistoolcreator');
+        $stepCont = !empty( $container['melis-toolcreator']['step3']) ?  $container['melis-toolcreator']['step3'] : [];
+
+        $view = new ViewModel();
+        $view->setTemplate('melis-tool-creator/step3-db_tble');
+        $view->type = 'language-db';
+
+        // Step form fields
+        $melisCoreConfig = $this->getServiceLocator()->get('MelisCoreConfig');
+        $appConfigForm = $melisCoreConfig->getFormMergedAndOrdered('melistoolcreator/forms/melistoolcreator_step3_form/melistoolcreator_step3_language_tbl', 'melistoolcreator_step3_language_tbl');
+        $factory = new \Zend\Form\Factory();
+        $formElements = $this->getServiceLocator()->get('FormElementManager');
+        $factory->setFormElementManager($formElements);
+        $step3Form = $factory->createForm($appConfigForm);
+
+        if (!empty($stepCont))
+            $step3Form->setData($stepCont);
+
+        $view->selectedPrimaryTbl = $this->params()->fromRoute('priTableName', null);
+
+        $selectedTbl = null;
+        if (!empty($stepCont['tcf-db-table-language-tbl']))
+            $selectedTbl = $stepCont['tcf-db-table-language-tbl'];
+
+        $ptfk = null;
+        $ltfk = null;
+        if (!empty($stepCont['tcf-db-table-language-pri-fk']))
+            $ptfk = $stepCont['tcf-db-table-language-pri-fk'];
+
+        if (!empty($stepCont['tcf-db-table-language-lang-fk']))
+            $ltfk = $stepCont['tcf-db-table-language-lang-fk'];
+
+        $validate = $this->params()->fromRoute('validate', false);
+
+        $request = $this->getRequest();
+        $formData = $request->getPost()->toArray();
+
+        if ($validate){
+
+            $step3Form->setData($formData['step-form'][1]);
+
+
+            if(!$step3Form->isValid()){
+
+                if ($formData['step-form'][1]['tcf-db-table-has-language']){
+
+                    // adding a variable to viewModel to flag an error
+                    $formErr = $step3Form->getMessages();
+
+                    // Removing FK errors if the language table has no value
+                    // To show first the error message of language table
+                    if (isset($formErr['tcf-db-table-language-tbl'])){
+                        $temp['tcf-db-table-language-tbl'] = $formErr['tcf-db-table-language-tbl'];
+                        $formErr = $temp;
+                    }
+
+                    $results['hasError'] = $formErr;
+                }
+            }
+
+            $formData = $step3Form->getData();
+
+            if ($formData['tcf-db-table-has-language'] && !empty($formData['tcf-db-table-language-tbl'])){
+
+                // Describe query to get the details of the Database table
+                $sql = 'DESCRIBE '.$formData['tcf-db-table-language-tbl'];
+                $adapter = $this->getServiceLocator()->get('Zend\Db\Adapter\Adapter');
+                $table = $adapter->query($sql, [5]);
+
+                $hasPrimaryKeyIdAI = false;
+                $hasPrimaryKey = false;
+                $notNullableBlobType = [];
+                foreach ($table->toArray() As $tbl){
+                    if ($tbl['Key'] == 'PRI'){
+                        $hasPrimaryKey = true;
+                        if ($tbl['Extra'] == 'auto_increment')
+                            $hasPrimaryKeyIdAI = true;
+                    }
+
+                    if (!is_bool(strpos($tbl['Type'], 'blob')))
+                        if ($tbl['Null'] == 'NO'){
+                            array_push($notNullableBlobType, '<b>'. $tbl['Field'] .'</b>');
+                        }
+                }
+
+                if (!$hasPrimaryKey || !$hasPrimaryKeyIdAI || !empty($notNullableBlobType)){
+
+                    if (empty($results['hasError']))
+                        $results['hasError'] = [];
+
+                    $translator = $this->getServiceLocator()->get('translator');
+                    // adding a variable to ViewModel to flag an error
+
+                    if (!$hasPrimaryKey)
+                        $results['hasError']['tcf-db-table']['langTblNoPrimaryKey'] = $translator->translate('tr_melistoolcreator_err_lang_no_primary_key');
+
+                    if (!$hasPrimaryKeyIdAI)
+                        $results['hasError']['tcf-db-table']['langTblNoPrimaryKeyNotAI'] = $translator->translate('tr_melistoolcreator_err_lang_primary_key_not_ai');
+
+                    if (!empty($notNullableBlobType)){
+                        if (count($notNullableBlobType) > 1)
+                            $errMsg = 's '.implode(', ', $notNullableBlobType);
+                        else
+                            $errMsg = ' '.implode(',', $notNullableBlobType);
+
+                        $results['hasError']['tcf-db-table']['notNullableBlobType'] = sprintf($translator->translate('tr_melistoolcreator_err_blob_type_found_lang_tbl'), $errMsg);
+                    }
+                }
+            }
+
+
+            if (!empty($stepCont))
+                $container['melis-toolcreator']['step3'] = ArrayUtils::merge($stepCont, $step3Form->getData());
+            else
+                $container['melis-toolcreator']['step3'] = $step3Form->getData();
+
+            $ptfk = $formData['tcf-db-table-language-pri-fk'];
+            $ltfk = $formData['tcf-db-table-language-lang-fk'];
+
+            $selectedTbl = $formData['tcf-db-table-language-tbl'];
+        }
+
+        $results['selectedTbl'] = $selectedTbl;
+        $results['ptfk'] = $ptfk;
+        $results['ltfk'] = $ltfk;
+
+        $view->step3Form = $step3Form;
+        $view->tables = $this->getDBTablesCached();
+
+        $results['hasLanguage'] = $step3Form->get('tcf-db-table-has-language')->getValue();
+
+        if (!empty($container['melis-toolcreator']['step3']['tcf-db-table-language-tbl'])){
+            $view->selectedTbl = $container['melis-toolcreator']['step3']['tcf-db-table-language-tbl'];
+        }
 
         // Rendering the ViewModel to return html string
         $viewRenderer = $this->getServiceLocator()->get('ViewRenderer');
@@ -489,18 +748,38 @@ class ToolCreatorController extends AbstractActionController
         $view = new ViewModel();
         $view->setTemplate('melis-tool-creator/step3-tbl-col');
 
+        $view->tblType = $this->params()->fromPost('type', $this->params()->fromRoute('type'));
+        $view->ptfk = $this->params()->fromPost('ptfk', $this->params()->fromRoute('ptfk'));
+        $view->ltfk = $this->params()->fromPost('ltfk', $this->params()->fromRoute('ltfk'));
+
         // Describe query to get the details of the Database table
-        $tableName = $this->params()->fromPost('tableName',$this->params()->fromRoute('tableName'));
-        $sql = 'DESCRIBE '.$tableName;
-        $adapter = $this->getServiceLocator()->get('Zend\Db\Adapter\Adapter');
-        $table = $adapter->query($sql, array(5));
-        $view->table = $table->toArray();
+        $tableName = $this->params()->fromPost('tableName', $this->params()->fromRoute('tableName'));
+        if ($tableName){
+            $sql = 'DESCRIBE '.$tableName;
+            $adapter = $this->getServiceLocator()->get('Zend\Db\Adapter\Adapter');
+            $tables = $adapter->query($sql, [5])->toArray();
+
+            $hasPrimaryKey = false;
+            $hasBlobType = false;
+            foreach ($tables As $tbl){
+                if ($tbl['Key'] == 'PRI')
+                    $hasPrimaryKey = true;
+
+                if (!is_bool(strpos($tbl['Type'], 'blob')))
+                    $hasBlobType = true;
+            }
+
+            $view->table = $tables;
+            $view->hasPrimaryKey = $hasPrimaryKey;
+            $view->hasBlobType = $hasBlobType;
+        }
+
 
         // Rendering the ViewModel to return html string
         $viewRenderer = $this->getServiceLocator()->get('ViewRenderer');
         $html = $viewRenderer->render($view);
 
-        return new JsonModel(array('html' => $html));
+        return new JsonModel(['html' => $html]);
     }
 
     /**
@@ -521,8 +800,22 @@ class ToolCreatorController extends AbstractActionController
         // Describe query to get the details of the Database table
         $sql = 'DESCRIBE '.$tcfDbTbl;
         $adapter = $this->getServiceLocator()->get('Zend\Db\Adapter\Adapter');
-        $table = $adapter->query($sql, array(5));
-        $viewStp->table = $table->toArray();
+        $table = $adapter->query($sql, [5]);
+        $viewStp->priTblCols = $table->toArray();
+
+        if (!empty($container['melis-toolcreator']['step3']['tcf-db-table-has-language'])){
+
+            // Describe query to get the details of the Database table
+            $sql = 'DESCRIBE '.$container['melis-toolcreator']['step3']['tcf-db-table-language-tbl'];
+            $table = $adapter->query($sql, [5]);
+            $viewStp->langTblCols = $table->toArray();
+
+            // Adding prefix "lang_" for language columns
+            $viewStp->fkCols = [
+                'tclangtblcol_'.$container['melis-toolcreator']['step3']['tcf-db-table-language-pri-fk'],
+                'tclangtblcol_'.$container['melis-toolcreator']['step3']['tcf-db-table-language-lang-fk'],
+            ];
+        }
 
         // Step form fields
         $melisMelisCoreConfig = $this->getServiceLocator()->get('MelisCoreConfig');
@@ -541,7 +834,7 @@ class ToolCreatorController extends AbstractActionController
             $formData = get_object_vars($request->getPost());
 
             if(empty($formData['step-form'])){
-                // adding a variable to viewmodel to flag an error
+                // adding a variable to ViewModel to flag an error
                 $viewStp->hasError = true;
                 $viewStp->skipErrModal = true;
             }else{
@@ -605,9 +898,31 @@ class ToolCreatorController extends AbstractActionController
         // Describe query to get the details of the Database table
         $sql = 'DESCRIBE '.$tcfDbTbl;
         $adapter = $this->getServiceLocator()->get('Zend\Db\Adapter\Adapter');
-        $table = $adapter->query($sql, array(5));
+        $table = $adapter->query($sql, [5]);
         $tableCols = $table->toArray();
 
+        $viewStp->tableCols = $this->tblColsFields($tableCols);
+
+        if (!empty($container['melis-toolcreator']['step3']['tcf-db-table-has-language'])){
+
+            // Describe query to get the details of the Database table
+            $sql = 'DESCRIBE '.$container['melis-toolcreator']['step3']['tcf-db-table-language-tbl'];
+            $table = $adapter->query($sql, [5]);
+            $angTblCols = $table->toArray();
+            $viewStp->langTblCols = $this->tblColsFields($angTblCols, true);
+        }
+
+        // Input Types
+        $config = $this->getServiceLocator()->get('config');
+        $viewStp->inputTypes = $config['plugins']['melistoolcreator']['datas']['input_types'];
+
+        return $viewStp;
+    }
+
+    private function tblColsFields($tableCols, $langTbl = false)
+    {
+        // Tool creator session container
+        $container = new Container('melistoolcreator');
         /**
          * This part is assigning to a input field data
          * base of the database table column details
@@ -616,6 +931,9 @@ class ToolCreatorController extends AbstractActionController
          * and also the type of the field if it s editable
          */
         foreach($tableCols As $key => $val){
+
+
+
             $editableIcon = 'fa fa-lg tcf-fa-checkbox-editable';
             $requiredIcon = 'fa fa-lg tcf-fa-checkbox-required';
             $iconTag = '<i class="%s"></i>';
@@ -624,41 +942,58 @@ class ToolCreatorController extends AbstractActionController
             $checkedIcon = 'fa-check-square-o';
             $checkedColorIcon = 'text-success';
 
+            $colField = $val['Field'];
+            if ($langTbl){
+                // Adding prefix "lang_" for language columns
+                $colField = 'tclangtblcol_'.$val['Field'];
+            }
+
             // input states
             $tableCols[$key]['editableIsChecked'] = false;
             $tableCols[$key]['requiredIsChecked'] = false;
 
             if ($val['Key'] == 'PRI' && $val['Extra'] == 'auto_increment'){
-                $tableCols[$key]['editable'] = 'AUTO_INCREMENT';
-                $tableCols[$key]['required'] = 'AUTO_INCREMENT';
+                $tableCols[$key]['editable'] = 'AUTO_INCREMENT';//sprintf($iconTag, implode(' ', [$editableIcon, $checkedIcon]));
+                $tableCols[$key]['required'] = 'AUTO_INCREMENT';//sprintf($iconTag, implode(' ', [$requiredIcon, $checkedIcon]));
+                $tableCols[$key]['isAutoIncrement'] = true;
                 $tableCols[$key]['editableIsChecked'] = true;
                 $tableCols[$key]['requiredIsChecked'] = true;
             }elseif ($val['Key'] == 'PRI' || $val['Null'] == 'NO'){
-                $tableCols[$key]['editable'] = sprintf($iconTag, implode(' ', array($editableIcon, $checkedIcon)));
-                $tableCols[$key]['required'] = sprintf($iconTag, implode(' ', array($requiredIcon, $checkedIcon)));
+                $tableCols[$key]['editable'] = sprintf($iconTag, implode(' ', [$editableIcon, $checkedIcon]));
+                $tableCols[$key]['required'] = sprintf($iconTag, implode(' ', [$requiredIcon, $checkedIcon]));
                 $tableCols[$key]['editableIsChecked'] = true;
                 $tableCols[$key]['requiredIsChecked'] = true;
             }else{
-                $tableCols[$key]['editable'] = sprintf($iconTag, implode(' ', array($editableIcon, $unCheckedIcon, $activeCheckIcon)));
-                $tableCols[$key]['required'] = sprintf($iconTag, implode(' ', array($requiredIcon, $unCheckedIcon, $activeCheckIcon)));
+                $tableCols[$key]['editable'] = sprintf($iconTag, implode(' ', [$editableIcon, $unCheckedIcon, $activeCheckIcon]));
+                $tableCols[$key]['required'] = sprintf($iconTag, implode(' ', [$requiredIcon, $unCheckedIcon, $activeCheckIcon]));
                 $tableCols[$key]['isChecked'] = false;
 
                 if (!empty($container['melis-toolcreator']['step5'])){
                     // Checking editable column checkbox
                     if ($container['melis-toolcreator']['step5']['tcf-db-table-col-editable']){
-                        if (in_array($val['Field'], $container['melis-toolcreator']['step5']['tcf-db-table-col-editable'])){
-                            $tableCols[$key]['editable'] = sprintf($iconTag, implode(' ', array($editableIcon, $checkedIcon, $checkedColorIcon, $activeCheckIcon)));
+                        if (in_array($colField, $container['melis-toolcreator']['step5']['tcf-db-table-col-editable'])){
+                            $tableCols[$key]['editable'] = sprintf($iconTag, implode(' ', [$editableIcon, $checkedIcon, $checkedColorIcon, $activeCheckIcon]));
                             $tableCols[$key]['editableIsChecked'] = true;
                         }
                     }
 
                     // Checking required column checkbox
                     if ($container['melis-toolcreator']['step5']['tcf-db-table-col-required']){
-                        if (in_array($val['Field'], $container['melis-toolcreator']['step5']['tcf-db-table-col-required'])){
-                            $tableCols[$key]['required'] = sprintf($iconTag, implode(' ', array($requiredIcon, $checkedIcon, $checkedColorIcon, $activeCheckIcon)));
+                        if (in_array($colField, $container['melis-toolcreator']['step5']['tcf-db-table-col-required'])){
+                            $tableCols[$key]['required'] = sprintf($iconTag, implode(' ', [$requiredIcon, $checkedIcon, $checkedColorIcon, $activeCheckIcon]));
                             $tableCols[$key]['requiredIsChecked'] = true;
                         }
                     }
+                }
+            }
+
+            // Language Foreign keys
+            if (!empty($container['melis-toolcreator']['step3']['tcf-db-table-has-language']) && $val['Key'] != 'PRI'){
+                if (in_array($val['Field'], [$container['melis-toolcreator']['step3']['tcf-db-table-language-pri-fk'], $container['melis-toolcreator']['step3']['tcf-db-table-language-lang-fk']])){
+                    $tableCols[$key]['editable'] = 'FK';
+                    $tableCols[$key]['required'] = 'FK';
+                    $tableCols[$key]['editableIsChecked'] = true;
+                    $tableCols[$key]['requiredIsChecked'] = true;
                 }
             }
 
@@ -672,7 +1007,7 @@ class ToolCreatorController extends AbstractActionController
                     $fieldType = $container['melis-toolcreator']['step5']['tcf-db-table-col-type'];
 
                     foreach ($container['melis-toolcreator']['step5']['tcf-db-table-col-editable'] As $fKey => $fVal){
-                        if ($fVal == $val['Field']){
+                        if ($fVal == $colField){
                             $tableCols[$key]['fieldType'] = $fieldType[$fKey];
                         }
                     }
@@ -680,9 +1015,7 @@ class ToolCreatorController extends AbstractActionController
             }
         }
 
-        $viewStp->tableCols = $tableCols;
-
-        return $viewStp;
+        return $tableCols;
     }
 
     /**
@@ -703,7 +1036,7 @@ class ToolCreatorController extends AbstractActionController
         $tcfDbTbl = $container['melis-toolcreator'];
 
         $coreLang = $this->getServiceLocator()->get('MelisCoreTableLang');
-        $languages = $coreLang->getLanguageInOrdered()->toArray();
+        $languages = $coreLang->fetchAll()->toArray();
 
         /**
          * Merging the columns the selected on step 4, 5 and 6
@@ -716,18 +1049,36 @@ class ToolCreatorController extends AbstractActionController
         );
 
         // Making sure the column order is the same with the database table structure
-        $tcfDbTbl = $container['melis-toolcreator']['step3']['tcf-db-table'];
-        $sql = 'DESCRIBE '.$tcfDbTbl;
+        $sql = 'DESCRIBE '.$tcfDbTbl['step3']['tcf-db-table'];
         $adapter = $this->getServiceLocator()->get('Zend\Db\Adapter\Adapter');
-        $table = $adapter->query($sql, array(5));
+        $table = $adapter->query($sql, [5]);
         $tableCols = $table->toArray();
 
         // Preparing the column the will be added to the Form dynamically
-        $selectedColumns = array();
+        $selectedColumns = [];
         foreach($tableCols As $val){
             if (in_array($val['Field'], $stepsColumns)){
-                array_push($selectedColumns, $val['Field']);
+                $selectedColumns['pri_tbl'][] = $val['Field'];
             }
+        }
+
+        if (!empty($tcfDbTbl['step3']['tcf-db-table-has-language'])){
+            // Describe query to get the details of the Database table
+            $sql = 'DESCRIBE '.$tcfDbTbl['step3']['tcf-db-table-language-tbl'];
+            $table = $adapter->query($sql, [5]);
+            $langTblCols = [];
+            foreach($table->toArray() As $val){
+                // Adding prefix "tclangtblcol_" for language columns
+                $tblCol = 'tclangtblcol_'.$val['Field'];
+                if (in_array($tblCol, $stepsColumns)){
+                    array_push($langTblCols, $tblCol);
+                }
+            }
+
+            $temp = $selectedColumns;
+            $selectedColumns = [];
+            $selectedColumns['pri_tbl'] = $temp['pri_tbl'];
+            $selectedColumns['lang_tbl'] = $langTblCols;
         }
 
         // Step form fields
@@ -737,132 +1088,154 @@ class ToolCreatorController extends AbstractActionController
         $formElements = $this->getServiceLocator()->get('FormElementManager');
         $factory->setFormElementManager($formElements);
 
-        $hasValidForm = false;
-        $hasErrorForm = array();
-        $inputHasValue = array();
+        $hasErrorForm = [];
+        $inputHasValue = [];
+        $step6Form = [];
 
         $request = $this->getRequest();
 
-        $step6Form = array();
+        $formDatas = [];
 
         foreach ($languages As $key => $lang){
-            $step6FormTmp = $factory->createForm($appConfigForm);
 
-            $step6FormTmp->get('tcf-lang-local')->setValue($lang['lang_locale']);
+            foreach ($selectedColumns As $tblType => $tblCols){
 
-            $inputFilter = new InputFilter();
-
-            /**
-             * Adding the selected Database table column
-             * dynamically to the form for column translations
-             */
-            foreach ($selectedColumns As $col){
-                $step6FormTmp->add(array(
-                    'name' => $col,
-                    'type' => 'MelisText',
-                    'options' => array(
-                        'label' => $col.' *',
-                        'col-name' => true,
-                    ),
-                    'attributes' => array(
-                        'required' => 'required',
-                        'placeholder' => $translator->translate('tr_melistoolcreator_common_name')
-                    ),
-                ));
-
-                $step6FormTmp->add(array(
-                    'name' => $col.'_tcinputdesc',
-                    'type' => 'MelisText',
-                    'options' => array(
-                        'col-desc' => true,
-                    ),
-                    'attributes' => array(
-                        'required' => 'required',
-                        'placeholder' => $translator->translate('tr_melistoolcreator_common_description'),
-                    ),
-                ));
-
-                $input = new Input($col);
-                $input->setRequired(true);
-
-                $input->getValidatorChain()
-                    ->attachByName(
-                        'NotEmpty',
-                            array('messages' => array(
-                                \Zend\Validator\NotEmpty::IS_EMPTY => 'tr_melistoolcreator_err_empty',
-                            )
-                        )
-                    );
-
-
-                $inputFilter->add($input);
-                $step6FormTmp->setInputFilter($inputFilter);
-            }
-
-            if (!empty($container['melis-toolcreator']['step6'])){
-                if (!empty($container['melis-toolcreator']['step6'][$lang['lang_locale']])){
-                    $step6FormTmp->setData($container['melis-toolcreator']['step6'][$lang['lang_locale']]);
-                }
-            }
-
-            if ($validate){
-                $formData = $request->getPost()->toArray();
-
-                foreach ($formData['step-form'] As $val){
-                    if ($val['tcf-lang-local'] == $lang['lang_locale']){
-                        $step6FormTmp->setData($val);
-                    }
-                }
+                $step6FormTmp = $factory->createForm($appConfigForm);
+                $inputFilter = new InputFilter();
 
                 /**
-                 * Just like in Step 2
-                 * this will accept if of the of the form validated with no error(s)
+                 * Adding the selected Database table column
+                 * dynamically to the form for column translations
                  */
-                if($step6FormTmp->isValid()){
-                    $hasValidForm = true;
-                }else{
-                    if (empty($step6FormTmp))
-                        $hasErrorForm = $step6FormTmp->getMessages();
-                    else
-                        $hasErrorForm = ArrayUtils::merge($hasErrorForm, $step6FormTmp->getMessages());
+                foreach ($tblCols As $col){
 
-                    foreach ($hasErrorForm as $keyError => $valueError){
-                        $hasErrorForm[$keyError]['form'][] = $lang['lang_locale'].'-tool-creator-step-6';
+                    // Column name
+                    $step6FormTmp->add([
+                        'name' => $col,
+                        'type' => 'MelisText',
+                        'options' => [
+                            'label' => $col.' *',
+                            'col-name' => true,
+                        ],
+                        'attributes' => [
+                            'required' => 'required',
+                            'placeholder' => $translator->translate('tr_melistoolcreator_inpt_name')
+                        ]
+                    ]);
+
+                    // Column validator nad filter
+                    $input = new Input($col);
+                    $input->setRequired(true);
+                    $input->getValidatorChain()
+                        ->attachByName(
+                            'NotEmpty',
+                            [
+                                'messages' => [
+                                    \Zend\Validator\NotEmpty::IS_EMPTY => 'tr_melistoolcreator_err_empty',
+                                ]
+                            ]
+                        );
+                    $input->getFilterChain()
+                        ->attachByName(
+                            'StripTags',
+                            'StringTrim'
+                        );
+                    $inputFilter->add($input);
+
+                    // Column name tooltip description
+                    $step6FormTmp->add([
+                        'name' => $col.'_tcinputdesc',
+                        'type' => 'MelisText',
+                        'options' => [
+                            'col-desc' => true,
+                        ],
+                        'attributes' => [
+                            'required' => 'required',
+                            'placeholder' => $translator->translate('tr_melistoolcreator_inpt_name tooltip'),
+                        ]
+                    ]);
+
+                    // Column name tooltip description validator and filters
+                    $inputDesc = new Input($col.'_tcinputdesc');
+                    $inputDesc->setRequired(false);
+                    $inputDesc->getFilterChain()
+                        ->attachByName(
+                            'StripTags',
+                            'StringTrim'
+                        );
+                    $inputFilter->add($inputDesc);
+
+                    // Setup input filters to Form
+                    $step6FormTmp->setInputFilter($inputFilter);
+                }
+
+                if (!$validate){
+                    if (!empty($container['melis-toolcreator']['step6'])){
+                        if (!empty($container['melis-toolcreator']['step6'][$lang['lang_locale']][$tblType])){
+                            $step6FormTmp->setData($container['melis-toolcreator']['step6'][$lang['lang_locale']][$tblType]);
+                        }
                     }
+
+                    $step6FormTmp->get('tcf-lang-local')->setValue($lang['lang_locale']);
+                    $step6FormTmp->get('tcf-tbl-type')->setValue($tblType);
                 }
 
-                // Getting input with data for Error preparation
-                foreach ($step6FormTmp->getData() As $key => $kVal){
-                    if (!empty($kVal) && !in_array($key, $inputHasValue))
-                        array_push($inputHasValue, $key);
+                if ($validate){
+                    $formData = $request->getPost()->toArray();
+
+                    foreach ($formData['step-form'] As $val){
+                        if ($val['tcf-lang-local'] == $lang['lang_locale'] && $val['tcf-tbl-type'] == $tblType){
+                            $step6FormTmp->setData($val);
+                        }
+                    }
+
+                    /**
+                     * Just like in Step 2
+                     * this will accept if of the of the form validated with no error(s)
+                     */
+                    if(!$step6FormTmp->isValid()){
+                        if (empty($step6FormTmp))
+                            $hasErrorForm = $step6FormTmp->getMessages();
+                        else
+                            $hasErrorForm = ArrayUtils::merge($hasErrorForm, $step6FormTmp->getMessages());
+                    }
+
+                    // Getting input with data for Error preparation
+                    foreach ($step6FormTmp->getData() As $ckey => $kVal){
+                        if (!empty($kVal) && !in_array($ckey, $inputHasValue)){
+                            array_push($inputHasValue, $ckey);
+                        }
+                    }
+
+                    $formDatas[$lang['lang_locale']][$tblType] = $step6FormTmp->getData();
                 }
 
-                $container['melis-toolcreator']['step6'][$lang['lang_locale']] = $step6FormTmp->getData();
+                $step6Form[$lang['lang_locale']][$tblType] = $step6FormTmp;
             }
-
-            $step6Form[$lang['lang_locale']] = $step6FormTmp;
 
             // Language label
             $languages[$key]['lang_label'] = $this->langLabel($lang['lang_locale'], $lang['lang_name']);
         }
 
-        // Removing input with data on any Form fieldset
+        // Removing input with data on any Form Fieldset
         if (!empty($inputHasValue)) {
             foreach ($inputHasValue As $key => $val)
                 if (isset($hasErrorForm[$val]))
                     unset($hasErrorForm[$val]);
         }
 
-        // adding a variable to viewmodel to flag an error
-        if ($hasErrorForm && !$hasValidForm){
+        // adding a variable to ViewModel to flag an error
+        if ($hasErrorForm){
             foreach ($hasErrorForm As $key => $errs){
                 foreach ($errs As $eKey => $txt)
-                    if ($eKey != 'form')
-                        $hasErrorForm[$key][$eKey] = $translator->translate($txt);
+                    $hasErrorForm[$key][$eKey] = $translator->translate($txt);
             }
             $viewStp->hasError = $hasErrorForm;
         }
 
+        if (empty($hasErrorForm) && $validate){
+            $container['melis-toolcreator']['step6'] = $formDatas;
+        }
 
         $viewStp->columns = $selectedColumns;
         $viewStp->languages = $languages;
@@ -891,9 +1264,16 @@ class ToolCreatorController extends AbstractActionController
         $tcfDbTbl = $container['melis-toolcreator'];
         $viewStp->datas = $tcfDbTbl;
 
+        $toolCreatorSrv = $this->getServiceLocator()->get('MelisToolCreatorService');
+        $priCol = $toolCreatorSrv->hasPrimaryKey();
+
+        if (!empty($priCol)){
+            $viewStp->priCol = $priCol['Field'];
+        }
+
         // Languages
         $coreLang = $this->getServiceLocator()->get('MelisCoreTableLang');
-        $viewStp->languages = $coreLang->getLanguageInOrdered()->toArray();
+        $viewStp->languages = $coreLang->fetchAll()->toArray();
 
         return $viewStp;
     }
@@ -922,623 +1302,29 @@ class ToolCreatorController extends AbstractActionController
             $validateModule = $request->getPost()->toArray();
             $activateModule = (!empty($validateModule['step-form']['tcf-activate-tool'])) ? true : false;
 
-            $this->finalize();
+            $toolCreatorSrv = $this->getServiceLocator()->get('MelisToolCreatorService');
+            $toolCreatorSrv->createTool();
 
             if ($activateModule){
 
-                // Tool creator session container
-                $container = new Container('melistoolcreator');
-                $tcfDbTbl = $container['melis-toolcreator'];
-                $moduleName = $tcfDbTbl['step1']['tcf-name'];
-
                 // Activating module
                 $moduleSvc = $this->getServiceLocator()->get('ModulesService');
-                $moduleSvc->activateModule($moduleName);
+                $moduleSvc->activateModule($toolCreatorSrv->moduleName());
+
+                // Reloading module paths
+                unlink($_SERVER['DOCUMENT_ROOT'].'/../config/melis.modules.path.php');
 
                 // Flag to reload the page in-order to run the new created tool
                 $viewStp->restartRequired = true;
             }
 
             $viewStp->finalized = $validate;
+            $viewStp->hasError = [];
         }
 
         $viewStp->form = $factory->createForm($appConfigForm);
 
         return $viewStp;
-    }
-
-    /**
-     * This methos triggered from AJAX request to finalize
-     * the tool creation
-     *
-     * @return JsonModel
-     */
-    private function finalize()
-    {
-        // Tool creator session container
-        $container = new Container('melistoolcreator');
-        $tcfDbTbl = $container['melis-toolcreator'];
-
-        $moduleName = $tcfDbTbl['step1']['tcf-name'];
-
-        /**
-         * Moudle directories
-         * this directories based on ZF2 framework
-         */
-        $moduleDirs = array(
-            'config' => null,
-            'language' => null,
-            'public' => array(
-                'js' => null
-            ),
-            'src' => array(
-                $moduleName => array(
-                    'Controller' => null,
-                    'Model' => array(
-                        'Tables' => array(
-                            'Factory' => null
-                        )
-                    )
-                )
-            ),
-            'view' => array(
-                $this->moduleNameToViewName($moduleName) => array(
-                    'index' => null
-                )
-            )
-        );
-
-        $moduleDir = $_SERVER['DOCUMENT_ROOT'].'/../module/'.$moduleName;
-
-        // Create module
-        $this->generateModule($moduleDir);
-
-        // Generating sub dir and files of the module
-        $this->generateModuleSubDirsAndFiles($moduleDirs, $moduleDir);
-
-        return new JsonModel(array('success' => true));
-    }
-
-    /**
-     * This method generate the module file of the Module
-     * @param $tempTargetDir
-     */
-    private function generateModule($tempTargetDir)
-    {
-        // Tool creator session container
-        $container = new Container('melistoolcreator');
-        $tcfDbTbl = $container['melis-toolcreator'];
-
-        mkdir($tempTargetDir, 0777);
-
-        $moduleName = $tcfDbTbl['step1']['tcf-name'];
-
-        $moduleFile = $this->moduleTplDir.'/Module.php';
-
-        $fileContent = file_get_contents($moduleFile);
-
-        $fileContent = str_replace('ModuleTpl', $moduleName, $fileContent);
-        $fileContent = str_replace('moduletpl', strtolower($moduleName), $fileContent);
-
-        $fh = fopen($tempTargetDir.'/Module.php', 'x');
-        fwrite($fh, $fileContent);
-        fclose($fh);
-    }
-
-    /**
-     * This method manage the creation of the module directories
-     * and file need of target Module
-     *
-     * @param array $dirs - list of directories
-     * @param string $targetDir - the directory where the module will created
-     */
-    private function generateModuleSubDirsAndFiles($dirs, $targetDir)
-    {
-        foreach ($dirs As $dir => $subDir){
-            $tempTargetDir = $targetDir.'/'.$dir;
-
-            mkdir($tempTargetDir, 0777);
-
-            switch ($dir){
-                case 'config':
-                    $this->generateModuleConfig($tempTargetDir);
-                    break;
-                case 'Controller':
-                    $this->generateModuleController($tempTargetDir);
-                    break;
-                case 'index':
-                    $this->generateModuleViews($tempTargetDir);
-                    break;
-                case 'js':
-                    $this->generateModuleJs($tempTargetDir);
-                    break;
-                case 'language':
-                    $this->generateModuleLanguages($tempTargetDir);
-                    break;
-                case 'Model':
-                    $this->generateModuleModel($tempTargetDir);
-                    break;
-                case 'Tables':
-                    $this->generateModuleModelTables($tempTargetDir);
-                    break;
-                case 'Factory':
-                    $this->generateModuleModelTablesFactory($tempTargetDir);
-                    break;
-            }
-
-            if (is_array($subDir)){
-                $this->generateModuleSubDirsAndFiles($subDir, $tempTargetDir);
-            }
-        }
-    }
-
-    /**
-     * This method generates the Module config
-     * @param $targetDir
-     */
-    private function generateModuleConfig($targetDir)
-    {
-        $moduleConfigFiles = $this->moduleTplDir.'/config';
-        foreach (scandir($moduleConfigFiles) As $file){
-            if (is_file($moduleConfigFiles.'/'.$file)){
-
-                if ($file == 'app.tools.php'){
-                    $this->generateModuleToolConfig($targetDir);
-                }else{
-                    $this->generateFile($file, $moduleConfigFiles.'/'.$file, $targetDir);
-                }
-            }
-        }
-    }
-
-    /**
-     * This method generate the Module controller
-     * @param $targetDir
-     */
-    private function generateModuleController($targetDir)
-    {
-        $file = 'IndexController.php';
-        $moduleCtrlFile = $this->moduleTplDir.'/src/ModuleTpl/Controller/IndexController.php';
-        $fileContent = file_get_contents($moduleCtrlFile);
-
-        $savingItemFile = $this->moduleTplDir.'/extra/CodeTemplates/saving-item-without-id.txt';
-        $savingItemContent = file_get_contents($savingItemFile);
-
-        $tableActions  = '';
-        $tableActionColumn  = '';
-        $formModalContent  = '';
-
-        $pk = $this->hasPrimaryKey();
-        if (!empty($pk)){
-            $extraFile = $this->moduleTplDir.'/extra/AssetsTemplates/edit-delete-function.txt';
-            $tableActions = file_get_contents($extraFile);
-
-            $extraFile = $this->moduleTplDir.'/extra/AssetsTemplates/table-action-column.txt';
-            $tableActionColumn = file_get_contents($extraFile);
-
-            $fileContent = str_replace('\'key\' => true,', '\'key\' => \''.$pk['Field'].'\',', $fileContent);
-
-            $savingItemFile = $this->moduleTplDir.'/extra/CodeTemplates/saving-item-with-id.txt';
-            $savingItemContent = file_get_contents($savingItemFile);
-            $savingItemContent = str_replace('#TCKEY', $pk['Field'], $savingItemContent);
-
-            $formModalFile = $this->moduleTplDir.'/extra/CodeTemplates/form-with-id.txt';
-            $formModalContent = file_get_contents($formModalFile);
-            $formModalContent = str_replace('#TCKEY', $pk['Field'], $formModalContent);
-        }
-
-        $fileContent = str_replace('#TCEDITDELETEFUNCTIONACTION', $tableActions, $fileContent);
-        $fileContent = str_replace('#TCTABLEACTIONCOLUMN', $tableActionColumn, $fileContent);
-        $fileContent = str_replace('#TCSAVINGITEM', $savingItemContent, $fileContent);
-        $fileContent = str_replace('#TCFORMMODAL', $formModalContent, $fileContent);
-
-        $this->generateFile($file, null, $targetDir, $fileContent);
-    }
-
-    /**
-     * This method generate the Module Tool config
-     * that contains the form config of the tool
-     *
-     * @param $targetDir
-     */
-    private function generateModuleToolConfig($targetDir)
-    {
-        // Tool creator session container
-        $container = new Container('melistoolcreator');
-        $tcSteps = $container['melis-toolcreator'];
-        $moduleName = $tcSteps['step1']['tcf-name'];
-
-        $strCol = array();
-        $strSearchableCols = array();
-        $colWidth = number_format(100/count($tcSteps['step4']['tcf-db-table-cols']), 0);
-        foreach ($tcSteps['step4']['tcf-db-table-cols'] As $key => $col){
-            $strCol[] = "\t\t\t\t\t\t\t".'\''.$col.'\' => array('.
-                        "\n\t\t\t\t\t\t\t\t".'\'text\' => \'tr_'.strtolower($moduleName).'_'.$col.'\','.
-                        "\n\t\t\t\t\t\t\t\t".'\'css\' => array(\'width\' => \''.$colWidth.'%\'),'.
-                        "\n\t\t\t\t\t\t\t\t".'\'sortable\' => true'.
-                        "\n\t\t\t\t\t\t\t".')';
-            $strSearchableCols[] = "\t\t\t\t\t\t\t".'\''.$col.'\'';
-        }
-
-        $tblCols = implode(','."\n", $strCol);
-        $tblSearchCols = implode(','."\n", $strSearchableCols);
-
-        $moduleConfigFiles = $this->moduleTplDir.'/config/app.tools.php';
-        $fileContent = file_get_contents($moduleConfigFiles);
-        $fileContent = str_replace('#TCTABLECOLUMNS', $tblCols, $fileContent);
-        $fileContent = str_replace('#TCTABLESEARCHCOLUMNS', $tblSearchCols, $fileContent);
-
-        $pk = $this->hasPrimaryKey();
-
-        /**
-         * Checking if the database table selected ha a primary key,
-         * else the update and delete feature would not be available to the
-         * generated tool
-         */
-        $tblActionButtons = '';
-        if (!empty($pk)){
-            $moduleTblActionButtons = $this->moduleTplDir.'/extra/FormTemplates/edit-delete-tool-config.txt';
-            $tblActionButtons = file_get_contents($moduleTblActionButtons);
-        }
-
-        $moduleForm = $this->moduleTplDir.'/extra/FormTemplates/form.txt';
-        $moduleFormContent = file_get_contents($moduleForm);
-
-        $formInputsTpl = $this->moduleTplDir.'/extra/FormTemplates/input.txt';
-        $formInputs = array();
-        $formInputFiltersTpl = $this->moduleTplDir.'/extra/FormTemplates/input-filter.txt';
-        $formInputFilters = array();
-        $formInputNotEmptyTplTpl = $this->moduleTplDir.'/extra/FormTemplates/not-empty-filter.txt';
-
-        foreach ($tcSteps['step5']['tcf-db-table-col-editable'] As $key => $col){
-            $formInputsTplContent = file_get_contents($formInputsTpl);
-            $formInputsTplContent = str_replace('#TCKEY', $col, $formInputsTplContent);
-            $formInputsTplContent = str_replace('#TCINPUTTYPE', $tcSteps['step5']['tcf-db-table-col-type'][$key], $formInputsTplContent);
-
-            $skipValidator = false;
-            if (!empty($pk)){
-                // If a column is AUTO_INCREMENT
-                // This column will skip for having validator
-                if (($pk['Extra'] == 'auto_increment') && $pk['Field'] == $col){
-                    $skipValidator = true;
-                }
-            }
-
-            // Generating input validators and filters
-            $inputIsRequired = 'false';
-            if (!$skipValidator){
-                $formInputFilterTplContent = file_get_contents($formInputFiltersTpl);
-                $formInputFilterTplContent = str_replace('#TCKEY', $col, $formInputFilterTplContent);
-
-                if (in_array($col, $tcSteps['step5']['tcf-db-table-col-required'])){
-                    $inputIsRequired = 'true';
-                    $formInputNotEmptyTplTplContent = file_get_contents($formInputNotEmptyTplTpl);
-                    $formInputFilterTplContent = str_replace('#TCVALIDATORS', $formInputNotEmptyTplTplContent, $formInputFilterTplContent);
-                }
-
-                $formInputFilterTplContent = str_replace('#TCISREQUIRED', $inputIsRequired, $formInputFilterTplContent);
-                array_push($formInputFilters, $formInputFilterTplContent);
-            }
-
-            // input required attribute
-            $formInputsTplContent = str_replace('#TCINPUTREQUIRED', $inputIsRequired, $formInputsTplContent);
-            array_push($formInputs, $formInputsTplContent);
-        }
-
-        $moduleForm = str_replace('#FORMINPUTS', implode(','."\n", $formInputs), $moduleFormContent);
-        $moduleForm = str_replace('#FORMINPUTFILTERS', implode(','."\n", $formInputFilters), $moduleForm);
-
-        $fileContent = str_replace('#TCFORMELEMENTS', $moduleForm, $fileContent);
-        $fileContent = str_replace('#TCTABLEACTIONBUTTONS', $tblActionButtons, $fileContent);
-
-        $this->generateFile('app.tools.php', null, $targetDir, $fileContent);
-    }
-
-    /**
-     * This method generate the Module Model
-     * @param $targetDir
-     */
-    private function generateModuleModel($targetDir)
-    {
-        // Tool creator session container
-        $container = new Container('melistoolcreator');
-        $tcSteps = $container['melis-toolcreator'];
-        $moduleName = $tcSteps['step1']['tcf-name'];
-
-        $moduleModelFiles = $this->moduleTplDir.'/src/ModuleTpl/Model/ModuleTpl.php';
-        $this->generateFile($moduleName.'.php', $moduleModelFiles, $targetDir);
-    }
-
-    /**
-     * This method generate the Module Module tables
-     * @param $targetDir
-     */
-    private function generateModuleModelTables($targetDir)
-    {
-        // Tool creator session container
-        $container = new Container('melistoolcreator');
-        $tcSteps = $container['melis-toolcreator'];
-        $moduleName = $tcSteps['step1']['tcf-name'];
-
-        $moduleModelTableFiles = $this->moduleTplDir.'/src/ModuleTpl/Model/Tables/ModuleTplTable.php';
-
-        $fileContent = file_get_contents($moduleModelTableFiles);
-
-        $tcfDbTbl = $tcSteps['step3']['tcf-db-table'];
-        $sql = 'DESCRIBE '.$tcfDbTbl;
-        $adapter = $this->getServiceLocator()->get('Zend\Db\Adapter\Adapter');
-        $table = $adapter->query($sql, array(5));
-        $selectedTbl = $table->toArray();
-
-        /**
-         * Checking if the selected database table has a primary key
-         * primary key used to update and delete entry from the tool table list
-         */
-        $varPrimaryKey = '';
-        $primaryKey = '';
-        foreach ($selectedTbl As $key => $cols){
-            // Checking if Selected table has a primary
-            // else the target module will not have a update feature
-            if ($cols['Key'] == 'PRI'){
-                $varPrimaryKey = 'protected $idField;';
-                $primaryKey = '$this->idField = \''.$cols['Field'].'\';';
-                break;
-            }
-        }
-
-        $fileContent = str_replace('#TCPVARRIMARYKEY', $varPrimaryKey, $fileContent);
-        $fileContent = str_replace('#TCPRIMARYKEYCOLUMN', $primaryKey, $fileContent);
-
-        $this->generateFile($moduleName.'Table.php', null, $targetDir, $fileContent);
-    }
-
-    /**
-     * This method generetae the Module Model table factory
-     * @param $targetDir
-     */
-    private function generateModuleModelTablesFactory($targetDir)
-    {
-        // Tool creator session container
-        $container = new Container('melistoolcreator');
-        $tcfSteps = $container['melis-toolcreator'];
-        $moduleName = $tcfSteps['step1']['tcf-name'];
-        $tcfDbTbl = $tcfSteps['step3']['tcf-db-table'];
-
-        $moduleModelTableFactoryFiles = $this->moduleTplDir.'/src/ModuleTpl/Model/Tables/Factory/ModuleTplTableFactory.php';
-
-        $fileContent = file_get_contents($moduleModelTableFactoryFiles);
-        $fileContent = str_replace('#TCDATABASETABLE', $tcfDbTbl, $fileContent);
-
-        $this->generateFile($moduleName.'TableFactory.php', null, $targetDir, $fileContent);
-    }
-
-    /**
-     * This method generate the Module views
-     * @param $targetDir
-     */
-    private function generateModuleViews($targetDir)
-    {
-        $moduleViewFiles = $this->moduleTplDir.'/view/module-tpl/index';
-        foreach (scandir($moduleViewFiles) As $file){
-            if (is_file($moduleViewFiles.'/'.$file)){
-
-                $fileContent = file_get_contents($moduleViewFiles.'/'.$file);
-
-                $this->generateFile($file, null, $targetDir, $fileContent);
-            }
-        }
-
-        /**
-         * Checking if the database table selected ha a primary key,
-         * else the update and delete feature would not be available to the
-         * generated tool
-         */
-        if (!empty($this->hasPrimaryKey())){
-            $extraFile = $this->moduleTplDir.'/extra/ViewTemplates/render-table-action-edit.phtml';
-            $this->generateFile('render-table-action-edit.phtml', $extraFile, $targetDir);
-            $extraFile = $this->moduleTplDir.'/extra/ViewTemplates/render-table-action-delete.phtml';
-            $this->generateFile('render-table-action-delete.phtml', $extraFile, $targetDir);
-        }
-    }
-
-    /**
-     * This method generate the Module Js assets
-     * used for add/update/delete of the entries of the tool
-     *
-     * @param $targetDir
-     */
-    private function generateModuleJs($targetDir)
-    {
-        $moduleJsFile = $this->moduleTplDir.'/public/js/tool.js';
-
-        $fileContent = file_get_contents($moduleJsFile);
-
-        $editDelScripts = '';
-        if (!empty($this->hasPrimaryKey())){
-
-            $extraFile = $this->moduleTplDir.'/extra/AssetsTemplates/edit-delete.txt';
-            $editDelScripts = file_get_contents($extraFile);
-        }
-
-        $fileContent = str_replace('#TCEDITDELELTESCRIPTS', $editDelScripts, $fileContent);
-
-        $this->generateFile('tool.js', null, $targetDir, $fileContent);
-    }
-
-    /**
-     * This method generate the Module Languages
-     * this will use as translations of the tool
-     *
-     * @param $targetDir
-     */
-    private function generateModuleLanguages($targetDir)
-    {
-        // Tool creator session container
-        $container = new Container('melistoolcreator');
-        $tcfSteps = $container['melis-toolcreator'];
-        $moduleName = $tcfSteps['step1']['tcf-name'];
-
-        $coreLang = $this->getServiceLocator()->get('MelisCoreTableLang');
-        $languages = $coreLang->getLanguageInOrdered()->toArray();
-
-        $translationsSrv = $this->getServiceLocator()->get('MelisCoreTranslation');
-        $commonTransTpl = require $this->moduleTplDir.'/extra/Languages/languages.php';
-
-        // Common translation
-        $commonTranslations = array();
-        foreach ($languages As $lang){
-            foreach ($commonTransTpl As $cKey => $cText){
-                $commonTranslations[$lang['lang_locale']][$cKey] = $translationsSrv->getMessage($cText, $lang['lang_locale']);
-            }
-        }
-
-        // Merging texts from steps forms
-        $stepTexts = array_merge_recursive($tcfSteps['step6'], $commonTranslations, $tcfSteps['step2']);
-
-        $translations = array();
-        $textFields = array();
-
-        // Default value setter
-        foreach ($languages As $lang){
-            $translations[$lang['lang_locale']] = array();
-            if (!empty($stepTexts[$lang['lang_locale']])){
-                foreach($stepTexts[$lang['lang_locale']] As $key => $text){
-                    if ($key != 'tcf-lang-local'){
-
-                        if (strpos($key, 'tcinputdesc')){
-
-                            if (empty($text)){
-                                $text = $stepTexts[$lang['lang_locale']][str_replace('_tcinputdesc', '', $key)];
-                            }
-
-                            $key = str_replace('tcinputdesc', 'tooltip', $key);
-                        }
-
-                        $translations[$lang['lang_locale']][$key] = $text;
-
-                        // Getting fields that has a value
-                        // this will be use as default value if a field doesn't have value
-                        if (!empty($text)){
-                            $textFields[$key] = $text;
-                        }
-                    }
-                }
-            }
-        }
-
-        // Assigning values to the fields that doesn't have value(s)
-        foreach ($translations As $local => $texts){
-            foreach ($textFields As $key => $text){
-                if (empty($texts[$key])){
-                    $translations[$local][$key] = $text;
-                }
-            }
-        }
-
-        $moduleCtrlFiles = $this->moduleTplDir.'/language/language-tpl.php';
-
-        foreach ($translations As $locale => $texts){
-            $strTranslations = '';
-            foreach ($texts As $key => $text){
-                $text = str_replace("'", "\'", $text);
-                $key = str_replace("-", "_", $key);
-                $key = str_replace("tcf_", "", $key);
-                $strTranslations .= "\t\t".'\'tr_'.strtolower($moduleName).'_'.$key.'\' => \''.$text.'\','."\n";
-            }
-
-            $fileContent = file_get_contents($moduleCtrlFiles);
-            $fileContent = str_replace('#TCTRANSLATIONS', $strTranslations, $fileContent);
-
-            $this->generateFile($locale.'.interface.php', null, $targetDir, $fileContent);
-        }
-    }
-
-    /**
-     * This method generate files to the directory
-     *
-     * @param string $fileName - file name
-     * @param string $sourceDir - directory of the source
-     * @param string $targetDir - the target directory where the file will created
-     * @param string $fileContent - will be the content of the file created
-     */
-    private function generateFile($fileName, $sourceDir = null, $targetDir, $fileContent = null)
-    {
-        // Tool creator session container
-        $container = new Container('melistoolcreator');
-        $tcfDbTbl = $container['melis-toolcreator'];
-        $moduleName = $tcfDbTbl['step1']['tcf-name'];
-
-        if (is_null($fileContent)){
-            $fileContent = file_get_contents($sourceDir);
-        }
-
-        $fileContent = str_replace('ModuleTpl', $moduleName, $fileContent);
-        $fileContent = str_replace('moduleTpl', lcfirst($moduleName), $fileContent);
-        $fileContent = str_replace('moduletpl', strtolower($moduleName), $fileContent);
-
-        $targetFile = fopen($targetDir.'/'.$fileName, 'x');
-        fwrite($targetFile, $fileContent);
-        fclose($targetFile);
-    }
-
-    /**
-     * This method the details of the Primary key
-     * If the selected Database table has more that one primary key
-     * this will only return the FIRST primary key found
-     * and set a Primary Key for tool
-     *
-     * This set to the Model table and other queries (update, delete)
-     * @return array
-     */
-    private function hasPrimaryKey()
-    {
-        // Tool creator session container
-        $container = new Container('melistoolcreator');
-        $tcSteps = $container['melis-toolcreator'];
-
-        /**
-         * Checking if the database table selected ha a primary key,
-         * else the update and delete feature would not be available to the
-         * generated tool
-         */
-        $tcfDbTbl = $tcSteps['step3']['tcf-db-table'];
-        $sql = 'DESCRIBE '.$tcfDbTbl;
-        $adapter = $this->getServiceLocator()->get('Zend\Db\Adapter\Adapter');
-        $table = $adapter->query($sql, array(5));
-        $selectedTbl = $table->toArray();
-
-        $primaryKey = array();
-        foreach ($selectedTbl As $col){
-            if ($col['Key'] == 'PRI'){
-                $primaryKey = $col;
-                break;
-            }
-        }
-
-        return $primaryKey;
-    }
-
-    /**
-     * This method converting a Module name to a valid view name  directory
-     * @param $string - Module name
-     * @return string
-     */
-    private function moduleNameToViewName($string)
-    {
-        return strtolower(preg_replace('/([a-z])([A-Z])/', '$1-$2', $string));
-    }
-
-    /**
-     * For checking the Tool creator steps data stored
-     * in the session container
-     */
-    public function sessAction()
-    {
-        // Tool creator session container
-        $container = new Container('melistoolcreator');
-        $tcSteps = $container['melis-toolcreator'];
-        print_r($tcSteps);
-        die();
     }
 
     /**
@@ -1551,12 +1337,20 @@ class ToolCreatorController extends AbstractActionController
      */
     private function langLabel($locale, $langName)
     {
-        $langLabel = $langName;
+        
+        $langLabel = '<span>'. $langName .'</span>';
 
-        $langLocale = explode('_', $locale)[0];
-        $moduleSvc = $this->getServiceLocator()->get('ModulesService');
-        if (file_exists($moduleSvc->getModulePath('MelisCore').'/public/assets/images/lang/'.$langLocale.'.png'))
-            $langLabel = '<img src="/MelisCore/assets/images/lang/'.$langLocale.'.png"> '.$langName;
+        $lang = explode('_', $locale);
+        if (!empty($lang[0])) {
+
+            $moduleSvc = $this->getServiceLocator()->get('ModulesService');
+            $imgPath = $moduleSvc->getModulePath('MelisCore').'/public/assets/images/lang/'.$lang[0].'.png';
+
+            if (file_exists($imgPath)) 
+                $langLabel .= '<span class="pull-right"><img src="/MelisCore/assets/images/lang/'.$lang[0].'.png"></span>';
+            else
+                $langLabel .= '<span style="border: 1px solid #fff;padding: 4px 4px;line-height: 10px;float: right;margin: 5px;">'. strtoupper($lang[0]) .'</span>';
+        }
 
         return $langLabel;
     }
@@ -1576,13 +1370,73 @@ class ToolCreatorController extends AbstractActionController
         $melisEngineCacheSystem = $this->serviceLocator->get('MelisEngineCacheSystem');
         $results = $melisEngineCacheSystem->getCacheByKey($this->cacheKey, $this->cacheConfig, true);
         if (!$results || $reloadCached){
+
+            $toolCreatorSrv = $this->getServiceLocator()->get('MelisToolCreatorService');
+
             $adapter = $this->getServiceLocator()->get('Zend\Db\Adapter\Adapter');
             $metadata = new Metadata($adapter);
             $tables = $metadata->getTables();
-            $melisEngineCacheSystem->setCacheByKey($this->cacheKey, $this->cacheConfig, $tables, true);
-            $results = $tables;
+
+            // Only table that has Primary key and auto increment
+            $results = [];
+            foreach ($tables As $tbl)
+                if (!empty($toolCreatorSrv->getTablePK($tbl->getName())))
+                    $results[] = $tbl;
+
+            $melisEngineCacheSystem->setCacheByKey($this->cacheKey, $this->cacheConfig, $results, true);
         }
 
         return $results;
+    }
+
+    /**
+     * For checking the Tool creator steps data stored
+     * in the session container
+     */
+    public function sessAction()
+    {
+        // Tool creator session container
+        $container = new Container('melistoolcreator');
+        $tcSteps = $container['melis-toolcreator'];
+        print_r($tcSteps);
+        die();
+    }
+
+    public function chAction()
+    {
+        // Tool creator session container
+        $container = new Container('melistoolcreator');
+
+        $container['melis-toolcreator']['step1']['tcf-name'] = 'IDDTDoíl';
+//        $container['melis-toolcreator']['step1']['tcf-tool-type'] = 'tab';
+        exit;
+    }
+
+    public function strAction()
+    {
+//        $toolCreatorSrv = $this->getServiceLocator()->get('MelisToolCreatorService');
+//        echo 'meLisModuLe: '.$toolCreatorSrv->generateModuleNameCase('MelisModuleJeJejE');
+
+        $text = 'ignore everything except this ("1", "2")';
+        preg_match('#\((.*?)\)#', $text, $match);
+        print_r($match);
+
+        exit;
+    }
+
+    public function testAction()
+    {
+        $toolCreatorSrv = $this->getServiceLocator()->get('MelisToolCreatorService');
+        $res = $toolCreatorSrv->createTool();
+        print_r($res->getVariables());
+        die();
+    }
+
+    public function desAction()
+    {
+        $toolCreatorSrv = $this->getServiceLocator()->get('MelisToolCreatorService');
+        $res = $toolCreatorSrv->describeTable('aaa');
+        print_r($res);
+        die();
     }
 }

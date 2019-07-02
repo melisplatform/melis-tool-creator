@@ -1,0 +1,1 @@
+        melisHelper.tabOpen(translations.tr_moduletpl_common_button_add, 'fa fa-puzzle-piece', 'add_id_moduletpl_properties_tool', 'moduletpl_properties_tool', null, 'id_moduletpl_tool');

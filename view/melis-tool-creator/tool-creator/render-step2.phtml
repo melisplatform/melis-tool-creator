@@ -10,7 +10,7 @@
                     <?php $ctr = 0; foreach ($this->languages As $key => $val):?>
                         <li class="<?php echo ($ctr++) ?: 'active'?>">
                             <a class="clearfix" data-toggle="tab" href="#toolcreator-text-transaltions-<?php echo $val['lang_locale']?>" aria-expanded="false">
-                                <span class="langimg-cont"><?php echo $val['lang_label']?></span>
+                                <?php echo $val['lang_label']?>
                             </a>
                         </li>
                     <?php endforeach;?>

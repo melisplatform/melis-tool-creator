@@ -1,43 +1,123 @@
 <div id="<?php echo $this->id; ?>" class="steps-content">
     <div class="row">
-
         <div class="col-sm-12">
             <h3><?php echo $this->translate('tr_melistoolcreator_database_title') ?></h3>
-            <p><?php echo $this->translate('tr_melistoolcreator_database_desc') ?></p>
+            <p>
+                <?php echo $this->translate('tr_melistoolcreator_database_desc') ?>
+            </p>
         </div>
-        <div class="col-sm-12">
-            <p align="right"> <button class="btn btn-success tc-reload-dbtbl-cached" data-toggle="tooltip" data-placement="left" title="Refreshing database tables list might take a few minutes"><?php echo $this->translate('tr_melistoolcreator_database_reload_cached') ?> <i class="fa fa-refresh"></i></button></p>
+        <div class="col-sm-6">
+            <p align="right">
+                <i class="fa fa-info-circle tip-info" data-toggle="tooltip" data-placement="left" title="<?php echo $this->translate('tr_melistoolcreator_refresh_db_tooltip') ?>"></i><br>
+                <button class="btn btn-success tc-reload-dbtbl-cached"><?php echo $this->translate('tr_melistoolcreator_database_reload_cached') ?> <i class="fa fa-refresh"></i></button>
+            </p>
         </div>
-
         <?php if ($this->hasError){ ?>
             <div class="col-sm-12">
-                <div class="alert alert-danger">
-                    <p><?php echo $this->translate('tr_melistoolcreator_err_no_selected_db') ?></p>
+                <div class="melis-toolcreator-db-step alert alert-danger">
+                    <?php
+                        foreach ($this->hasError As $key => $errors){
+                            foreach ($errors As $err){
+                                echo '<p>' . $err . '</p>';
+                                break;
+                            }
+                        }
+                    ?>
                 </div>
             </div>
         <?php } ?>
+
+        <div class="col-sm-12">
+            <div class="row">
+                <div class="col-sm-6">
+                    <?php
+                        $errCss = '';
+                        if (!empty($this->hasError['tcf-db-table']))
+                            $errCss = 'style="color: red"';
+                    ?>
+
+                    <h4 <?php echo $errCss ?>>
+                        <?php echo $this->translate('tr_melistoolcreator_pri_db_tbl') ?>
+                        <small>
+                            <i class="fa fa-info-circle pull-right tip-info" data-toggle="tooltip" data-placement="left" title="" data-original-title="<?php echo $this->translate('tr_melistoolcreator_pri_tbl_cols_select') ?>" style="padding-top: 10px;"></i>
+                        </small>
+                    </h4>
+                </div>
+                <div class="col-sm-6"></div>
+            </div>
+        </div>
 
         <div class="col-sm-6">
             <div class="widget widget-inverse">
                 <div class="widget-head">
                     <h4 class="heading"><i class="fa fa-table"></i> <?php echo $this->translate('tr_melistoolcreator_db_tables') ?></h4>
                 </div>
-                <div class="widget-body list melis-toolcreator-steps-table-list">
+                <div class="widget-body list melis-toolcreator-steps-table-list melis-toolcreator-steps-primary-db-table-list">
                     <?php echo $this->dbTables ?>
                 </div>
             </div>
         </div>
-        <div class="col-sm-6">
-            <div class="widget widget-inverse <?php echo ($this->tblCols) ? '': 'hidden' ?>">
-                <div class="widget-head">
-                    <h4 class="heading"><i class="fa fa-reorder"></i> <?php echo $this->translate('tr_melistoolcreator_db_tables_cols') ?></h4>
+        <div class="col-sm-6 melis-toolcreator-steps-primary-db-table-columns">
+            <?php echo $this->tblCols ?>
+        </div>
+    </div>
+
+    <div class="row">
+        <hr>
+        <div class="col-sm-12">
+            <h4><i class="fa fa-lg <?php echo ($this->hasLanguage) ? 'fa-check-square-o text-success' : 'fa-square-o'?> melis-tc-tool-language"></i> <?php echo $this->translate('tr_melistoolcreator_int_lang_tab') ?></h4>
+        </div>
+        <div class="melis-tc-tool-language-db-list" <?php echo (!$this->hasLanguage) ? 'style="display: none"' : ''?>>
+            <div class="col-sm-12">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <?php
+                            $langKeys = [
+                                'tcf-db-table-language-tbl',
+                                'tcf-db-table-language-pri-fk',
+                                'tcf-db-table-language-lang-fk',
+                            ];
+
+                            $errCss = '';
+                            if (!empty($this->hasError))
+                                foreach ($this->hasError As $key => $err){
+
+                                    if (in_array($key, $langKeys))
+                                        $errCss = 'style="color: red"';
+
+                                    if ($key == 'tcf-db-table-language-pri-fk')
+                                        echo '<style> .tc-ptfk{color: red} </style>';
+
+                                    if ($key == 'tcf-db-table-language-lang-fk')
+                                        echo '<style> .tc-ltfk{color: red} </style>';
+                                }
+                        ?>
+                        <h4 <?php echo $errCss ?>>
+                            <?php echo $this->translate('tr_melistoolcreator_lang_tbl_lst') ?>
+                            <small>
+                                <i class="fa fa-info-circle pull-right tip-info" data-toggle="tooltip" data-placement="left" title="" data-original-title="<?php echo $this->translate('tr_melistoolcreator_select_lang_tbl_lst') ?>" style="padding-top: 10px;"></i>
+                            </small>
+                        </h4>
+                    </div>
+                    <div class="col-sm-6"></div>
                 </div>
-                <div class="widget-body list melis-toolcreator-steps-table-columns table-responsive">
-                    <?php echo $this->tblCols ?>
+            </div>
+            <div class="col-sm-6">
+                <div class="widget widget-inverse">
+                    <div class="widget-head">
+                        <h4 class="heading"><i class="fa fa-table"></i> <?php echo $this->translate('tr_melistoolcreator_db_tables') ?></h4>
+                    </div>
+                    <div class="widget-body list melis-toolcreator-steps-table-list melis-toolcreator-steps-language-db-table-list">
+                        <?php echo $this->dbLangTables ?>
+                    </div>
                 </div>
+            </div>
+            <div class="col-sm-6 melis-toolcreator-steps-language-db-table-columns">
+                <?php echo $this->langTblCols ?>
             </div>
         </div>
     </div>
+    <br>
 
     <button class="btn btn-default btn-steps" data-curstep="3" data-nxtstep="2"><?php echo $this->translate('tr_melistoolcreator_back') ?></button>
     <button class="btn btn-default pull-right btn-steps tcf-validate" data-curstep="3" data-nxtstep="4"><?php echo $this->translate('tr_melistoolcreator_next') ?></button>

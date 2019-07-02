@@ -1,26 +1,89 @@
-<table class="table table-striped">
-    <tr>
-        <th>#</th>
-        <th><?php echo $this->translate('tr_melistoolcreator_col_pk') ?></th>
-        <th><?php echo $this->translate('tr_melistoolcreator_col_name') ?></th>
-        <th><?php echo $this->translate('tr_melistoolcreator_col_type') ?></th>
-        <th><?php echo $this->translate('tr_melistoolcreator_col_null') ?></th>
-        <th><?php echo $this->translate('tr_melistoolcreator_col_default') ?></th>
-        <th><?php echo $this->translate('tr_melistoolcreator_col_extra') ?></th>
-    </tr>
-    <?php
-        $ctr = 1;
-        foreach ($this->table As $col){
-            $pk = in_array($col['Key'], array('PRI')) ? ' <i class="fa fa-key fa-lg fa-rotate-90"></i>': '';
-            echo '<tr>
-                    <td>'.$ctr++.'</td>
-                    <td>'.$pk.'</td>
-                    <td><b>'.$col['Field'].'</b></td>
-                    <td>'.$col['Type'].'</td>
-                    <td>'.$col['Null'].'</td>
-                    <td>'.$col['Default'].'</td>
-                    <td>'.$col['Extra'].'</td>
-                </tr>';
-        }
-    ?>
-</table>
+<div class="widget widget-inverse">
+    <div class="widget-head">
+        <h4 class="heading"><i class="fa fa-reorder"></i> <?php echo $this->translate('tr_melistoolcreator_db_tables_cols') ?></h4>
+    </div>
+    <div class="widget-body list">
+        <?php if ($this->tblType == 'language-db'){?>
+            <div class="melis-toolreator-lang-cols-alert">
+                <div class="alert alert-info">
+                    <p><?php echo $this->translate('tr_melistoolcreator_pk_fk_pri_tbl_lbl') ?></p>
+                    <p><?php echo $this->translate('tr_melistoolcreator_pk_fk_lang_tbl_lbl') ?></p>
+                </div>
+            </div>
+        <?php }?>
+
+        <?php if (!$this->hasPrimaryKey || $this->hasBlobType){ ?>
+            <div class="melis-toolreator-lang-cols-alert">
+                <div class="alert alert-danger">
+                    <?php if (!$this->hasPrimaryKey){ ?>
+                        <p><?php echo $this->translate('tr_melistoolcreator_err_no_primary_key') ?></p>
+                    <?php } ?>
+                    <?php if ($this->hasBlobType){ ?>
+                        <p><?php echo $this->translate('tr_melistoolcreator_warning_tbl_has_blob') ?></p>
+                    <?php } ?>
+                </div>
+            </div>
+        <?php } ?>
+
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <tr>
+                    <th>#</th>
+                    <?php if ($this->tblType == 'language-db'){?>
+                        <th class="tc-ptfk"><?php echo $this->translate('FK1') ?></th>
+                        <th class="tc-ltfk"><?php echo $this->translate('FK2') ?></th>
+                    <?php }?>
+                    <th><?php echo $this->translate('tr_melistoolcreator_col_pk') ?></th>
+                    <th><?php echo $this->translate('tr_melistoolcreator_col_name') ?></th>
+                    <th><?php echo $this->translate('tr_melistoolcreator_col_type') ?></th>
+                    <th><?php echo $this->translate('tr_melistoolcreator_col_null') ?></th>
+                    <th><?php echo $this->translate('tr_melistoolcreator_col_default') ?></th>
+                    <th><?php echo $this->translate('tr_melistoolcreator_col_extra') ?></th>
+                </tr>
+                <?php
+                    $ctr = 1;
+                    if (!empty($this->table)){
+                        foreach ($this->table As $col){
+                            $pk = in_array($col['Key'], array('PRI')) ? ' <i class="fa fa-key fa-lg fa-rotate-90"></i>': '';
+
+                            $warnHghlght = '';
+                            if (!is_bool(strpos($col['Type'], 'blob')))
+                                $warnHghlght = 'style="color: red"';
+
+                            echo '<tr '. $warnHghlght .'>
+                            <td>'.$ctr++.'</td>';
+
+                            if ($this->tblType == 'language-db'){
+
+                                $ptfkCheck = 'fa-square-o';
+                                if ($this->ptfk == $col['Field'])
+                                    $ptfkCheck = 'fa-check-square-o text-success';
+
+                                $ltfkCheck = 'fa-square-o';
+                                if ($this->ltfk == $col['Field'])
+                                    $ltfkCheck = 'fa-check-square-o text-success';
+
+                                if ($this->hasPrimaryKey && $col['Extra'] != 'auto_increment'){
+                                    echo '<td class="text-center"><i class="fa '.$ptfkCheck.' fa-lg melis-tc-lang-tbl-pt-fk" data-tbl-name="'. $col['Field'] .'" data-field-name="tcf-db-table-language-pri-fk"></i></td>';
+                                    echo '<td class="text-center"><i class="fa '.$ltfkCheck.' fa-lg melis-tc-lang-tbl-lt-fk" data-tbl-name="'. $col['Field'] .'" data-field-name="tcf-db-table-language-lang-fk"></i></td>';
+                                }else{
+                                    echo '<td></td><td></td>';
+                                }
+                            }
+
+                            echo '<td>'.$pk.'</td>
+                                <td><b>'.$col['Field'].'</b></td>
+                                <td>'.$col['Type'].'</td>
+                                <td>'.$col['Null'].'</td>
+                                <td>'.$col['Default'].'</td>
+                                <td>'.$col['Extra'].'</td>
+                            </tr>';
+                        }
+                    }
+                ?>
+            </table>
+
+
+        </div>
+    </div>
+</div>

@@ -1,0 +1,14 @@
+                        'moduletpl_language_form' => [
+                            'attributes' => [
+                                'name' => 'moduleTplLangForm',
+                                'method' => 'POST',
+                                'action' => '',
+                            ],
+                            'hydrator'  => 'Zend\Stdlib\Hydrator\ArraySerializable',
+                            'elements' => [
+#FORMINPUTS
+                            ],
+                            'input_filter' => [
+#FORMINPUTFILTERS
+                            ]
+                        ]

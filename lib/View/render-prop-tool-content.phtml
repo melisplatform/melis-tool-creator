@@ -1,0 +1,51 @@
+<?php
+    $id = $this->id . '_' . $this->zoneconfig['conf']['id'];
+    $melisKey = $this->zoneconfig['conf']['melisKey'];
+?>
+<div id="<?php echo $id ?>" data-melisKey="<?php echo $melisKey; ?>">
+    <div id="<?= $id ?>" data-melisKey="<?= $this->melisKey; ?>" class="widget widget-tabs widget-tabs-double-2 widget-tabs-responsive">
+        <div class="widget-head nav">
+            <ul class="tabs-label nav-tabs">
+                <?php
+                    foreach($this->zoneconfig['interface'] as $keyConfig => $menuConfig) {
+
+                        $tabId = $this->id . '_' . $menuConfig['conf']['id'];
+                        $tabIcon = $menuConfig['conf']['icon'];
+                        $tabName = $menuConfig['conf']['name'];
+
+                        $li= '<li>
+                            <a class="'.$tabIcon.'" data-toggle="tab" href="#'.$tabId.'" aria-expanded="true">
+                                <i></i>
+                                <span>'.$this->translate($tabName).'</span>
+                            </a>
+                        </li>';
+                        echo $li;
+                    }
+                ?>
+            </ul>
+        </div>
+    </div>
+    <div class="tab-content innerAll spacing-x2">
+        <?php
+            if(!empty($this->zoneconfig['interface'])){
+                $ctr = 0;
+                foreach($this->zoneconfig['interface'] as $keyConfig => $val){
+
+                    $tabId = $this->id . '_' . $val['conf']['id'];
+
+                    $active = ($ctr++) ? '' : 'active';
+                    echo '<div class="tab-pane '.$active.'" id="'.$tabId.'" data-melisKey="'.$val['conf']['melisKey'].'">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                '. $this->$keyConfig .'
+                                            </div>
+                                        </div>
+                                    </div>';
+                    
+                }
+            }
+        ?>
+    </div>
+</div>
+
+
