@@ -581,7 +581,7 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
         $listCtrlFile = $this->sp('#TCMODALVIEWMODEL', $modalAction, $listCtrlFile);
 
         // Column display filter flag
-        $hasColDisplayFilter = flase;
+        $hasColDisplayFilter = false;
 
         // Data empty filter
         $emptyDataFilter = '';
