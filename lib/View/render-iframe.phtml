@@ -1,0 +1,12 @@
+<?php
+$id = $this->zoneconfig['conf']['id'];
+$melisKey = $this->zoneconfig['conf']['melisKey'];
+?>
+<div id="<?php echo $id ?>" data-melisKey="<?php echo $melisKey; ?>" class="tab-pane container-level-a">
+    <script>
+        function updateIframe(){
+            $("#id_moduletpl_tool iframe").css("height", $(window).height() - 55);
+        }
+    </script>
+    <iframe width="100%" height="100%" frameborder="0" onload="updateIframe();" src="<?php echo $this->url ?>"></iframe>
+</div>

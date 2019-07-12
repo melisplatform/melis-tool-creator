@@ -24,21 +24,7 @@ class Module
 
         $this->createTranslations($e);
 
-        $melisRoute = false;
-        $sm = $e->getApplication()->getServiceManager();
-        $routeMatch = $sm->get('router')->match($sm->get('request'));
-
-        if (!empty($routeMatch)){
-            $routeName = $routeMatch->getMatchedRouteName();
-            $module = explode('/', $routeName);
-
-            if (!empty($module[0]))
-                if ($module[0] == 'melis-backoffice'){
-                    // attach listeners for Melis
-                    $eventManager->attach(new \ModuleTpl\Listener\SavePropertiesListener());
-                    $eventManager->attach(new \ModuleTpl\Listener\DeleteListener());
-                }
-        }
+#TCMODULE
     }
 
     public function getConfig()
@@ -46,9 +32,8 @@ class Module
         $config = array();
         $configFiles = array(
             include __DIR__ . '/config/module.config.php',
-            include __DIR__ . '/config/app.interface.php',
-            include __DIR__ . '/config/app.tools.php',
             include __DIR__ . '/config/app.toolstree.php',
+            #TCCONFIG
         );
 
         foreach ($configFiles as $file) {

@@ -26,7 +26,7 @@ $(function(){
                  * This form contains input with the same name attribute of "tcf-db-table-cols"
                  */
                 var multInpt = "";
-                if ($.inArray(v.name, ["tcf-db-table-cols", "tcf-db-table-col-editable", "tcf-db-table-col-required", "tcf-db-table-col-type", ""]) != -1){
+                if ($.inArray(v.name, ["tcf-db-table-cols", "tcf-db-table-col-display", "tcf-db-table-col-editable", "tcf-db-table-col-required", "tcf-db-table-col-type", ""]) != -1){
                     multInpt = "[]";
                 }
 
@@ -90,6 +90,11 @@ $(function(){
             $(divContainer + " .form-control[name='"+key +"']").prev("label").css("color","red");
         });
     }
+
+    $body.on("change", "input[name='tcf-tool-type']", function(){
+        $(".tcf-tool-type").hide();
+        $("#tcf-tool-type-"+$(this).val()).show();
+    });
 
     $body.on("click", ".tc-reload-dbtbl-cached", function(){
 
@@ -201,9 +206,14 @@ $(function(){
                                                                                                 .removeClass("text-success")
                                                                                                 .removeClass("fa-check-square-o")
                                                                                                 .next("input").attr("checked", false);
+
+                if ($(this).hasClass("tfc-table-list")) {
+                    // Disabling field type select input
+                    $("select[name='tcf-db-table-col-display'][data-col-type='"+$(this).data("col-type")+"']").attr("disabled", true);
+                }
             }else{
                 // Unchecking select all checkbox
-                $(".tcf-fa-checkbox.tcf-fa-checkall[data-col-type='"+$(this).data("col-type")+"'").addClass("fa-square-o")
+                $(".tcf-fa-checkbox.tcf-fa-checkall[data-col-type='"+$(this).data("col-type")+"']").addClass("fa-square-o")
                                                                                                 .removeClass("text-success")
                                                                                                 .removeClass("fa-check-square-o");
             }
@@ -231,13 +241,23 @@ $(function(){
                 $(this).parents("tr").find("select[name='tcf-db-table-col-type']").attr("disabled", true);
             }
 
+
+            if ($(this).hasClass("tfc-table-list")) {
+                // Disabling field type select input
+                $(this).parents("tr").find("select[name='tcf-db-table-col-display']").attr("disabled", true);
+            }
+
         }else{
             // Checking
             if ($(this).hasClass("tcf-fa-checkall")){
-                $(".tcf-fa-checkbox.tcf-fa-checkitem[data-col-type='"+$(this).data("col-type")+"'").removeClass("fa-square-o")
+                $(".tcf-fa-checkbox.tcf-fa-checkitem[data-col-type='"+$(this).data("col-type")+"']").removeClass("fa-square-o")
                                                                                                 .addClass("fa-check-square-o")
                                                                                                 .addClass("text-success")
                                                                                                 .next("input").attr("checked", true);
+                if ($(this).hasClass("tfc-table-list")) {
+                    // Disabling field type select input
+                    $("select[name='tcf-db-table-col-display'][data-col-type='"+$(this).data("col-type")+"']").attr("disabled", false);
+                }
             }
 
             $(this).removeClass("fa-square-o")
@@ -247,7 +267,7 @@ $(function(){
 
             // Set check "select all checkbox"
             if ($(".tcf-fa-checkbox.tcf-fa-checkitem").length === $(".tcf-fa-checkbox.tcf-fa-checkitem.fa-check-square-o").length){
-                $(".tcf-fa-checkbox.tcf-fa-checkall[data-col-type='"+$(this).data("col-type")+"'").removeClass("fa-square-o")
+                $(".tcf-fa-checkbox.tcf-fa-checkall[data-col-type='"+$(this).data("col-type")+"']").removeClass("fa-square-o")
                                                                                             .addClass("fa-check-square-o")
                                                                                             .addClass("text-success");
             }
@@ -273,6 +293,11 @@ $(function(){
             if ($(this).hasClass("tcf-fa-checkbox-editable")) {
                 // Enabling field type select input
                 $(this).parents("tr").find("select[name='tcf-db-table-col-type']").attr("disabled", false);
+            }
+
+            if ($(this).hasClass("tfc-table-list")) {
+                // Disabling field type select input
+                $(this).parents("tr").find("select[name='tcf-db-table-col-display']").attr("disabled", false);
             }
         }
     });

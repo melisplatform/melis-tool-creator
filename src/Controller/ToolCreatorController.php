@@ -108,6 +108,26 @@ class ToolCreatorController extends AbstractActionController
 
         $stpFunction = 'renderStep'.$curStep;
 
+        if ($validate){
+            $request = $this->getRequest();
+            $post = $request->getPost();
+            if (!empty($post['step-form']['tcf-tool-type'])){
+                if ($post['step-form']['tcf-tool-type'] == 'iframe'){
+                    $nxtStep = 7;
+                }
+            }
+        }
+
+        if ($curStep == 7 && $nxtStep == 6){
+            // Tool creator session container
+            $container = new Container('melistoolcreator');
+            $tcfDbTbl = $container['melis-toolcreator'];
+
+            if (!empty($tcfDbTbl['step1']['tcf-tool-type']))
+                if ($tcfDbTbl['step1']['tcf-tool-type'] == 'iframe')
+                    $nxtStep = 1;
+        }
+
         /**
          * This will try to get the requested view
          * with the current view and the flag for validation
@@ -198,6 +218,10 @@ class ToolCreatorController extends AbstractActionController
             $formData = get_object_vars($request->getPost());
 
             $step1Form->setData($formData['step-form']);
+
+            if ($formData['step-form']['tcf-tool-type'] == 'db'){
+                $step1Form->getInputFilter()->remove('tcf-tool-iframe-url');
+            }
 
             if(!$step1Form->isValid()){
                 // adding a variable to viewmodel to flag an error
@@ -352,7 +376,7 @@ class ToolCreatorController extends AbstractActionController
         // Tool creator session container
         $container = new Container('melistoolcreator');
 
-        $toolType = $container['melis-toolcreator']['step1']['tcf-tool-type'];
+        $toolType = $container['melis-toolcreator']['step1']['tcf-tool-edit-type'];
         $viewStp->toolType = $toolType;
 
         /**
@@ -812,9 +836,10 @@ class ToolCreatorController extends AbstractActionController
 
             // Adding prefix "lang_" for language columns
             $viewStp->fkCols = [
-                'tclangtblcol_'.$container['melis-toolcreator']['step3']['tcf-db-table-language-pri-fk'],
-                'tclangtblcol_'.$container['melis-toolcreator']['step3']['tcf-db-table-language-lang-fk'],
+                'tclangtblcol_'.$container['melis-toolcreator']['step3']['tcf-db-table-language-lang-fk']
             ];
+
+            $viewStp->fkMainTbl = $container['melis-toolcreator']['step3']['tcf-db-table-language-pri-fk'];
         }
 
         // Step form fields
@@ -824,6 +849,14 @@ class ToolCreatorController extends AbstractActionController
         $formElements = $this->getServiceLocator()->get('FormElementManager');
         $factory->setFormElementManager($formElements);
         $step4Form = $factory->createForm($appConfigForm);
+
+        /**
+         * Triggering an event for the Select input option values dynamic values
+         */
+        $coreSrv = $this->getServiceLocator()->get('MelisCoreGeneralService');
+        $colDisplayOptions = $step4Form->get('tcf-db-table-col-display')->getValueOptions();
+        $result = $coreSrv->sendEvent('melis_toolcreator_col_display_options', ['valueOptions' => $colDisplayOptions]);
+        $step4Form->get('tcf-db-table-col-display')->setValueOptions($result['valueOptions']);
 
         $viewStp->step4Form = $step4Form;
 
@@ -845,6 +878,7 @@ class ToolCreatorController extends AbstractActionController
         if (!empty($container['melis-toolcreator']['step4'])){
             if (!empty($container['melis-toolcreator']['step4']['tcf-db-table-cols'])){
                 $viewStp->tblColumns = $container['melis-toolcreator']['step4']['tcf-db-table-cols'];
+                $viewStp->tblColumnsDisplay = $container['melis-toolcreator']['step4']['tcf-db-table-col-display'];
             }
         }
 
@@ -872,6 +906,15 @@ class ToolCreatorController extends AbstractActionController
         $formElements = $this->getServiceLocator()->get('FormElementManager');
         $factory->setFormElementManager($formElements);
         $step5Form = $factory->createForm($appConfigForm);
+
+        /**
+         * Triggering an event for the Select input option values dynamic values
+         */
+        $coreSrv = $this->getServiceLocator()->get('MelisCoreGeneralService');
+        $editTypeOptions = $step5Form->get('tcf-db-table-col-type')->getValueOptions();
+        $result = $coreSrv->sendEvent('melis_toolcreator_input_edition_type_options', ['valueOptions' => $editTypeOptions]);
+        $step5Form->get('tcf-db-table-col-type')->setValueOptions($result['valueOptions']);
+
         $viewStp->step5Form = $step5Form;
 
         $request = $this->getRequest();
@@ -1063,6 +1106,19 @@ class ToolCreatorController extends AbstractActionController
         }
 
         if (!empty($tcfDbTbl['step3']['tcf-db-table-has-language'])){
+
+            /**
+             * Skiping Foreign keys
+             */
+            $skipFkCols = [
+                $tcfDbTbl['step3']['tcf-db-table-language-pri-fk']
+            ];
+
+            // If lanugage FK not exist in table col this will not include also in form texts
+            if (!in_array('tclangtblcol_'.$tcfDbTbl['step3']['tcf-db-table-language-lang-fk'], $tcfDbTbl['step4']['tcf-db-table-cols'])){
+                $skipFkCols[] = $tcfDbTbl['step3']['tcf-db-table-language-lang-fk'];
+            }
+
             // Describe query to get the details of the Database table
             $sql = 'DESCRIBE '.$tcfDbTbl['step3']['tcf-db-table-language-tbl'];
             $table = $adapter->query($sql, [5]);
@@ -1070,7 +1126,7 @@ class ToolCreatorController extends AbstractActionController
             foreach($table->toArray() As $val){
                 // Adding prefix "tclangtblcol_" for language columns
                 $tblCol = 'tclangtblcol_'.$val['Field'];
-                if (in_array($tblCol, $stepsColumns)){
+                if (in_array($tblCol, $stepsColumns) && !in_array($val['Field'], $skipFkCols)){
                     array_push($langTblCols, $tblCol);
                 }
             }
@@ -1108,6 +1164,8 @@ class ToolCreatorController extends AbstractActionController
                  * dynamically to the form for column translations
                  */
                 foreach ($tblCols As $col){
+
+                    // Skip main talbe foriegn keys
 
                     // Column name
                     $step6FormTmp->add([
@@ -1264,16 +1322,20 @@ class ToolCreatorController extends AbstractActionController
         $tcfDbTbl = $container['melis-toolcreator'];
         $viewStp->datas = $tcfDbTbl;
 
-        $toolCreatorSrv = $this->getServiceLocator()->get('MelisToolCreatorService');
-        $priCol = $toolCreatorSrv->hasPrimaryKey();
+        $viewStp->toolType = $tcfDbTbl['step1']['tcf-tool-type'];
 
-        if (!empty($priCol)){
-            $viewStp->priCol = $priCol['Field'];
+        if ($tcfDbTbl['step1']['tcf-tool-type'] != 'iframe'){
+            $toolCreatorSrv = $this->getServiceLocator()->get('MelisToolCreatorService');
+            $priCol = $toolCreatorSrv->hasPrimaryKey();
+
+            if (!empty($priCol)){
+                $viewStp->priCol = $priCol['Field'];
+            }
+
+            // Languages
+            $coreLang = $this->getServiceLocator()->get('MelisCoreTableLang');
+            $viewStp->languages = $coreLang->fetchAll()->toArray();
         }
-
-        // Languages
-        $coreLang = $this->getServiceLocator()->get('MelisCoreTableLang');
-        $viewStp->languages = $coreLang->fetchAll()->toArray();
 
         return $viewStp;
     }
@@ -1408,7 +1470,7 @@ class ToolCreatorController extends AbstractActionController
         $container = new Container('melistoolcreator');
 
         $container['melis-toolcreator']['step1']['tcf-name'] = 'IDDTDoíl';
-//        $container['melis-toolcreator']['step1']['tcf-tool-type'] = 'tab';
+//        $container['melis-toolcreator']['step1']['tcf-tool-edit-type'] = 'tab';
         exit;
     }
 

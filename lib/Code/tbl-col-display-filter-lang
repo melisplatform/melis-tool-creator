@@ -1,0 +1,3 @@
+                    if ($col == '#TCCOLUMN'){
+                        $data = $coreSrv->sendEvent('melis_tool_column_display_#TCCOLDISPLAY', ['data' => $data])['data'];
+                    }

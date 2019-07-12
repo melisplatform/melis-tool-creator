@@ -1,0 +1,14 @@
+        $sm = $e->getApplication()->getServiceManager();
+        $routeMatch = $sm->get('router')->match($sm->get('request'));
+
+        if (!empty($routeMatch)){
+            $routeName = $routeMatch->getMatchedRouteName();
+            $module = explode('/', $routeName);
+
+            if (!empty($module[0]))
+                if ($module[0] == 'melis-backoffice'){
+                    // attach listeners for Melis
+                    $eventManager->attach(new \ModuleTpl\Listener\SavePropertiesListener());
+                    $eventManager->attach(new \ModuleTpl\Listener\DeleteListener());
+                }
+        }

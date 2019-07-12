@@ -35,8 +35,16 @@ return [
     // Steps
     'tr_melistoolcreator_module' => 'Outil',
     'tr_melistoolcreator_tcf-name tooltip' => 'Nom de l\'outil /module. Seul les caractères alphabétiques sont autorisés',
-    'tr_melistoolcreator_tcf_tool_type' => 'Type d\'édition',
-    'tr_melistoolcreator_tcf_tool_type tooltip' => 'Sélectionnez le type d\'édition que vous voulez pour votre outil. Modal ouvrira les éléments dans une popin centrée qui va bien avec peu de champs à éditer. Tabulation ouvrira une nouvelle tabulation principale dans Melis Platform et conviendra mieux aux longs formulaires qui nécessitent plus de place et de visibilité',
+
+    'tr_melistoolcreator_tcf_tool_type' => 'Type d\'outil',
+    'tr_melistoolcreator_tcf_tool_type tooltip' => 'Outil BDD est utilize pour créer un outil qui liste une table en base de données et permettre l\'edition. Un outil iFrame permet d\'insérer n\'importe quelle URL dans un outil dans la plateforme, permettant de donner accès à d\'autres plateformes dans une seule interface',
+    'tr_melistoolcreator_tcf_tool_type_db' => 'Outil BDD <span class="melis-radio-box-circle"></span>',
+    'tr_melistoolcreator_tcf_tool_type_iframe' => 'Outil en iFrame <span class="melis-radio-box-circle"></span>',
+    'tr_melistoolcreator_tcf_tool_iframe_url' => 'URL à charger à l\'intérieur de l\'outil',
+    'tr_melistoolcreator_tcf_tool_iframe_url tooltip' => 'L\'outil chargera cette URL dans une nouvelle tabulation quand vous cliquerez sur son nom dans le menu principal',
+
+    'tr_melistoolcreator_tcf_tool_edit_type' => 'Type d\'édition',
+    'tr_melistoolcreator_tcf_tool_edit_type tooltip' => 'Sélectionnez le type d\'édition que vous voulez pour votre outil. Modal ouvrira les éléments dans une popin centrée qui va bien avec peu de champs à éditer. Tabulation ouvrira une nouvelle tabulation principale dans Melis Platform et conviendra mieux aux longs formulaires qui nécessitent plus de place et de visibilité',
     'tr_melistoolcreator_module_title' => 'Propriétés de l\'outil',
     'tr_melistoolcreator_module_desc' => 'Entrez le nom de l\'outil /du module. <br>Puis choisissez le type d\'edition. Modal ouvrira les éléments dans une popin centrée qui va bien avec peu de champs à éditer. <br>Tabulation ouvrira une nouvelle tabulation principale dans Melis Platform et conviendra mieux aux longs formulaires qui nécessitent plus de place et de visibilité',
     'tr_melistoolcreator_texts' => 'Textes',
@@ -75,6 +83,7 @@ return [
     'tr_melistoolcreator_col_null' => 'Null',
     'tr_melistoolcreator_col_default' => 'Défaut',
     'tr_melistoolcreator_col_extra' => 'Extra',
+    'tr_melistoolcreator_col_display' => 'Affichage',
     'tr_melistoolcreator_col_editable' => 'Editable',
     'tr_melistoolcreator_col_mandatory' => 'Obligatoire',
     'tr_melistoolcreator_col_field_type' => 'Input type',
@@ -103,9 +112,18 @@ return [
     'tr_melistoolcreator_choose' => 'Choisissez',
     'tr_melistoolcreator_select_text' => 'Texte / Champs normal',
     'tr_melistoolcreator_select_textarea_tinymce' => 'Rich HTML (TinyMCE)',
+    'tr_melistoolcreator_select_switch' => 'Switch ON/OFF vert/rouge',
+    'tr_melistoolcreator_select_raw_view' => 'Valeur en base',
+    'tr_melistoolcreator_select_char_len_50' => 'Valeur coupée à 50 char',
+    'tr_melistoolcreator_select_dot_color' => 'Point vert/rouge',
+    'tr_melistoolcreator_select_site_name' => 'Site',
+    'tr_melistoolcreator_select_lang_name' => 'Langue',
+    'tr_melistoolcreator_select_tpl_name' => 'Template',
+    'tr_melistoolcreator_select_admin_name' => 'Utilisateur BO',
 
     // Forms
     'tr_melistoolcreator_tcf-name' => 'Nom de l\'outil',
+    'tr_melistoolcreator_tcf-tool-iframe-url' => 'Iframe Url',
     'tr_melistoolcreator_tcf-module-toolstree' => 'Arbre des outils',
     'tr_melistoolcreator_tcf-module-toolstree tooltip' => 'Arbre des outils',
     'tr_melistoolcreator_tcf-title' => 'Titre de l\'outil',
@@ -115,12 +133,10 @@ return [
     'tr_melistoolcreator_inpt_name' => 'Nom',
     'tr_melistoolcreator_inpt_name tooltip' => 'Description tooltip',
 
-    // Warning message
-    'tr_melistoolcreator_warning_message' => 'For a better experience of this tool we recommend to use a wider screen',//TO REMOVE
-
     // Error messages
     'tr_melistoolcreator_err_message' => 'Impossible de passer à l\'étape suivante, veuillez réessayer',
     'tr_melistoolcreator_err_invalid_module' => 'Seul les caractères alphabétiques sont autorisés',
+    'tr_melistoolcreator_invalid_url' => 'URL invalide',
     'tr_melistoolcreator_err_empty' => 'Champ requis, ne peut être vide',
     'tr_melistoolcreator_err_long_50' => 'Valeur trop longue, elle doit être de moins de 50 caractères',
     'tr_melistoolcreator_err_long_100' => 'Valeur trop longue, elle doit être de moins de 100 caractères',

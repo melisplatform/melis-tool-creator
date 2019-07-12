@@ -6,7 +6,8 @@
             $langTbl = $this->getServiceLocator()->get('ModuleTplLangTable');
 
             foreach ($tableData As $key => $val){
-                foreach ($val As $col => $data)
+                foreach ($val As $col => $data){
+                    $langName = '';
                     if (in_array($col, [#TCREQUIRETBLFIELDS]) && $data == ''){
                         $langRes = $langTbl->getTableGateway()->select([
                             '#TCPFKEY = '. $val['DT_RowId'],
@@ -14,11 +15,20 @@
                         ])->current();
 
                         if (!empty($langRes) && $langRes->$col != ''){
-                            $str = $langRes->$col;
+                            $data = $langRes->$col;
                             // Adding language name
                             $cmsLang = $engineLangTbl->getEntryById($langRes->#TCLANGFKEY)->current();
                             if (!empty($cmsLang))
-                                $tableData[$key][$col] = $str.' ('. $cmsLang->lang_cms_name .')';
+                                $langName = '('. $cmsLang->lang_cms_name .')';
                         }
                     }
+
+#TCTABLECOLDISPLAYFILTER
+
+                    $tableData[$key][$col] = $data;
+
+                    if (!empty($langName)){
+                        $tableData[$key][$col] .= ' '. $langName;
+                    }
+                }
             }

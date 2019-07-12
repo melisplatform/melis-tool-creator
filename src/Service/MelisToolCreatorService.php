@@ -97,6 +97,19 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
         // Create module
         mkdir($moduleDir, 0777);
         $moduleFile = $this->fgc('/Module/Module.php');
+
+        $code = '';
+        $config ='';
+        if ($this->isDbTool()){
+            $code = $this->fgc('/Code/module');
+
+            $config = 'include __DIR__ . \'/config/app.interface.php\',
+            include __DIR__ . \'/config/app.tools.php\',';
+        }
+
+        $moduleFile = $this->sp('#TCMODULE', $code, $moduleFile);
+        $moduleFile = $this->sp('#TCCONFIG', $config, $moduleFile);
+
         $this->generateFile('Module.php', $moduleDir, $moduleFile);
     }
 
@@ -112,43 +125,56 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
         foreach ($dirs As $dir => $subDir){
             $tempTargetDir = $targetDir.'/'.$dir;
 
-            // Generating directory
-            mkdir($tempTargetDir, 0777);
+            if (!$this->skipDir($dir)){
 
-            switch ($dir){
-                case 'config':
-                    $this->generateModuleConfigs($tempTargetDir);
-                    break;
-                case 'Controller':
-                    $this->generateModuleController($tempTargetDir);
-                    break;
-                case 'Listener':
-                    $this->generateModuleListeners($tempTargetDir);
-                    break;
-                case 'view':
-                    $this->generateModuleViews($tempTargetDir);
-                    break;
-                case 'js':
-                    $this->generateModuleJs($tempTargetDir);
-                    break;
-                case 'language':
-                    $this->generateModuleLanguages($tempTargetDir);
-                    break;
-                case 'Model':
-                    $this->generateModuleModel($tempTargetDir);
-                    break;
-                case 'Tables':
-                    $this->generateModuleModelTables($tempTargetDir);
-                    break;
-                case 'Factory':
-                    $this->generateModuleModelTablesFactory($tempTargetDir);
-                    break;
-            }
+                // Generating directory
+                mkdir($tempTargetDir, 0777);
 
-            if (is_array($subDir)){
-                $this->generateModuleSubDirsAndFiles($subDir, $tempTargetDir);
+                switch ($dir){
+                    case 'config':
+                        $this->generateModuleConfigs($tempTargetDir);
+                        break;
+                    case 'Controller':
+                        $this->generateModuleController($tempTargetDir);
+                        break;
+                    case 'Listener':
+                        $this->generateModuleListeners($tempTargetDir);
+                        break;
+                    case 'view':
+                        $this->generateModuleViews($tempTargetDir);
+                        break;
+                    case 'js':
+                        $this->generateModuleJs($tempTargetDir);
+                        break;
+                    case 'language':
+                        $this->generateModuleLanguages($tempTargetDir);
+                        break;
+                    case 'Model':
+                        $this->generateModuleModel($tempTargetDir);
+                        break;
+                    case 'Tables':
+                        $this->generateModuleModelTables($tempTargetDir);
+                        break;
+                    case 'Factory':
+                        $this->generateModuleModelTablesFactory($tempTargetDir);
+                        break;
+                }
+
+                if (is_array($subDir)){
+                    $this->generateModuleSubDirsAndFiles($subDir, $tempTargetDir);
+                }
             }
         }
+    }
+
+    public function skipDir($dir)
+    {
+        if (!$this->isDbTool()){
+            if (in_array($dir, ['public', 'Listener', 'Model']))
+                return true;
+        }
+
+        return false;
     }
 
     /**
@@ -161,12 +187,12 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
         foreach (scandir($moduleConfigFiles) As $file){
             if (is_file($moduleConfigFiles.'/'.$file)){
                 if ($file == 'app.toolstree.php'){
-                    $this->generateModuleInterfaceConfig($targetDir);
-                }elseif ($file == 'app.tools.php'){
+                    $this->generateModuleToolstreeConfig($targetDir);
+                }elseif ($file == 'app.tools.php' && $this->isDbTool()){
                     $this->generateModuleToolConfig($targetDir);
                 }elseif ($file == 'module.config.php'){
                     $this->generateModuleConfig($targetDir);
-                }elseif ($file == 'app.interface.php'){
+                }elseif ($file == 'app.interface.php' && $this->isDbTool()){
                     $interfaceContent = $this->fgc('/Config/app.interface.php');
                     $this->generateFile('app.interface.php', $targetDir, $interfaceContent);
                 }
@@ -178,15 +204,23 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
      * This method generates the tool interface config
      * @param $targetDir
      */
-    private function generateModuleInterfaceConfig($targetDir)
+    private function generateModuleToolstreeConfig($targetDir)
     {
         // Application interfaces config
         $toolsTreeContent = $this->fgc('/Config/app.toolstree.php');
 
-        $toolInterface = $this->fgc('/Code/'.$this->getToolType().'-interface');
+        $toolInterface = $this->fgc('/Code/'.$this->getToolEditType().'-interface');
 
-        if ($this->hasLanguage())
-            $toolInterface = $this->sp('#TCTOOLINTERFACE', $this->fgc('/Code/'.$this->getToolType().'-lang-interface'), $toolInterface);
+        if ($this->isDbTool()){
+
+            $toolsTreeContent = $this->sp('#TCTOOLSTREE', $this->fgc('/Code/db-toolstree'), $toolsTreeContent);
+
+            if ($this->hasLanguage())
+                $toolInterface = $this->sp('#TCTOOLINTERFACE', $this->fgc('/Code/'.$this->getToolEditType().'-lang-interface'), $toolInterface);
+
+        }else{
+            $toolsTreeContent = $this->sp('#TCTOOLSTREE', $this->fgc('/Code/iframe-toolstree'), $toolsTreeContent);
+        }
 
         $toolsTreeContent = $this->sp('#TCTOOLINTERFACE', $toolInterface, $toolsTreeContent);
         $this->generateFile('app.toolstree.php', $targetDir, $toolsTreeContent);
@@ -434,12 +468,17 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
         // Application interfaces config
         $fileContent = $this->fgc('/Config/module.config.php');
 
-        $controllers = $this->fgc('/Code/controllers');
-        $services = $this->fgc('/Code/services');
+        if ($this->isDbTool()){
+            $controllers = $this->fgc('/Code/controllers');
+            $services = $this->fgc('/Code/services');
 
-        if ($this->hasLanguage()){
-            $controllers = $this->fgc('/Code/lang-controllers');
-            $services = $this->fgc('/Code/lang-services');
+            if ($this->hasLanguage()){
+                $controllers = $this->fgc('/Code/lang-controllers');
+                $services = $this->fgc('/Code/lang-services');
+            }
+        }else{
+            $controllers = $this->fgc('/Code/iframe-controller');
+            $services = $this->fgc('/Code/iframe-service');
         }
 
         $fileContent = $this->sp('#TCSERVICES', $services, $fileContent);
@@ -454,11 +493,19 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
      */
     private function generateModuleController($targetDir)
     {
+
+        if (!$this->isDbTool()){
+            $iframeCtrl = $this->fgc('/Controller/IndexController.php');
+            $iframeCtrl = $this->sp('#TCIFRAMEURL', $this->tcSteps['step1']['tcf-tool-iframe-url'], $iframeCtrl);
+            $this->generateFile('IndexController.php', $targetDir, $iframeCtrl);
+            return;
+        }
+
         $pk = $this->hasPrimaryKey();
         if (!empty($pk)){
 
             $modulePropCtrlFile = $this->fgc('/Controller/PropertiesController.php');
-            $modulePropCtrlFile = $this->sp('#TCPROPACTIONS', $this->fgc('/Code/'.$this->getToolType().'-prop-actions'), $modulePropCtrlFile);
+            $modulePropCtrlFile = $this->sp('#TCPROPACTIONS', $this->fgc('/Code/'.$this->getToolEditType().'-prop-actions'), $modulePropCtrlFile);
 
             // Checking if there is one file input
             $fileParams = '';
@@ -530,8 +577,11 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
         }
 
         $listCtrlFile = $this->fgc('/Controller/ListController.php');
-        $modalAction = ($this->getToolType() == 'modal') ? $this->fgc('/Code/modal-action') : '';
+        $modalAction = ($this->getToolEditType() == 'modal') ? $this->fgc('/Code/modal-action') : '';
         $listCtrlFile = $this->sp('#TCMODALVIEWMODEL', $modalAction, $listCtrlFile);
+
+        // Column display filter flag
+        $hasColDisplayFilter = flase;
 
         // Data empty filter
         $emptyDataFilter = '';
@@ -545,6 +595,26 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
             $emptyDataFilter = $this->sp('#TCREQUIRETBLFIELDS', implode(', ', $requiredLangFields), $this->fgc('/Code/empty-columns'));
             $emptyDataFilter = $this->sp('#TCPFKEY', $this->tcSteps['step3']['tcf-db-table-language-pri-fk'], $emptyDataFilter);
             $emptyDataFilter = $this->sp('#TCLANGFKEY', $this->tcSteps['step3']['tcf-db-table-language-lang-fk'], $emptyDataFilter);
+
+            // Columns display
+            $tblColDisplay = '';
+            $tblColDisplayFilters = [];
+            foreach ($this->tcSteps['step4']['tcf-db-table-cols'] As $key => $col){
+                if (!is_bool(strpos($col, 'tclangtblcol_')) && $this->tcSteps['step4']['tcf-db-table-col-display'][$key] != 'raw_view'){
+                    $tblColDisplayFilters[] = $this->sp(
+                        ['#TCCOLUMN', '#TCCOLDISPLAY'],
+                        [$this->sp('tclangtblcol_', '', $col), $this->tcSteps['step4']['tcf-db-table-col-display'][$key]],
+                        $this->fgc('/Code/tbl-col-display-filter-lang')
+                    );
+                }
+            }
+
+            if (!empty($tblColDisplayFilters)){
+                $hasColDisplayFilter = true;
+                $tblColDisplay = implode(PHP_EOL, $tblColDisplayFilters);
+            }
+
+            $emptyDataFilter = $this->sp('#TCTABLECOLDISPLAYFILTER', $tblColDisplay, $emptyDataFilter);
         }
         $listCtrlFile = $this->sp('#TCDATAEMPTYFILTER', $emptyDataFilter, $listCtrlFile);
 
@@ -561,7 +631,7 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
                 if (!is_bool(strpos($col['Type'], 'blob')))
                     array_push($blobFields, $col['Field']);
 
-
+        // Blog type columns
         $blobFilter = '';
         if (!empty($blobFields)){
             $blobFilter = $this->fgc('/Code/blob-data-filter');
@@ -573,6 +643,34 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
             $blobFilter = $this->sp('#TCBLOBFIELD', $blobDataStr, $blobFilter);
         }
         $listCtrlFile = $this->sp('#TCBLOBDATAFILTER', $blobFilter, $listCtrlFile);
+
+        // Columns display
+        $tblColDisplay = '';
+        $tblColDisplayFilters = [];
+        foreach ($this->tcSteps['step4']['tcf-db-table-cols'] As $key => $col){
+            if (is_bool(strpos($col, 'tclangtblcol_')) && $this->tcSteps['step4']['tcf-db-table-col-display'][$key] != 'raw_view'){
+                $tblColDisplayFilters[] = $this->sp(
+                    ['#TCCOLUMN', '#TCCOLDISPLAY'],
+                    [$col, $this->tcSteps['step4']['tcf-db-table-col-display'][$key]],
+                    $this->fgc('/Code/tbl-col-display-filter')
+                );
+            }
+        }
+
+        if (!empty($tblColDisplayFilters)){
+            $hasColDisplayFilter = true;
+            $tblColDisplay = $this->sp('#TCCOLFILTERS', implode(PHP_EOL, $tblColDisplayFilters) , $this->fgc('/Code/tbl-col-display'));
+        }
+
+        // Melis core event service
+        $coreEventSrv = '';
+        if ($hasColDisplayFilter)
+            $coreEventSrv = '$coreSrv = $this->getServiceLocator()->get(\'MelisCoreGeneralService\');';
+
+        $listCtrlFile = $this->sp('#TCCOREEVENTSERVICE', $coreEventSrv, $listCtrlFile);
+        $listCtrlFile = $this->sp('#TCTABLECOLDISPLAYFILTER', $tblColDisplay, $listCtrlFile);
+
+
 
         $this->generateFile('ListController.php', $targetDir, $listCtrlFile);
     }
@@ -603,41 +701,53 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
      */
     private function generateModuleViews($targetDir)
     {
+
         // Generating view module directory
         mkdir($targetDir.'/'.$this->moduleViewName(), 0777);
 
-        // Common view file for tool
-        $listViews = [
-            'table-filter-limit',
-            'table-filter-refresh',
-            'table-filter-search',
-            'table-action-edit',
-            'table-action-delete',
-            'tool-content',
-            'tool-header',
-            'tool',
-        ];
+        if ($this->isDbTool()){
 
-        if ($this->getToolType() == 'modal'){
-            $listViews[] = 'modal-form';
-            $propViews[] = 'properties-form';
-        }else{
-            $propViews = [
-                'prop-tool-main-content',
-                'prop-tool-content',
-                'prop-tool-header',
-                'prop-tool'
+            // Common view file for tool
+            $listViews = [
+                'table-filter-limit',
+                'table-filter-refresh',
+                'table-filter-search',
+                'table-action-edit',
+                'table-action-delete',
+                'tool-content',
+                'tool-header',
+                'tool',
             ];
-        }
 
-        $toolViews = [
-            'list' => $listViews,
-            'properties' => $propViews
-        ];
+            if ($this->getToolEditType() == 'modal'){
+                $listViews[] = 'modal-form';
+                $propViews[] = 'properties-form';
+            }else{
+                $propViews = [
+                    'prop-tool-main-content',
+                    'prop-tool-content',
+                    'prop-tool-header',
+                    'prop-tool'
+                ];
+            }
 
-        if ($this->hasLanguage()){
-            $toolViews['language'] = [
-                'language-form'
+            $toolViews = [
+                'list' => $listViews,
+                'properties' => $propViews
+            ];
+
+            if ($this->hasLanguage()){
+                $toolViews['language'] = [
+                    'language-form'
+                ];
+            }
+
+        }else{
+
+            $toolViews = [
+                'index' => [
+                    'iframe'
+                ]
             ];
         }
 
@@ -668,11 +778,14 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
      */
     private function generateModuleJs($targetDir)
     {
-        $addBtnScript = $this->fgc('/Asset/'.$this->getToolType().'-add-btn');
-        $saveScript = $this->fgc('/Asset/'.$this->getToolType().'-save');
-        $ediBtnScript = $this->fgc('/Asset/'.$this->getToolType().'-edit-btn');
-        $closeTabDelete = ($this->getToolType() == 'tab') ? $this->fgc('/Asset/tab-delete') : '';
-        $langSave = ($this->hasLanguage()) ? $this->fgc('/Asset/'.$this->getToolType().'-lang-save'): '';
+        if (!$this->isDbTool())
+            return;
+
+        $addBtnScript = $this->fgc('/Asset/'.$this->getToolEditType().'-add-btn');
+        $saveScript = $this->fgc('/Asset/'.$this->getToolEditType().'-save');
+        $ediBtnScript = $this->fgc('/Asset/'.$this->getToolEditType().'-edit-btn');
+        $closeTabDelete = ($this->getToolEditType() == 'tab') ? $this->fgc('/Asset/tab-delete') : '';
+        $langSave = ($this->hasLanguage()) ? $this->fgc('/Asset/'.$this->getToolEditType().'-lang-save'): '';
 
         $saveScript = $this->sp('#TCSAVELANG', $langSave, $saveScript);
 
@@ -699,62 +812,72 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
         $coreLang = $this->getServiceLocator()->get('MelisCoreTableLang');
         $languages = $coreLang->fetchAll()->toArray();
 
-        $translationsSrv = $this->getServiceLocator()->get('MelisCoreTranslation');
-        $commonTransTpl = require $this->moduleTplDir.'/Language/languages.php';
+        if ($this->isDbTool()){
 
-        // Common translation
-        $commonTranslations = [];
-        foreach ($languages As $lang){
-            foreach ($commonTransTpl As $cKey => $cText)
-                $commonTranslations[$lang['lang_locale']][$cKey] = $translationsSrv->getMessage($cText, $lang['lang_locale']);
+            $translationsSrv = $this->getServiceLocator()->get('MelisCoreTranslation');
+            $commonTransTpl = require $this->moduleTplDir.'/Language/languages.php';
 
-            if (!empty($this->tcSteps['step6'][$lang['lang_locale']])){
-                $commonTranslations[$lang['lang_locale']] = array_merge($commonTranslations[$lang['lang_locale']], $this->tcSteps['step6'][$lang['lang_locale']]['pri_tbl']);
+            // Common translation
+            $commonTranslations = [];
+            foreach ($languages As $lang){
+                foreach ($commonTransTpl As $cKey => $cText)
+                    $commonTranslations[$lang['lang_locale']][$cKey] = $translationsSrv->getMessage($cText, $lang['lang_locale']);
 
-                if (!empty($this->tcSteps['step6'][$lang['lang_locale']]['lang_tbl']))
-                    $commonTranslations[$lang['lang_locale']] = array_merge($commonTranslations[$lang['lang_locale']], $this->tcSteps['step6'][$lang['lang_locale']]['lang_tbl']);
-            }
-        }
+                if (!empty($this->tcSteps['step6'][$lang['lang_locale']])){
+                    $commonTranslations[$lang['lang_locale']] = array_merge($commonTranslations[$lang['lang_locale']], $this->tcSteps['step6'][$lang['lang_locale']]['pri_tbl']);
 
-        // Merging texts from steps forms
-        $stepTexts = array_merge_recursive($this->tcSteps['step2'], $commonTranslations);
-
-        $translations = [];
-        $textFields = [];
-
-        // Default value setter
-        foreach ($languages As $lang){
-            $translations[$lang['lang_locale']] = [];
-            if (!empty($stepTexts[$lang['lang_locale']])){
-                foreach($stepTexts[$lang['lang_locale']]  As $key => $text){
-
-                    if (!in_array($key, ['tcf-lang-local', 'tcf-tbl-type'])){
-                        // Input description
-                        if (strpos($key, 'tcinputdesc')){  
-                            if (empty($text))
-                                $text = $stepTexts[$lang['lang_locale']][$key];
-
-                            $key = $this->sp('tcinputdesc', 'tooltip', $key);
-                            $key = $this->sp('tclangtblcol_', '', $key);
-                        }
-
-                        $translations[$lang['lang_locale']][$key] = $text;
-                    }else
-                        $text = '';
-
-                    // Getting fields that has a value
-                    // this will be use as default value if a field doesn't have value
-                    if (!empty($text))
-                        $textFields[$key] = $text;
+                    if (!empty($this->tcSteps['step6'][$lang['lang_locale']]['lang_tbl']))
+                        $commonTranslations[$lang['lang_locale']] = array_merge($commonTranslations[$lang['lang_locale']], $this->tcSteps['step6'][$lang['lang_locale']]['lang_tbl']);
                 }
             }
-        }
 
-        // Assigning values to the fields that doesn't have value(s)
-        foreach ($translations As $local => $texts)
-            foreach ($textFields As $key => $text)
-                if (empty($texts[$key]))
-                    $translations[$local][$key] = $text;
+            // Merging texts from steps forms
+            $stepTexts = array_merge_recursive($this->tcSteps['step2'], $commonTranslations);
+
+            $translations = [];
+            $textFields = [];
+
+            // Default value setter
+            foreach ($languages As $lang){
+                $translations[$lang['lang_locale']] = [];
+                if (!empty($stepTexts[$lang['lang_locale']])){
+                    foreach($stepTexts[$lang['lang_locale']]  As $key => $text){
+
+                        if (!in_array($key, ['tcf-lang-local', 'tcf-tbl-type'])){
+                            // Input description
+                            if (strpos($key, 'tcinputdesc')){
+                                if (empty($text))
+                                    $text = $stepTexts[$lang['lang_locale']][$key];
+
+                                $key = $this->sp('tcinputdesc', 'tooltip', $key);
+                                $key = $this->sp('tclangtblcol_', '', $key);
+                            }
+
+                            $translations[$lang['lang_locale']][$key] = $text;
+                        }else
+                            $text = '';
+
+                        // Getting fields that has a value
+                        // this will be use as default value if a field doesn't have value
+                        if (!empty($text))
+                            $textFields[$key] = $text;
+                    }
+                }
+            }
+
+            // Assigning values to the fields that doesn't have value(s)
+            foreach ($translations As $local => $texts)
+                foreach ($textFields As $key => $text)
+                    if (empty($texts[$key]))
+                        $translations[$local][$key] = $text;
+        }else{
+            $translations = [];
+            foreach ($languages As $lang){
+                $translations[$lang['lang_locale']] = [
+                    'title' => $this->moduleName(),
+                ];
+            }
+        }
 
         foreach ($translations As $locale => $texts){
             $strTranslations = '';
@@ -916,9 +1039,14 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
         return $this->moduleNameToViewName($this->generateModuleNameCase($this->tcSteps['step1']['tcf-name']));
     }
 
-    private function getToolType()
+    private function isDbTool()
     {
-        return $this->tcSteps['step1']['tcf-tool-type'];
+        return $this->tcSteps['step1']['tcf-tool-type'] == 'db' ? true : false;
+    }
+
+    private function getToolEditType()
+    {
+        return $this->tcSteps['step1']['tcf-tool-edit-type'];
     }
 
     private function hasLanguage()
