@@ -40,6 +40,7 @@ return [
     'tr_melistoolcreator_tcf_tool_type tooltip' => 'DB Tool is used to create a tool that list a table in the database and allows it to be editable. An iFrame tool will insert whatever URL given inside a tool in the platform, allowing to have access to many platforms in the same interface',
     'tr_melistoolcreator_tcf_tool_type_db' => 'DB Tool <span class="melis-radio-box-circle"></span>',
     'tr_melistoolcreator_tcf_tool_type_iframe' => 'iFrame Tool <span class="melis-radio-box-circle"></span>',
+    'tr_melistoolcreator_tcf_tool_type_blank' => 'Blank <span class="melis-radio-box-circle"></span>',
     'tr_melistoolcreator_tcf_tool_iframe_url' => 'URL to load inside the tool',
     'tr_melistoolcreator_tcf_tool_iframe_url tooltip' => 'The tool will load this URL inside a tabulation when you’ll click on his name inside the main menu',
 

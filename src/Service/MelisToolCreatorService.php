@@ -100,8 +100,9 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
 
         $code = '';
         $config ='';
-        if ($this->isDbTool()){
-            $code = $this->fgc('/Code/module');
+        if ($this->isDbTool() || $this->isBlankTool()){
+            if (!$this->isBlankTool())
+                $code = $this->fgc('/Code/module');
 
             $config = 'include __DIR__ . \'/config/app.interface.php\',
             include __DIR__ . \'/config/app.tools.php\',';
@@ -169,10 +170,13 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
 
     public function skipDir($dir)
     {
-        if (!$this->isDbTool()){
+        if ($this->isIframeTool())
             if (in_array($dir, ['public', 'Listener', 'Model']))
                 return true;
-        }
+
+        if ($this->isBlankTool())
+            if (in_array($dir, ['public', 'Listener', 'Model']))
+                return true;
 
         return false;
     }
@@ -188,11 +192,11 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
             if (is_file($moduleConfigFiles.'/'.$file)){
                 if ($file == 'app.toolstree.php'){
                     $this->generateModuleToolstreeConfig($targetDir);
-                }elseif ($file == 'app.tools.php' && $this->isDbTool()){
+                }elseif ($file == 'app.tools.php' && ($this->isDbTool() || $this->isBlankTool())){
                     $this->generateModuleToolConfig($targetDir);
                 }elseif ($file == 'module.config.php'){
                     $this->generateModuleConfig($targetDir);
-                }elseif ($file == 'app.interface.php' && $this->isDbTool()){
+                }elseif ($file == 'app.interface.php' && ($this->isDbTool() || $this->isBlankTool())){
                     $interfaceContent = $this->fgc('/Config/app.interface.php');
                     $this->generateFile('app.interface.php', $targetDir, $interfaceContent);
                 }
@@ -211,12 +215,15 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
 
         $toolInterface = $this->fgc('/Code/'.$this->getToolEditType().'-interface');
 
-        if ($this->isDbTool()){
+        if ($this->isDbTool() || $this->isBlankTool()){
 
             $toolsTreeContent = $this->sp('#TCTOOLSTREE', $this->fgc('/Code/db-toolstree'), $toolsTreeContent);
 
-            if ($this->hasLanguage())
-                $toolInterface = $this->sp('#TCTOOLINTERFACE', $this->fgc('/Code/'.$this->getToolEditType().'-lang-interface'), $toolInterface);
+            if ($this->isBlankTool())
+                $toolInterface = '';
+            else
+                if ($this->hasLanguage())
+                    $toolInterface = $this->sp('#TCTOOLINTERFACE', $this->fgc('/Code/'.$this->getToolEditType().'-lang-interface'), $toolInterface);
 
         }else{
             $toolsTreeContent = $this->sp('#TCTOOLSTREE', $this->fgc('/Code/iframe-toolstree'), $toolsTreeContent);
@@ -234,225 +241,232 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
      */
     private function generateModuleToolConfig($targetDir)
     {
-        // Table primary key details
-        $pk = $this->hasPrimaryKey();
+        $tblCols = '';
+        $tblSearchCols = '';
+        $moduleForm = '';
+        $tblActionButtons = '';
 
-        // Table columns
-        $strCol = [];
-        // Table searchable columns
-        $strSearchableCols = [];
+        if (!$this->isBlankTool()){
 
-        $tblCols = $this->fgc('/Code/tbl-cols');
+            // Table primary key details
+            $pk = $this->hasPrimaryKey();
 
-        // Dividing length of table to several columns
-        $colWidth = number_format(100/count($this->tcSteps['step4']['tcf-db-table-cols']), 0);
-        foreach ($this->tcSteps['step4']['tcf-db-table-cols'] As $key => $col){
+            // Table columns
+            $strCol = [];
+            // Table searchable columns
+            $strSearchableCols = [];
 
-            // Primary column use to update and delete raw entry
-            $priCol = ($col == $pk['Field']) ? 'DT_RowId' : $col;
+            $tblCols = $this->fgc('/Code/tbl-cols');
 
-            $strColTmp = $this->sp('#TCKEYCOL', $priCol, $tblCols);
-            $strColTmp = $this->sp('#TCKEY', $col, $strColTmp);
-            $strCol[] = $this->sp('#TCTBLKEY', $colWidth, $strColTmp);
+            // Dividing length of table to several columns
+            $colWidth = number_format(100/count($this->tcSteps['step4']['tcf-db-table-cols']), 0);
+            foreach ($this->tcSteps['step4']['tcf-db-table-cols'] As $key => $col){
+
+                // Primary column use to update and delete raw entry
+                $priCol = ($col == $pk['Field']) ? 'DT_RowId' : $col;
+
+                $strColTmp = $this->sp('#TCKEYCOL', $priCol, $tblCols);
+                $strColTmp = $this->sp('#TCKEY', $col, $strColTmp);
+                $strCol[] = $this->sp('#TCTBLKEY', $colWidth, $strColTmp);
+
+                /**
+                 * This will avoid duplication of columns in
+                 * searchable keys and to avoid sql issue
+                 */
+                if (!is_bool(strpos($col, 'tclangtblcol_')))
+                    $col = $this->sp('tclangtblcol_', '', $col);
+
+                if (!isset($strSearchableCols[$col]))
+                    $strSearchableCols[$col] = $col;
+                else
+                    $strSearchableCols[$col] = $this->tcSteps['step3']['tcf-db-table'].'.'.$col;
+            }
+
+            // Format array to string
+            foreach ($strSearchableCols As $key => $col)
+                $strSearchableCols[$key] = "\t\t\t\t\t\t\t".'\''.$col.'\'';
+
+            $tblCols = implode(','."\n", $strCol);
+            $tblSearchCols = implode(','."\n", $strSearchableCols);
+
+            $langTablePK = null;
+            if ($this->hasLanguage()){
+                $langTable = $this->getTablePK($this->tcSteps['step3']['tcf-db-table-language-tbl']);
+                if (!empty($langTable))
+                    if (($langTable['Extra'] == 'auto_increment'))
+                        $langTablePK = $langTable['Field'];
+            }
 
             /**
-             * This will avoid duplication of columns in
-             * searchable keys and to avoid sql issue
+             * Checking if the database table selected ha a primary key,
+             * else the update and delete feature would not be available to the
+             * generated tool
              */
-            if (!is_bool(strpos($col, 'tclangtblcol_')))
-                $col = $this->sp('tclangtblcol_', '', $col);
+            $tblActionButtons = '';
+            if (!empty($pk))
+                $tblActionButtons = $this->fgc('/Form/edit-delete-tool-config');
 
-            if (!isset($strSearchableCols[$col]))
-                $strSearchableCols[$col] = $col;
-            else
-                $strSearchableCols[$col] = $this->tcSteps['step3']['tcf-db-table'].'.'.$col;
+            $formInputs = [];
+            $formInputFilters = [];
+
+            $langInputs = [];
+            $langInputFilters = [];
+
+            $priTable = $this->describeTable($this->tcSteps['step3']['tcf-db-table']);
+            $langTable = [];
+            if ($this->hasLanguage()){
+                $langTable = $this->describeTable($this->tcSteps['step3']['tcf-db-table-language-tbl']);
+            }
+
+
+            $formHiddenInputTplContent = $this->fgc('/Form/input-hidden');
+
+            foreach ($this->tcSteps['step5']['tcf-db-table-col-editable'] As $key => $col){
+
+                $inptType = $this->tcSteps['step5']['tcf-db-table-col-type'][$key];
+
+                switch ($inptType){
+                    case 'Switch':
+                        $formInputsTplContent = $this->fgc('/Form/switch-input');
+                        break;
+                    case 'File':
+                        $formInputsTplContent = $this->fgc('/Form/file-input');
+                        break;
+                    case 'Select':
+                        $formInputsTplContent = $this->fgc('/Form/select');
+
+                        $selectVals = '';
+                        if (is_bool(strpos($col, 'tclangtblcol_'))){
+                            // Checking from primary table
+                            foreach ($priTable As $dCol)
+                                if ($dCol['Field'] == $col){
+                                    preg_match('#\((.*?)\)#', $dCol['Type'], $match);
+                                    if (!empty($match[1]))
+                                        $selectVals = $match[1];
+                                }
+                        }else{
+                            // Checking from language table
+                            foreach ($langTable As $dCol)
+                                if ($dCol['Field'] == str_replace('tclangtblcol_', '', $col)){
+                                    preg_match('#\((.*?)\)#', $dCol['Type'], $match);
+                                    if (!empty($match[1]))
+                                        $selectVals = $match[1];
+                                }
+                        }
+
+                        $formInputsTplContent = $this->sp('#TCSELECTVALUES', $selectVals, $formInputsTplContent);
+                        break;
+                    default:
+                        $formInputsTplContent = $this->fgc('/Form/input');
+                        break;
+                }
+
+                $formInputsTplContent = $this->sp('#TCKEY', $col, $formInputsTplContent);
+                $formInputsTplContent = $this->sp('#TCINPUTTYPE', $inptType, $formInputsTplContent);
+
+
+
+                $skipValidator = false;
+                if (!empty($pk)){
+                    // If a column is AUTO_INCREMENT
+                    // This column will skip for having validator
+                    if (($pk['Extra'] == 'auto_increment') && $pk['Field'] == $col){
+                        $skipValidator = true;
+                    }
+                }
+
+                $disabledInput = '';
+                if ($skipValidator)
+                    $disabledInput = '\'disabled\' => \'disabled\'';
+                elseif (!is_null($langTablePK)){
+
+                    if (!is_bool(strpos($col, 'tclangtblcol_'))){
+                        if ($langTablePK == $this->sp('tclangtblcol_', '', $col))
+                            $skipValidator = true;
+                    }
+                }
+
+                $formInputsTplContent = $this->sp('#TCINPTAI', $disabledInput, $formInputsTplContent);
+
+                // Generating input validators and filters
+                $inputIsRequired = 'false';
+                if (!$skipValidator){
+                    $formInputFilterTplContent = $this->fgc('/Form/input-filter');
+                    $formInputFilterTplContent = $this->sp('#TCKEY', $col, $formInputFilterTplContent);
+
+                    $formInputValidator = [];
+                    if (in_array($col, $this->tcSteps['step5']['tcf-db-table-col-required'])){
+                        $inputIsRequired = 'true';
+                        array_push($formInputValidator, $this->fgc('/Form/not-empty-validator'));
+                    }
+
+                    // Numeric validation
+                    $colNumTypes = [
+                        'int',
+                        'smallint',
+                        'mediumint',
+                        'tinyint',
+                        'bigint',
+                        'decimal',
+                        'float',
+                        'double',
+                        'real',
+                        'bit',
+                        'serial',
+                    ];
+
+                    $table = [];
+                    if (is_bool(strpos($col, 'tclangtblcol_')))
+                        $table = $priTable;
+                    else
+                        if ($this->hasLanguage())
+                            $table = $langTable;
+
+                    if (!empty($table))
+                        foreach ($table As $ccol)
+                            if ($ccol['Field'] == $col)
+                                if (in_array(preg_replace("/\([^)]+\)/", '', $ccol['Type']), $colNumTypes))
+                                    array_push($formInputValidator, $this->fgc('/Form/number-validator'));
+
+                    $formInputFilterTplContent = $this->sp('#TCVALIDATORS', implode(','."\n", $formInputValidator), $formInputFilterTplContent);
+
+                    $formInputFilterTplContent = $this->sp('#TCISREQUIRED', $inputIsRequired, $formInputFilterTplContent);
+
+                    if (is_bool(strpos($col, 'tclangtblcol_')))
+                        array_push($formInputFilters, $formInputFilterTplContent);
+                    else
+                        if (!in_array($this->sp('tclangtblcol_', '', $col), $this->geLanguageFk()))
+                            array_push($langInputFilters, $formInputFilterTplContent);
+                }
+
+                // input required attribute
+                $formInputsTplContent = $this->sp('#TCINPUTREQUIRED', $inputIsRequired, $formInputsTplContent);
+                if (is_bool(strpos($col, 'tclangtblcol_')))
+                    array_push($formInputs, $formInputsTplContent);
+                else{
+                    if (in_array($this->sp('tclangtblcol_', '', $col), $this->geLanguageFk()) || $langTablePK == $this->sp('tclangtblcol_', '', $col))
+                        $formInputsTplContent = $this->sp('#TCKEY', $col, $formHiddenInputTplContent);
+
+                    array_push($langInputs, $formInputsTplContent);
+                }
+            }
+
+            $moduleFormContent = $this->fgc('/Form/form');
+            $moduleForm = $this->sp('#FORMINPUTS', implode(','."\n", $formInputs), $moduleFormContent);
+            $moduleForm = $this->sp('#FORMINPUTFILTERS', implode(','."\n", $formInputFilters), $moduleForm);
+
+            $langForm = '';
+            if ($this->hasLanguage()){
+                $formLang = $this->fgc('/Form/form-language');
+                $langForm = $this->sp('#FORMINPUTS', implode(','."\n", $langInputs), $formLang);
+                $langForm = $this->sp('#FORMINPUTFILTERS', implode(','."\n", $langInputFilters), $langForm);
+            }
+            $moduleForm = $this->sp('#FORMLANGUAGE', $langForm, $moduleForm);
         }
-
-        // Format array to string
-        foreach ($strSearchableCols As $key => $col)
-            $strSearchableCols[$key] = "\t\t\t\t\t\t\t".'\''.$col.'\'';
-
-        $tblCols = implode(','."\n", $strCol);
-        $tblSearchCols = implode(','."\n", $strSearchableCols);
 
         $fileContent = $this->fgc('/Config/app.tools.php');
         $fileContent = $this->sp('#TCTABLECOLUMNS', $tblCols, $fileContent);
         $fileContent = $this->sp('#TCTABLESEARCHCOLUMNS', $tblSearchCols, $fileContent);
-
-        $langTablePK = null;
-        if ($this->hasLanguage()){
-            $langTable = $this->getTablePK($this->tcSteps['step3']['tcf-db-table-language-tbl']);
-            if (!empty($langTable))
-                if (($langTable['Extra'] == 'auto_increment'))
-                    $langTablePK = $langTable['Field'];
-        }
-
-        /**
-         * Checking if the database table selected ha a primary key,
-         * else the update and delete feature would not be available to the
-         * generated tool
-         */
-        $tblActionButtons = '';
-        if (!empty($pk))
-            $tblActionButtons = $this->fgc('/Form/edit-delete-tool-config');
-
-        $formInputs = [];
-        $formInputFilters = [];
-
-        $langInputs = [];
-        $langInputFilters = [];
-
-        $priTable = $this->describeTable($this->tcSteps['step3']['tcf-db-table']);
-        $langTable = [];
-        if ($this->hasLanguage()){
-            $langTable = $this->describeTable($this->tcSteps['step3']['tcf-db-table-language-tbl']);
-        }
-
-
-        $formHiddenInputTplContent = $this->fgc('/Form/input-hidden');
-
-        foreach ($this->tcSteps['step5']['tcf-db-table-col-editable'] As $key => $col){
-
-            $inptType = $this->tcSteps['step5']['tcf-db-table-col-type'][$key];
-
-            switch ($inptType){
-                case 'Switch':
-                    $formInputsTplContent = $this->fgc('/Form/switch-input');
-                    break;
-                case 'File':
-                    $formInputsTplContent = $this->fgc('/Form/file-input');
-                    break;
-                case 'Select':
-                    $formInputsTplContent = $this->fgc('/Form/select');
-
-                    $selectVals = '';
-                    if (is_bool(strpos($col, 'tclangtblcol_'))){
-                        // Checking from primary table
-                        foreach ($priTable As $dCol)
-                            if ($dCol['Field'] == $col){
-                                preg_match('#\((.*?)\)#', $dCol['Type'], $match);
-                                if (!empty($match[1]))
-                                    $selectVals = $match[1];
-                            }
-                    }else{
-                        // Checking from language table
-                        foreach ($langTable As $dCol)
-                            if ($dCol['Field'] == str_replace('tclangtblcol_', '', $col)){
-                                preg_match('#\((.*?)\)#', $dCol['Type'], $match);
-                                if (!empty($match[1]))
-                                    $selectVals = $match[1];
-                            }
-                    }
-
-                    $formInputsTplContent = $this->sp('#TCSELECTVALUES', $selectVals, $formInputsTplContent);
-                    break;
-                default:
-                    $formInputsTplContent = $this->fgc('/Form/input');
-                    break;
-            }
-
-            $formInputsTplContent = $this->sp('#TCKEY', $col, $formInputsTplContent);
-            $formInputsTplContent = $this->sp('#TCINPUTTYPE', $inptType, $formInputsTplContent);
-
-
-
-            $skipValidator = false;
-            if (!empty($pk)){
-                // If a column is AUTO_INCREMENT
-                // This column will skip for having validator
-                if (($pk['Extra'] == 'auto_increment') && $pk['Field'] == $col){
-                    $skipValidator = true;
-                }
-            }
-
-            $disabledInput = '';
-            if ($skipValidator)
-                $disabledInput = '\'disabled\' => \'disabled\'';
-            elseif (!is_null($langTablePK)){
-
-                if (!is_bool(strpos($col, 'tclangtblcol_'))){
-                    if ($langTablePK == $this->sp('tclangtblcol_', '', $col))
-                        $skipValidator = true;
-                }
-            }
-
-            $formInputsTplContent = $this->sp('#TCINPTAI', $disabledInput, $formInputsTplContent);
-
-            // Generating input validators and filters
-            $inputIsRequired = 'false';
-            if (!$skipValidator){
-                $formInputFilterTplContent = $this->fgc('/Form/input-filter');
-                $formInputFilterTplContent = $this->sp('#TCKEY', $col, $formInputFilterTplContent);
-
-                $formInputValidator = [];
-                if (in_array($col, $this->tcSteps['step5']['tcf-db-table-col-required'])){
-                    $inputIsRequired = 'true';
-                    array_push($formInputValidator, $this->fgc('/Form/not-empty-validator'));
-                }
-
-                // Numeric validation
-                $colNumTypes = [
-                    'int',
-                    'smallint',
-                    'mediumint',
-                    'tinyint',
-                    'bigint',
-                    'decimal',
-                    'float',
-                    'double',
-                    'real',
-                    'bit',
-                    'serial',
-                ];
-
-                $table = [];
-                if (is_bool(strpos($col, 'tclangtblcol_')))
-                    $table = $priTable;
-                else
-                    if ($this->hasLanguage())
-                        $table = $langTable;
-
-                if (!empty($table))
-                    foreach ($table As $ccol)
-                        if ($ccol['Field'] == $col)
-                            if (in_array(preg_replace("/\([^)]+\)/", '', $ccol['Type']), $colNumTypes))
-                                array_push($formInputValidator, $this->fgc('/Form/number-validator'));
-
-                $formInputFilterTplContent = $this->sp('#TCVALIDATORS', implode(','."\n", $formInputValidator), $formInputFilterTplContent);
-
-                $formInputFilterTplContent = $this->sp('#TCISREQUIRED', $inputIsRequired, $formInputFilterTplContent);
-
-                if (is_bool(strpos($col, 'tclangtblcol_')))
-                    array_push($formInputFilters, $formInputFilterTplContent);
-                else
-                    if (!in_array($this->sp('tclangtblcol_', '', $col), $this->geLanguageFk()))
-                        array_push($langInputFilters, $formInputFilterTplContent);
-            }
-
-            // input required attribute
-            $formInputsTplContent = $this->sp('#TCINPUTREQUIRED', $inputIsRequired, $formInputsTplContent);
-            if (is_bool(strpos($col, 'tclangtblcol_')))
-                array_push($formInputs, $formInputsTplContent);
-            else{
-                if (in_array($this->sp('tclangtblcol_', '', $col), $this->geLanguageFk()) || $langTablePK == $this->sp('tclangtblcol_', '', $col))
-                    $formInputsTplContent = $this->sp('#TCKEY', $col, $formHiddenInputTplContent);
-
-                array_push($langInputs, $formInputsTplContent);
-            }
-        }
-
-        $moduleFormContent = $this->fgc('/Form/form');
-        $moduleForm = $this->sp('#FORMINPUTS', implode(','."\n", $formInputs), $moduleFormContent);
-        $moduleForm = $this->sp('#FORMINPUTFILTERS', implode(','."\n", $formInputFilters), $moduleForm);
-
-        $langForm = '';
-        if ($this->hasLanguage()){
-            $formLang = $this->fgc('/Form/form-language');
-            $langForm = $this->sp('#FORMINPUTS', implode(','."\n", $langInputs), $formLang);
-            $langForm = $this->sp('#FORMINPUTFILTERS', implode(','."\n", $langInputFilters), $langForm);
-        }
-        $moduleForm = $this->sp('#FORMLANGUAGE', $langForm, $moduleForm);
-
         $fileContent = $this->sp('#TCFORMELEMENTS', $moduleForm, $fileContent);
         $fileContent = $this->sp('#TCTABLEACTIONBUTTONS', $tblActionButtons, $fileContent);
 
@@ -476,6 +490,9 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
                 $controllers = $this->fgc('/Code/lang-controllers');
                 $services = $this->fgc('/Code/lang-services');
             }
+        }elseif ($this->isBlankTool()){
+            $controllers = $this->fgc('/Code/blank-controller');
+            $services = $this->fgc('/Code/blank-service');
         }else{
             $controllers = $this->fgc('/Code/iframe-controller');
             $services = $this->fgc('/Code/iframe-service');
@@ -494,10 +511,16 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
     private function generateModuleController($targetDir)
     {
 
-        if (!$this->isDbTool()){
+        if ($this->isIframeTool()){
             $iframeCtrl = $this->fgc('/Controller/IndexController.php');
             $iframeCtrl = $this->sp('#TCIFRAMEURL', $this->tcSteps['step1']['tcf-tool-iframe-url'], $iframeCtrl);
             $this->generateFile('IndexController.php', $targetDir, $iframeCtrl);
+            return;
+        }
+
+        if ($this->isBlankTool()){
+            $blnkListCtrl = $this->fgc('/Controller/Blank-ListController.php');
+            $this->generateFile('ListController.php', $targetDir, $blnkListCtrl);
             return;
         }
 
@@ -742,12 +765,27 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
                 ];
             }
 
-        }else{
+        }elseif ($this->isIframeTool()){
 
             $toolViews = [
                 'index' => [
                     'iframe'
                 ]
+            ];
+
+        }elseif ($this->isBlankTool()){
+
+            $listViews = [
+                'table-filter-limit',
+                'table-filter-refresh',
+                'table-filter-search',
+                'blank-tool-content',
+                'blank-tool-header',
+                'tool',
+            ];
+
+            $toolViews = [
+                'list' => $listViews
             ];
         }
 
@@ -758,12 +796,18 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
             mkdir($viewDir, 0777);
 
             foreach ($files As $file){
-                $fileName = 'render-'.$file.'.phtml';
+                if (is_bool(strpos($file, 'blank')))
+                    $fileName = 'render-'.$file.'.phtml';
+                else{
+                    // Blank view template
+                    $fileName = 'blank-render-'.$this->sp('blank-', '', $file).'.phtml';
+                }
 
                 if (is_file($this->moduleTplDir.'/View/'.$fileName)){
                     $fileContent = $this->fgc('/View/'.$fileName);
                     // Renaming view file for tool properties
                     $fileName = str_replace('prop-', '', $fileName);
+                    $fileName = str_replace('blank-', '', $fileName);
                     $this->generateFile($fileName, $viewDir, $fileContent);
                 }
             }
@@ -870,11 +914,42 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
                 foreach ($textFields As $key => $text)
                     if (empty($texts[$key]))
                         $translations[$local][$key] = $text;
-        }else{
+        }elseif ($this->isIframeTool()){
             $translations = [];
             foreach ($languages As $lang){
                 $translations[$lang['lang_locale']] = [
                     'title' => $this->moduleName(),
+                ];
+            }
+        }elseif ($this->isBlankTool()){
+            $translations = [];
+
+            $title = '';
+            $desc = '';
+
+            foreach ($languages As $lang){
+
+                if (!empty($this->tcSteps['step2'][$lang['lang_locale']]['tcf-title']) && empty($title))
+                    $title = $this->tcSteps['step2'][$lang['lang_locale']]['tcf-title'];
+
+                if (!empty($this->tcSteps['step2'][$lang['lang_locale']]['tcf-desc']) && empty($desc))
+                    $desc = $this->tcSteps['step2'][$lang['lang_locale']]['tcf-desc'];
+
+                if (!empty($title) && !empty($desc))
+                    break;
+            }
+
+            foreach ($languages As $lang){
+
+                if (!empty($this->tcSteps['step2'][$lang['lang_locale']]['tcf-title']))
+                    $title = $this->tcSteps['step2'][$lang['lang_locale']]['tcf-title'];
+
+                if (!empty($this->tcSteps['step2'][$lang['lang_locale']]['tcf-desc']))
+                    $desc = $this->tcSteps['step2'][$lang['lang_locale']]['tcf-desc'];
+
+                $translations[$lang['lang_locale']] = [
+                    'title' => $title,
+                    'desc' => $desc
                 ];
             }
         }
@@ -1042,6 +1117,16 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
     private function isDbTool()
     {
         return $this->tcSteps['step1']['tcf-tool-type'] == 'db' ? true : false;
+    }
+
+    private function isIframeTool()
+    {
+        return $this->tcSteps['step1']['tcf-tool-type'] == 'iframe' ? true : false;
+    }
+
+    private function isBlankTool()
+    {
+        return $this->tcSteps['step1']['tcf-tool-type'] == 'blank' ? true : false;
     }
 
     private function getToolEditType()

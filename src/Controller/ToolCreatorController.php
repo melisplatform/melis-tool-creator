@@ -94,6 +94,10 @@ class ToolCreatorController extends AbstractActionController
      */
     public function renderToolCreatorStepsAction()
     {
+        // Tool creator session container
+        $container = new Container('melistoolcreator');
+        $tcfDbTbl = $container['melis-toolcreator'];
+
         $view = new ViewModel();
 
         // The steps requested
@@ -106,8 +110,6 @@ class ToolCreatorController extends AbstractActionController
         $viewStp->id = 'melistoolcreator_step'.$curStep;
         $viewStp->setTemplate('melis-tool-creator/step'.$curStep);
 
-        $stpFunction = 'renderStep'.$curStep;
-
         if ($validate){
             $request = $this->getRequest();
             $post = $request->getPost();
@@ -115,23 +117,28 @@ class ToolCreatorController extends AbstractActionController
                 if ($post['step-form']['tcf-tool-type'] == 'iframe'){
                     $nxtStep = 7;
                 }
+            }else{
+                if ($tcfDbTbl['step1']['tcf-tool-type'] == 'blank' && $nxtStep == 3){
+                    $nxtStep = 7;
+                }
             }
         }
 
         if ($curStep == 7 && $nxtStep == 6){
-            // Tool creator session container
-            $container = new Container('melistoolcreator');
-            $tcfDbTbl = $container['melis-toolcreator'];
-
             if (!empty($tcfDbTbl['step1']['tcf-tool-type']))
                 if ($tcfDbTbl['step1']['tcf-tool-type'] == 'iframe')
                     $nxtStep = 1;
+                elseif ($tcfDbTbl['step1']['tcf-tool-type'] == 'blank')
+                    $nxtStep = 2;
+
         }
 
         /**
          * This will try to get the requested view
          * with the current view and the flag for validation
          */
+        $stpFunction = 'renderStep'.$curStep;
+
         $viewVars = $this->$stpFunction($viewStp, $validate);
         /**
          * Checking if the view returns with error this view will display to show the errors message(s)
@@ -219,7 +226,7 @@ class ToolCreatorController extends AbstractActionController
 
             $step1Form->setData($formData['step-form']);
 
-            if ($formData['step-form']['tcf-tool-type'] == 'db'){
+            if ($formData['step-form']['tcf-tool-type'] != 'iframe'){
                 $step1Form->getInputFilter()->remove('tcf-tool-iframe-url');
             }
 
@@ -1324,17 +1331,17 @@ class ToolCreatorController extends AbstractActionController
 
         $viewStp->toolType = $tcfDbTbl['step1']['tcf-tool-type'];
 
-        if ($tcfDbTbl['step1']['tcf-tool-type'] != 'iframe'){
+        // Languages
+        $coreLang = $this->getServiceLocator()->get('MelisCoreTableLang');
+        $viewStp->languages = $coreLang->fetchAll()->toArray();
+
+        if ($tcfDbTbl['step1']['tcf-tool-type'] == 'db'){
             $toolCreatorSrv = $this->getServiceLocator()->get('MelisToolCreatorService');
             $priCol = $toolCreatorSrv->hasPrimaryKey();
 
             if (!empty($priCol)){
                 $viewStp->priCol = $priCol['Field'];
             }
-
-            // Languages
-            $coreLang = $this->getServiceLocator()->get('MelisCoreTableLang');
-            $viewStp->languages = $coreLang->fetchAll()->toArray();
         }
 
         return $viewStp;

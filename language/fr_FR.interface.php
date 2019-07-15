@@ -40,6 +40,7 @@ return [
     'tr_melistoolcreator_tcf_tool_type tooltip' => 'Outil BDD est utilize pour créer un outil qui liste une table en base de données et permettre l\'edition. Un outil iFrame permet d\'insérer n\'importe quelle URL dans un outil dans la plateforme, permettant de donner accès à d\'autres plateformes dans une seule interface',
     'tr_melistoolcreator_tcf_tool_type_db' => 'Outil BDD <span class="melis-radio-box-circle"></span>',
     'tr_melistoolcreator_tcf_tool_type_iframe' => 'Outil en iFrame <span class="melis-radio-box-circle"></span>',
+    'tr_melistoolcreator_tcf_tool_type_blank' => 'Blank <span class="melis-radio-box-circle"></span>',
     'tr_melistoolcreator_tcf_tool_iframe_url' => 'URL à charger à l\'intérieur de l\'outil',
     'tr_melistoolcreator_tcf_tool_iframe_url tooltip' => 'L\'outil chargera cette URL dans une nouvelle tabulation quand vous cliquerez sur son nom dans le menu principal',
 

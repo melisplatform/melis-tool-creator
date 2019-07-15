@@ -53,6 +53,7 @@ return [
                                     'value_options' => [
                                         'db' => 'tr_melistoolcreator_tcf_tool_type_db',
                                         'iframe' => 'tr_melistoolcreator_tcf_tool_type_iframe',
+                                        'blank' => 'tr_melistoolcreator_tcf_tool_type_blank',
                                     ],
                                 ],
                                 'attributes' => [

@@ -65,6 +65,7 @@
                             }
                             ?>
                         </table>
+
                     <?php } elseif ($key == 'step3') { ?>
                         <?php if (empty($step['tcf-db-table-has-language'])){?>
                             <h4><i class="fa fa-table"></i> <?php echo $step['tcf-db-table'] ?></h4>
@@ -208,6 +209,11 @@
                 </div>
             </div>
             <hr>
+            <?php
+                // Breaking loop for Blank tool type
+                if ($this->toolType == 'blank' && $key == 'step2')
+                    break;
+            ?>
         <?php } ?>
     <?php } ?>
     <button class="btn btn-default btn-steps" data-curstep="7" data-nxtstep="6"><?php echo $this->translate('tr_melistoolcreator_back') ?></button>
