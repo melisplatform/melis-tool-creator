@@ -448,7 +448,7 @@ return [
                                         'site_name' => 'tr_melistoolcreator_select_site_name',
                                         'lang_name' => 'tr_melistoolcreator_select_lang_name',
                                         'tpl_name' => 'tr_melistoolcreator_select_tpl_name',
-                                        'admin_ame' => 'tr_melistoolcreator_select_admin_name',
+                                        'admin_name' => 'tr_melistoolcreator_select_admin_name',
                                     ],
                                 ],
                                 'attributes' => [
