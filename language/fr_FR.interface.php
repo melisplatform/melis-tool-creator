@@ -37,7 +37,7 @@ return [
     'tr_melistoolcreator_tcf-name tooltip' => 'Nom de l\'outil /module. Seul les caractères alphabétiques sont autorisés',
 
     'tr_melistoolcreator_tcf_tool_type' => 'Type d\'outil',
-    'tr_melistoolcreator_tcf_tool_type tooltip' => 'Outil BDD est utilize pour créer un outil qui liste une table en base de données et permettre l\'edition. Un outil iFrame permet d\'insérer n\'importe quelle URL dans un outil dans la plateforme, permettant de donner accès à d\'autres plateformes dans une seule interface',
+    'tr_melistoolcreator_tcf_tool_type tooltip' => 'Outil BDD permet de créer et éditer un outil basé sur une table de la base de données. iFrame permet de charger une URL dans un outil depuis Melis Platform. vide permet de concevoir uniquement la structure d\'un module.',
     'tr_melistoolcreator_tcf_tool_type_db' => 'Outil BDD <span class="melis-radio-box-circle"></span>',
     'tr_melistoolcreator_tcf_tool_type_iframe' => 'Outil en iFrame <span class="melis-radio-box-circle"></span>',
     'tr_melistoolcreator_tcf_tool_type_blank' => 'Blank <span class="melis-radio-box-circle"></span>',

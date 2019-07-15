@@ -37,7 +37,7 @@ return [
     'tr_melistoolcreator_tcf-name tooltip' => 'Name of the tool /module. Only alphabetic characters are authorized',
 
     'tr_melistoolcreator_tcf_tool_type' => 'Type of tool',
-    'tr_melistoolcreator_tcf_tool_type tooltip' => 'DB Tool is used to create a tool that list a table in the database and allows it to be editable. An iFrame tool will insert whatever URL given inside a tool in the platform, allowing to have access to many platforms in the same interface',
+    'tr_melistoolcreator_tcf_tool_type tooltip' => 'DB tool allows to create and edit a tool based on a table from the database. iFrame tool allows to charge a URL in a tool from Melis Platform. Blank tool allows to create only the structure of a module.',
     'tr_melistoolcreator_tcf_tool_type_db' => 'DB Tool <span class="melis-radio-box-circle"></span>',
     'tr_melistoolcreator_tcf_tool_type_iframe' => 'iFrame Tool <span class="melis-radio-box-circle"></span>',
     'tr_melistoolcreator_tcf_tool_type_blank' => 'Blank <span class="melis-radio-box-circle"></span>',
