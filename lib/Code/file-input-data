@@ -2,7 +2,7 @@
             if (!empty($filesInpt))
                 foreach ($filesInpt As $input => $file){
                     if (!empty($formData[$input]['tmp_name']))
-                        $formData[$input] = $formData[$input]['tmp_name'];
+                        $formData[$input] = '/media/ModuleTpl/' . basename($formData[$input]['tmp_name']);
                     else
                         unset($formData[$input]);
                 }
