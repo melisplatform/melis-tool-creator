@@ -1,0 +1,27 @@
+    public function saveLang($data, $id = null)
+    {
+        $arrayParameters = $this->makeArrayFromParameters(__METHOD__, func_get_args());
+        $arrayParameters = $this->sendEvent('moduletpl_service_save_lang_start', $arrayParameters);
+
+        if ($data) {
+            $langTable = $this->getServiceLocator()->get('ModuleTplLangTable');
+            $res = $langTable->save($arrayParameters['data'], $arrayParameters['id']);
+        }
+
+        $arrayParameters['result'] = $res;
+        $arrayParameters = $this->sendEvent('moduletpl_service_save_lang_end', $arrayParameters);
+        return $arrayParameters['result'];
+    }
+
+    public function deleteLang($id)
+    {
+        $arrayParameters = $this->makeArrayFromParameters(__METHOD__, func_get_args());
+        $arrayParameters = $this->sendEvent('moduletpl_service_delete_lang_start', $arrayParameters);
+
+        $langTable = $this->getServiceLocator()->get('ModuleTplLangTable');
+        $res = $langTable->deleteByFkId($arrayParameters['id']);
+
+        $arrayParameters['result'] = $res;
+        $arrayParameters = $this->sendEvent('moduletpl_service_delete_lang_end', $arrayParameters);
+        return $arrayParameters['result'];
+    }

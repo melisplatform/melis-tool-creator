@@ -5,5 +5,6 @@
         ],
         'factories' => [
             'ModuleTpl\Model\Tables\ModuleTplTable' => 'ModuleTpl\Model\Tables\Factory\ModuleTplTableFactory',
-            'ModuleTpl\Model\Tables\ModuleTplLangTable' => 'ModuleTpl\Model\Tables\Factory\ModuleTplLangTableFactory'
+            'ModuleTpl\Model\Tables\ModuleTplLangTable' => 'ModuleTpl\Model\Tables\Factory\ModuleTplLangTableFactory',
+            'ModuleTplService' => 'ModuleTpl\Service\Factory\ModuleTplServiceFactory',
         ],

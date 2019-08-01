@@ -49,6 +49,7 @@ class Module
             include __DIR__ . '/config/app.interface.php',
             include __DIR__ . '/config/app.tools.php',
             include __DIR__ . '/config/app.toolstree.php',
+            #CONFIGMICROSERVICES
         );
 
         foreach ($configFiles as $file) {

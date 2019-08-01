@@ -61,7 +61,21 @@ return [
                                     'required' => 'required',
                                 ],
                             ]
-                        ]
+                        ],
+                        [
+                            'spec' => [
+                                'name' => 'tcf-create-microservice',
+                                'type' => 'MelisText',
+                                'options' => [],
+                                'attributes' => array(
+                                    'id' => 'tcf-create-microservice',
+                                    'class' => 'tcf-create-microservice',
+                                    'value' => '',
+                                    'data-label' => 'tr_melistoolcreator_tcf_microservices_title',
+                                    'data-tooltip' => 'tr_melistoolcreator_tcf_microservices_tooltip'
+                                ),
+                            ],
+                        ],
                         /*[
                             'spec' => [
                                 'name' => 'tcf-module-toolstree',

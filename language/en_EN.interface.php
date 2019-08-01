@@ -163,4 +163,8 @@ return [
     'tr_melistoolcreator_delete_item' => 'Delete item',
     'tr_melistoolcreator_delete_success' => 'Item deleted successfully',
     'tr_melistoolcreator_must_numeric' => 'The input must be numeric',
+
+    // Addition step1
+    'tr_melistoolcreator_tcf_microservices_title' => 'Create microservices access',
+    'tr_melistoolcreator_tcf_microservices_tooltip' => 'Create config to add the service generated in the list of services for the platform',
 ];

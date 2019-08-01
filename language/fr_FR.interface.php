@@ -163,4 +163,8 @@ return [
     'tr_melistoolcreator_delete_item' => 'Supprimer l\'élément',
     'tr_melistoolcreator_delete_success' => 'Elément supprimé avec succès',
     'tr_melistoolcreator_must_numeric' => 'Champ requis doit être un nombre',
+
+    // Addition step1
+    'tr_melistoolcreator_tcf_microservices_title' => 'Créer un accès aux microservices',
+    'tr_melistoolcreator_tcf_microservices_tooltip' => 'Créer un fichier de config pour ajouter le service généré dans la liste des services pour la plateforme',
 ];

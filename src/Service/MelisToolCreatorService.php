@@ -72,7 +72,8 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
                         'Tables' => [
                             'Factory' => null
                         ]
-                    ]
+                    ],
+                    'Service' => null
                 ]
             ],
             'view' => []
@@ -97,6 +98,13 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
         // Create module
         mkdir($moduleDir, 0777);
         $moduleFile = $this->fgc('/Module/Module.php');
+
+        if ($this->hasMicroservicesAccess()) {
+            $moduleFile = str_replace('#CONFIGMICROSERVICES', 'include __DIR__ . \'/config/app.microservice.php\',', $moduleFile);
+        } else {
+            $moduleFile = str_replace('#CONFIGMICROSERVICES', '', $moduleFile);
+        }
+
         $this->generateFile('Module.php', $moduleDir, $moduleFile);
     }
 
@@ -143,6 +151,9 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
                 case 'Factory':
                     $this->generateModuleModelTablesFactory($tempTargetDir);
                     break;
+                case 'Service':
+                    $this->generateModuleService($tempTargetDir);
+                    break;
             }
 
             if (is_array($subDir)){
@@ -169,6 +180,11 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
                 }elseif ($file == 'app.interface.php'){
                     $interfaceContent = $this->fgc('/Config/app.interface.php');
                     $this->generateFile('app.interface.php', $targetDir, $interfaceContent);
+                }elseif ($file == 'app.microservice.php'){
+                    if ($this->hasMicroservicesAccess()) {
+                        $content = $this->fgc('/Config/app.microservice.php');
+                        $this->generateFile('app.microservice.php', $targetDir, $content);
+                    }
                 }
             }
         }
@@ -875,6 +891,32 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
     }
 
     /**
+     * Generates service + service factory files
+     * @param $targetDir
+     */
+    private function generateModuleService($targetDir)
+    {
+        // Service Factory
+        $serviceFactoryPath = $targetDir . '/Factory';
+        mkdir($serviceFactoryPath, 0777);
+        $fileContent = $this->fgc('/Service/Factory/servicefactory');
+        $this->generateFile($this->moduleName().'ServiceFactory.php', $serviceFactoryPath, $fileContent);
+
+        // Service
+        $servicePath = $targetDir;
+        $fileContent = $this->fgc('/Service/service');
+
+        if ($this->hasLanguage()) {
+            $langsection = $this->fgc('/Code/service-lang-section');
+            $fileContent = str_replace('#SERVICESECTIONLANG', $langsection, $fileContent);
+        } else {
+            $fileContent = str_replace('#SERVICESECTIONLANG', '', $fileContent);
+        }
+
+        $this->generateFile($this->moduleName().'Service.php', $servicePath, $fileContent);
+    }
+
+    /**
      * This method generate files to the directory
      *
      * @param string $fileName - file name
@@ -1032,5 +1074,10 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
     private function sp($srch, $replce, $subjct)
     {
         return str_replace($srch, $replce, $subjct);
+    }
+
+    private function hasMicroservicesAccess()
+    {
+        return !empty($this->tcSteps['step1']['tcf-create-microservice']) ? true : false;
     }
 }
