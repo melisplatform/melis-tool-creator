@@ -43,7 +43,28 @@
                 ?>
 
                 <script type="text/javascript">
-                    melisHelper.initSwitch('.tcf-create-microservice');
+                    var targetInput = $('.tcf-create-microservice');
+                    if(targetInput.length) {
+                        targetInput.each(function () {
+                            var parentDiv = $(this).parent("div.form-group");
+                            var attribRequired = '';
+                            if (typeof $(this).data("required") != 'undefined') {
+                                attribRequired = ' *';
+                            }
+                            var attribTooltip = '';
+                            if (typeof $(this).data("tooltip") != 'undefined') {
+                                attribTooltip = '<i class="fa fa-info-circle fa-lg" data-toggle="tooltip" data-placement="left" title="" data-original-title="' + $(this).data("tooltip") + '"></i>';
+                            }
+                            var switchBtn = '<label for="' + $(this).attr("name") + '">' + $(this).data("label") + attribRequired + attribTooltip + '</label>'
+                                + '<div class="make-switch tcf-microservice-switch" data-label-icon="glyphicon glyphicon-resize-horizontal" data-on-label="' + translations.tr_meliscore_common_yes + '" data-off-label="' + translations.tr_meliscore_common_nope + '" style="display: block;">'
+                                + '<input type="checkbox" name="' + $(this).attr("name") + '" id="' + $(this).attr("id") + '">'
+                                + '</div>';
+                            parentDiv.html(switchBtn);
+                        });
+
+                        $('.tcf-microservice-switch').bootstrapSwitch('destroy', true);
+                        $('.tcf-microservice-switch').bootstrapSwitch();
+                    }
                 </script>
             </div>
             <?php
