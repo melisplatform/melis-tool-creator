@@ -14,6 +14,7 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\Session\Container;
 use Zend\Stdlib\ArrayUtils;
 use Zend\View\Model\JsonModel;
+use Symfony\Component;
 
 /**
  * This service manage the creation of the new tool
