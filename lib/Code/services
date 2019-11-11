@@ -4,4 +4,5 @@
         ],
         'factories' => [
             'ModuleTpl\Model\Tables\ModuleTplTable' => 'ModuleTpl\Model\Tables\Factory\ModuleTplTableFactory',
+            'ModuleTplService' => 'ModuleTpl\Service\Factory\ModuleTplServiceFactory',
         ],

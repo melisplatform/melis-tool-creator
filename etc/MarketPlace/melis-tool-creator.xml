@@ -1,0 +1,63 @@
+<melis-tool-creator>
+	<package_info>
+		<mp_title>Melis Tool Creator</mp_title>
+		<mp_subtitle>This module allows to create new modules easily.</mp_subtitle>
+		<mp_description>
+			<![CDATA[
+				<p>MelisCmsUserAccount is tailored for developers to easily create new modules based on existing ones.<br />
+With just a few clicks and a little of typing, it saves a huge amount of time.<br />
+<br />
+The Tool Creator offers customized solutions:<br />
+- Single table with modal edition<br />
+- Single table with tab edition<br />
+- Dual table with modal edition<br />
+- Dual table with tab edition<br />
+You can set the title, description, table columns, editable/mandatory fields, field titles, tooltip descriptions and translations of the tool you build.</p>
+			]]>
+		</mp_description>
+		<mp_maintainers>melisplatform</mp_maintainers>
+		<mp_group>Melis Core</mp_group>
+	</package_info>
+	<package_images>
+		<img_1>
+			<mpi_image_title>MelisToolCreator' Tool</mpi_image_title>
+			<mpi_image_file>melis-tool-creator_1.JPG</mpi_image_file>
+			<mpi_image_main>0</mpi_image_main>
+		</img_1>
+		<img_2>
+			<mpi_image_title>MelisToolCreator' Text</mpi_image_title>
+			<mpi_image_file>melis-tool-creator_2.JPG</mpi_image_file>
+			<mpi_image_main>0</mpi_image_main>
+		</img_2>
+		<img_3>
+			<mpi_image_title>MelisToolCreator' Database</mpi_image_title>
+			<mpi_image_file>melis-tool-creator_3.JPG</mpi_image_file>
+			<mpi_image_main>0</mpi_image_main>
+		</img_3>
+		<img_4>
+			<mpi_image_title>MelisToolCreator' List and columns</mpi_image_title>
+			<mpi_image_file>melis-tool-creator_4.JPG</mpi_image_file>
+			<mpi_image_main>0</mpi_image_main>
+		</img_4>
+		<img_5>
+			<mpi_image_title>MelisToolCreator' Edition fields</mpi_image_title>
+			<mpi_image_file>melis-tool-creator_5.JPG</mpi_image_file>
+			<mpi_image_main>0</mpi_image_main>
+		</img_5>
+		<img_6>
+			<mpi_image_title>MelisToolCreator' Columns translations</mpi_image_title>
+			<mpi_image_file>melis-tool-creator_6.JPG</mpi_image_file>
+			<mpi_image_main>0</mpi_image_main>
+		</img_6>
+		<img_7>
+			<mpi_image_title>MelisToolCreator' Summary</mpi_image_title>
+			<mpi_image_file>melis-tool-creator_7.JPG</mpi_image_file>
+			<mpi_image_main>1</mpi_image_main>
+		</img_7>
+		<img_8>
+			<mpi_image_title>MelisToolCreator' Finalization</mpi_image_title>
+			<mpi_image_file>melis-tool-creator_8.JPG</mpi_image_file>
+			<mpi_image_main>0</mpi_image_main>
+		</img_8>
+	</package_images>
+</melis-tool-creator>

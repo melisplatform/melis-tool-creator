@@ -50,7 +50,7 @@ class ListController extends AbstractActionController
         $melisTool = $this->getServiceLocator()->get('MelisCoreTool');
         $melisTool->setMelisToolKey('moduletpl', 'moduletpl_tools');
 
-        $moduleTplTable = $this->getServiceLocator()->get('ModuleTplTable');
+        $moduleTplService = $this->getServiceLocator()->get('ModuleTplService');
 
         $draw = 0;
         $dataCount = 0;
@@ -77,8 +77,8 @@ class ListController extends AbstractActionController
             $sortOrder = $this->getRequest()->getPost('order');
             $sortOrder = $sortOrder[0]['dir'];
 
-            $tableData = $moduleTplTable->getList($start, $length, $melisTool->getSearchableColumns(), $search, $selCol, $sortOrder, $langId)->toArray();
-            $dataCount = count($moduleTplTable->getList(null, null, $melisTool->getSearchableColumns(), null, null, 'ASC', $langId)->toArray());
+            $tableData = $moduleTplService->getList($start, $length, $melisTool->getSearchableColumns(), $search, $selCol, $sortOrder, $langId)->toArray();
+            $dataCount = count($moduleTplService->getList(null, null, $melisTool->getSearchableColumns(), null, null, 'ASC', $langId)->toArray());
 
             #TCCOREEVENTSERVICE
 

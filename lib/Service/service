@@ -1,0 +1,82 @@
+<?php
+
+/**
+ * Melis Technology (http://www.melistechnology.com)
+ *
+ * @copyright Copyright (c) 2016 Melis Technology (http://www.melistechnology.com)
+ *
+ */
+
+namespace ModuleTpl\Service;
+
+use MelisEngine\Service\MelisEngineGeneralService;
+use Zend\Session\Container;
+use Zend\Stdlib\ArrayUtils;
+use Zend\View\Model\JsonModel;
+
+class ModuleTplService extends MelisEngineGeneralService
+{
+    public function getItemById($id)
+    {
+        $arrayParameters = $this->makeArrayFromParameters(__METHOD__, func_get_args());
+        $arrayParameters = $this->sendEvent('ModuleTpl_service_get_item_start', $arrayParameters);
+
+        $ModuleTplTable = $this->getServiceLocator()->get('ModuleTplTable');
+        $item = $ModuleTplTable->getEntryById($arrayParameters['id'])->current();
+
+        $arrayParameters['results'] = $item;
+        $arrayParameters = $this->sendEvent('ModuleTpl_service_get_item_end', $arrayParameters);
+        return $arrayParameters['results'];
+    }
+
+    public function getList($start = null, $limit = null, $searchKeys = [], $searchValue = null, $orderKey = null, $order = 'ASC', $langId = 1)
+    {
+        $arrayParameters = $this->makeArrayFromParameters(__METHOD__, func_get_args());
+        $arrayParameters = $this->sendEvent('ModuleTpl_service_get_list_start', $arrayParameters);
+
+        $ModuleTplTable = $this->getServiceLocator()->get('ModuleTplTable');
+        $list = $ModuleTplTable->getList(
+            $arrayParameters['start'],
+            $arrayParameters['limit'],
+            $arrayParameters['searchKeys'],
+            $arrayParameters['searchValue'],
+            $arrayParameters['orderKey'],
+            $arrayParameters['order'],
+            $arrayParameters['langId']
+        );
+
+        $arrayParameters['results'] = $list;
+        $arrayParameters = $this->sendEvent('ModuleTpl_service_get_list_end', $arrayParameters);
+        return $arrayParameters['results'];
+    }
+
+    public function saveItem($data, $id = null)
+    {
+        $arrayParameters = $this->makeArrayFromParameters(__METHOD__, func_get_args());
+        $arrayParameters = $this->sendEvent('moduletpl_service_save_item_start', $arrayParameters);
+
+        if ($data) {
+            $ModuleTplTable = $this->getServiceLocator()->get('ModuleTplTable');
+            $res = $ModuleTplTable->save($arrayParameters['data'], $arrayParameters['id']);
+        }
+
+        $arrayParameters['result'] = $res;
+        $arrayParameters = $this->sendEvent('moduletpl_service_save_item_end', $arrayParameters);
+        return $arrayParameters['result'];
+    }
+
+    public function deleteItem($id)
+    {
+        $arrayParameters = $this->makeArrayFromParameters(__METHOD__, func_get_args());
+        $arrayParameters = $this->sendEvent('moduletpl_service_delete_item_start', $arrayParameters);
+
+        $ModuleTplTable = $this->getServiceLocator()->get('ModuleTplTable');
+        $res = $ModuleTplTable->deleteById($arrayParameters['id']);
+
+        $arrayParameters['result'] = $res;
+        $arrayParameters = $this->sendEvent('moduletpl_service_delete_item_end', $arrayParameters);
+        return $arrayParameters['result'];
+    }
+
+#SERVICESECTIONLANG
+}

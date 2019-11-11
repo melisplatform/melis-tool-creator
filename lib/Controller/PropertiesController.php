@@ -111,8 +111,8 @@ class PropertiesController extends AbstractActionController
             else
                 unset($formData['#TCKEY']);
 
-            $moduleTplLangTable = $this->getServiceLocator()->get('ModuleTplTable');
-            $res = $moduleTplLangTable->save($formData, $id);
+            $moduleTplService = $this->getServiceLocator()->get('ModuleTplService');
+            $res = $moduleTplService->saveItem($formData, $id);
 
             if (!is_null($res)){
                 $id = $res;
@@ -142,8 +142,8 @@ class PropertiesController extends AbstractActionController
         $queryData = $request->getQuery()->toArray();
 
         if (!empty($queryData['id'])){
-            $moduleTplTable = $this->getServiceLocator()->get('ModuleTplTable');
-            $moduleTplTable->deleteById($queryData['id']);
+            $moduleTplService = $this->getServiceLocator()->get('ModuleTplService');
+            $moduleTplService->deleteItem($queryData['id']);
         }
     }
 

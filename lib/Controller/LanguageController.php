@@ -92,8 +92,8 @@ class LanguageController extends AbstractActionController
                     // Assign foreign key value
                     $formData['#TCKEYPRIID'] = $fkId;
 
-                    $langTable = $this->getServiceLocator()->get('ModuleTplLangTable');
-                    $langTable->save($formData, $id);
+                    $langTable = $this->getServiceLocator()->get('ModuleTplService');
+                    $langTable->saveLang($formData, $id);
                 }
 
                 $success = 1;
@@ -121,8 +121,8 @@ class LanguageController extends AbstractActionController
         $queryData = $request->getQuery()->toArray();
 
         if (!empty($queryData['id'])){
-            $myToolTabLangTable = $this->getServiceLocator()->get('ModuleTplLangTable');
-            $myToolTabLangTable->deleteByFkId($queryData['id']);
+            $myToolTabLangTable = $this->getServiceLocator()->get('ModuleTplService');
+            $myToolTabLangTable->deleteLang($queryData['id']);
         }
     }
 

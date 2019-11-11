@@ -10,19 +10,19 @@
             <div class="form-group">
                 <?php
                     $moduleField = $form->get('tcf-name');
-                    $moduleField->setLabelOptions(array('disable_html_escape' => true));
+                    $moduleField->setLabelOptions(['disable_html_escape' => true]);
                     $label = $moduleField->getLabel().' *<i class="fa fa-info-circle fa-lg pull-right tip-info" data-toggle="tooltip" data-placement="left" title="" data-original-title="'.$moduleField->getOption('tooltip').'"></i>';
                     $moduleField->setLabel($label);
                     echo $this->formLabel($moduleField);
                     echo $this->formElement($moduleField);
-                    echo $this->formElementErrors($moduleField, array('class' => 'text-danger'));
+                    echo $this->formElementErrors($moduleField, ['class' => 'text-danger']);
                 ?>
             </div>
             <div class="form-group">
                 <?php
                     $typeField = $form->get('tcf-tool-type');
                     $inputLabel = $typeField->getLabelAttributes();
-                    $typeField->setLabelAttributes(array('class', null));
+                    $typeField->setLabelAttributes(['class', null]);
                     $label = $typeField->getLabel().'<i class="fa fa-info-circle fa-lg pull-right tip-info" data-toggle="tooltip" data-placement="left" title="" data-original-title="'.$typeField->getOption('tooltip').'"></i>';
                     $typeField->setLabel($label);
                     echo $this->formLabel($typeField);
@@ -30,28 +30,65 @@
                     echo $this->formElement($typeField);
                 ?>
             </div>
-            <div class="form-group tcf-tool-type" id="tcf-tool-type-iframe" <?php echo $typeField->getValue() == 'iframe' ? '': 'style="display: none;"'?>>
+            <div class="form-group tcf-tool-type tcf-tool-type-iframe" <?php echo $typeField->getValue() == 'iframe' ? '': 'style="display: none;"'?>>
                 <?php
                     $moduleField = $form->get('tcf-tool-iframe-url');
-                    $moduleField->setLabelOptions(array('disable_html_escape' => true));
+                    $moduleField->setLabelOptions(['disable_html_escape' => true]);
                     $label = $moduleField->getLabel().' *<i class="fa fa-info-circle fa-lg pull-right tip-info" data-toggle="tooltip" data-placement="left" title="" data-original-title="'.$moduleField->getOption('tooltip').'"></i>';
                     $moduleField->setLabel($label);
                     echo $this->formLabel($moduleField);
                     echo $this->formElement($moduleField);
-                    echo $this->formElementErrors($moduleField, array('class' => 'text-danger'));
+                    echo $this->formElementErrors($moduleField, ['class' => 'text-danger']);
                 ?>
             </div>
-            <div class="form-group tcf-tool-type" id="tcf-tool-type-db" <?php echo $typeField->getValue() == 'db' ? '': 'style="display: none;"'?>>
+            <?php $dbcont = $typeField->getValue() == 'db' ? '': 'style="display: none;"'?>
+            <div class="form-group tcf-tool-type tcf-tool-type-db" <?php echo $dbcont ?>>
                 <?php
                     $typeField = $form->get('tcf-tool-edit-type');
                     $inputLabel = $typeField->getLabelAttributes();
-                    $typeField->setLabelAttributes(array('class', null));
+                    $typeField->setLabelAttributes(['class', null]);
                     $label = $typeField->getLabel().'<i class="fa fa-info-circle fa-lg pull-right tip-info" data-toggle="tooltip" data-placement="left" title="" data-original-title="'.$typeField->getOption('tooltip').'"></i>';
                     $typeField->setLabel($label);
                     echo $this->formLabel($typeField);
                     $typeField->setLabelAttributes($inputLabel);
                     echo $this->formElement($typeField);
                 ?>
+            </div>
+            <div class="form-group tcf-tool-type tcf-tool-type-db" <?php echo $dbcont ?>>
+                <?php
+                    $typeField = $form->get('tcf-create-microservice');
+                    $inputLabel = $typeField->getLabelAttributes();
+                    $typeField->setLabelAttributes(['class', null]);
+                    $label = $typeField->getLabel().'<i class="fa fa-info-circle fa-lg pull-right tip-info" data-toggle="tooltip" data-placement="left" title="" data-original-title="'.$typeField->getOption('tooltip').'"></i>';
+                    $typeField->setLabel($label);
+                    echo $this->formLabel($typeField);
+                    $typeField->setLabelAttributes($inputLabel);
+                    echo $this->formElement($typeField);
+                ?>
+                <script type="text/javascript">
+                    var targetInput = $('.tcf-create-microservice');
+                    if(targetInput.length) {
+                        targetInput.each(function () {
+                            var parentDiv = $(this).parent("div.form-group");
+                            var attribRequired = '';
+                            if (typeof $(this).data("required") != 'undefined') {
+                                attribRequired = ' *';
+                            }
+                            var attribTooltip = '';
+                            if (typeof $(this).data("tooltip") != 'undefined') {
+                                attribTooltip = '<i class="fa fa-info-circle fa-lg" data-toggle="tooltip" data-placement="left" title="" data-original-title="' + $(this).data("tooltip") + '"></i>';
+                            }
+                            var switchBtn = '<label for="' + $(this).attr("name") + '">' + $(this).data("label") + attribRequired + attribTooltip + '</label>'
+                                + '<div class="make-switch tcf-microservice-switch" data-label-icon="glyphicon glyphicon-resize-horizontal" data-on-label="' + translations.tr_meliscore_common_yes + '" data-off-label="' + translations.tr_meliscore_common_nope + '" style="display: block;">'
+                                + '<input type="checkbox" name="' + $(this).attr("name") + '" id="' + $(this).attr("id") + '">'
+                                + '</div>';
+                            parentDiv.html(switchBtn);
+                        });
+
+                        $('.tcf-microservice-switch').bootstrapSwitch('destroy', true);
+                        $('.tcf-microservice-switch').bootstrapSwitch();
+                    }
+                </script>
             </div>
             <?php
                 echo $this->form()->closeTag();

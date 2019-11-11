@@ -93,7 +93,7 @@ $(function(){
 
     $body.on("change", "input[name='tcf-tool-type']", function(){
         $(".tcf-tool-type").hide();
-        $("#tcf-tool-type-"+$(this).val()).show();
+        $(".tcf-tool-type-"+$(this).val()).show();
     });
 
     $body.on("click", ".tc-reload-dbtbl-cached", function(){
