@@ -28,7 +28,7 @@ return [
                  */
                 'build' => [
                     // configuration to override "use_build_assets" configuration, if you want to use the normal assets for this module.
-                    'disable_bundle' => false,
+                    'disable_bundle' => true,
 
                     // lists of assets that will be loaded in the layout
                     'css' => [

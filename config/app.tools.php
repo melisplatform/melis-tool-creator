@@ -23,8 +23,8 @@ return [
                     'elements' => [
                         [
                             'spec' => [
-                                'name' => 'tcf-name',
                                 'type' => 'MelisText',
+                                'name' => 'tcf-name',
                                 'options' => [
                                     'label' => 'tr_melistoolcreator_tcf-name',
                                     'tooltip' => 'tr_melistoolcreator_tcf-name tooltip',
@@ -39,11 +39,12 @@ return [
                         ],
                         [
                             'spec' => [
-                                'type' => 'Zend\Form\Element\Radio',
+                                'type' => 'Radio',
                                 'name' => 'tcf-tool-type',
                                 'options' => [
                                     'label' => 'tr_melistoolcreator_tcf_tool_type',
                                     'tooltip' => 'tr_melistoolcreator_tcf_tool_type tooltip',
+                                    'radio-button' => true,
                                     'label_options' => [
                                         'disable_html_escape' => true,
                                     ],
@@ -53,7 +54,7 @@ return [
                                     'value_options' => [
                                         'db' => 'tr_melistoolcreator_tcf_tool_type_db',
                                         'iframe' => 'tr_melistoolcreator_tcf_tool_type_iframe',
-                                        'blank' => 'tr_melistoolcreator_tcf_tool_type_blank',
+                                        'blank' => 'tr_melistoolcreator_tcf_tool_type_blank'
                                     ],
                                 ],
                                 'attributes' => [
@@ -64,8 +65,8 @@ return [
                         ],
                         [
                             'spec' => [
-                                'name' => 'tcf-tool-iframe-url',
                                 'type' => 'MelisText',
+                                'name' => 'tcf-tool-iframe-url',
                                 'options' => [
                                     'label' => 'tr_melistoolcreator_tcf_tool_iframe_url',
                                     'tooltip' => 'tr_melistoolcreator_tcf_tool_iframe_url tooltip',
@@ -75,16 +76,18 @@ return [
                                     'value' => '',
                                     'placeholder' => '',
                                     'required' => 'required',
+                                    'class' => 'tcf-tool-type tcf-tool-type-iframe form-control'
                                 ],
                             ],
                         ],
                         [
                             'spec' => [
-                                'type' => 'Zend\Form\Element\Radio',
+                                'type' => 'Radio',
                                 'name' => 'tcf-tool-edit-type',
                                 'options' => [
                                     'label' => 'tr_melistoolcreator_tcf_tool_edit_type',
                                     'tooltip' => 'tr_melistoolcreator_tcf_tool_edit_type tooltip',
+                                    'radio-button' => true,
                                     'label_options' => [
                                         'disable_html_escape' => true,
                                     ],
@@ -92,30 +95,36 @@ return [
                                         'class' => 'melis-radio-box'
                                     ],
                                     'value_options' => [
-                                        'modal' => 'Modal <span class="melis-radio-box-circle"></span>',
-                                        'tab' => 'Tabulation <span class="melis-radio-box-circle"></span>',
+                                        'modal' => 'Modal',
+                                        'tab' => 'Tabulation',
                                     ],
                                 ],
                                 'attributes' => [
                                     'value' => 'modal',
                                     'required' => 'required',
+                                    'class' => 'tcf-tool-type tcf-tool-type-db'
                                 ],
                             ]
                         ],
                         [
                             'spec' => [
+                                'type' => 'Checkbox',
                                 'name' => 'tcf-create-microservice',
-                                'type' => 'MelisText',
-                                'options' => [],
-                                'attributes' => array(
+                                'options' => [
+                                    'label' => 'tr_melistoolcreator_tcf_microservices_title',
+                                    'tooltip' => 'tr_melistoolcreator_tcf_microservices_tooltip',
+                                    'switch_options' => [
+                                        'label-on' => 'tr_meliscore_common_yes',
+                                        'label-off' => 'tr_meliscore_common_no',
+                                        'icon' => "glyphicon glyphicon-resize-horizontal",
+                                    ],
+                                ],
+                                'attributes' => [
                                     'id' => 'tcf-create-microservice',
-                                    'class' => 'tcf-create-microservice',
-                                    'value' => '',
-                                    'data-label' => 'tr_melistoolcreator_tcf_microservices_title',
-                                    'data-tooltip' => 'tr_melistoolcreator_tcf_microservices_tooltip'
-                                ),
+                                    'class' => 'tcf-tool-type tcf-tool-type-db'
+                                ],
                             ],
-                        ]
+                        ],
                     ],
                     'input_filter' => [
                         'tcf-name' => [

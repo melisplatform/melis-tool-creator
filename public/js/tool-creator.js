@@ -92,8 +92,8 @@ $(function(){
     }
 
     $body.on("change", "input[name='tcf-tool-type']", function(){
-        $(".tcf-tool-type").hide();
-        $(".tcf-tool-type-"+$(this).val()).show();
+        $(".tcf-tool-type").parents(".form-group").hide();
+        $(".tcf-tool-type-"+$(this).val()).parents(".form-group").show();
     });
 
     $body.on("click", ".tc-reload-dbtbl-cached", function(){
@@ -370,6 +370,16 @@ $(function(){
             $(this).removeClass("fa-square-o");
             $(this).addClass("fa-check-square-o");
             $(this).addClass("text-success");
+        }
+    });
+
+    $body.on("switch-change", "div.make-switch[data-input-name='tcf-create-framework-tool']", function(e, data){
+        if(data.value === false){
+            $("label[for='tcf-tool-framework']").parents(".form-group").hide();
+            // $("input[name='tcf-tool-framework']").attr("disabled", true);
+        }else{
+            $("label[for='tcf-tool-framework']").parents(".form-group").show();
+            // $("input[name='tcf-tool-framework']").attr("disabled", false);
         }
     });
 

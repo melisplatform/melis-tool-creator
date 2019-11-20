@@ -103,14 +103,16 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
         $code = '';
         $config ='';
         if ($this->isDbTool() || $this->isBlankTool()){
-            if (!$this->isBlankTool())
+            if (!$this->isBlankTool() && !$this->isFrameworkTool())
                 $code = $this->fgc('/Code/module');
 
-            $config = 'include __DIR__ . \'/config/app.interface.php\',
-            include __DIR__ . \'/config/app.tools.php\',';
+            $config = 'include __DIR__ . \'/config/app.interface.php\',';
+
+            if (!$this->isFrameworkTool())
+                $config .= PHP_EOL . "\t\t\t". 'include __DIR__ . \'/config/app.tools.php\',';
 
             if ($this->hasMicroServicesAccess() && !$this->isBlankTool())
-                $config .= PHP_EOL . 'include __DIR__ . \'/config/app.microservice.php\',';
+                $config .= PHP_EOL . "\t\t\t".  'include __DIR__ . \'/config/app.microservice.php\',';
         }
 
         $moduleFile = $this->sp('#TCMODULE', $code, $moduleFile);
@@ -200,7 +202,7 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
             if (is_file($moduleConfigFiles.'/'.$file)){
                 if ($file == 'app.toolstree.php'){
                     $this->generateModuleToolstreeConfig($targetDir);
-                }elseif ($file == 'app.tools.php' && ($this->isDbTool() || $this->isBlankTool())){
+                }elseif ($file == 'app.tools.php' && ($this->isDbTool() || $this->isBlankTool()) && !$this->isFrameworkTool()){
                     $this->generateModuleToolConfig($targetDir);
                 }elseif ($file == 'module.config.php'){
                     $this->generateModuleConfig($targetDir);
@@ -208,13 +210,21 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
                     $interfaceContent = $this->fgc('/Config/app.interface.php');
                     $this->generateFile('app.interface.php', $targetDir, $interfaceContent);
                 }elseif ($file == 'app.microservice.php'){
-                    if ($this->hasMicroServicesAccess()) {
+                    if ($this->hasMicroServicesAccess() && !$this->isFrameworkTool()) {
                         $content = $this->fgc('/Config/app.microservice.php');
                         $this->generateFile('app.microservice.php', $targetDir, $content);
                     }
+                }elseif ($file == 'app.framework.php' && $this->isFrameworkTool()){
+
+                    $configFile = $this->moduleTplDir.'/Config/framework-'. $this->isFrameworkTool() .'-config';
+                    $phpConfigFile = $this->sp('', $configFile, $this->fgc('/Config/'.$file));
+
+
+
                 }
             }
         }
+        exit;
     }
 
     /**
@@ -230,13 +240,18 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
 
         if ($this->isDbTool() || $this->isBlankTool()){
 
-            $toolsTreeContent = $this->sp('#TCTOOLSTREE', $this->fgc('/Code/db-toolstree'), $toolsTreeContent);
+            if (!$this->isFrameworkTool()) {
 
-            if ($this->isBlankTool())
-                $toolInterface = '';
-            else
-                if ($this->hasLanguage())
-                    $toolInterface = $this->sp('#TCTOOLINTERFACE', $this->fgc('/Code/'.$this->getToolEditType().'-lang-interface'), $toolInterface);
+
+                $toolsTreeContent = $this->sp('#TCTOOLSTREE', $this->fgc('/Code/db-toolstree'), $toolsTreeContent);
+
+                if ($this->isBlankTool())
+                    $toolInterface = '';
+                else
+                    if ($this->hasLanguage())
+                        $toolInterface = $this->sp('#TCTOOLINTERFACE', $this->fgc('/Code/' . $this->getToolEditType() . '-lang-interface'), $toolInterface);
+            }else
+                $toolsTreeContent = $this->sp('#TCTOOLSTREE', $this->fgc('/Code/framework-toolstree'), $toolsTreeContent);
 
         }else{
             $toolsTreeContent = $this->sp('#TCTOOLSTREE', $this->fgc('/Code/iframe-toolstree'), $toolsTreeContent);
@@ -496,12 +511,19 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
         $fileContent = $this->fgc('/Config/module.config.php');
 
         if ($this->isDbTool()){
-            $controllers = $this->fgc('/Code/controllers');
-            $services = $this->fgc('/Code/services');
 
-            if ($this->hasLanguage()){
-                $controllers = $this->fgc('/Code/lang-controllers');
-                $services = $this->fgc('/Code/lang-services');
+            if (!$this->isFrameworkTool()){
+
+                $controllers = $this->fgc('/Code/controllers');
+                $services = $this->fgc('/Code/services');
+
+                if ($this->hasLanguage()){
+                    $controllers = $this->fgc('/Code/lang-controllers');
+                    $services = $this->fgc('/Code/lang-services');
+                }
+            }else{
+                $controllers = $this->fgc('/Code/framework-controller');
+                $services = '';
             }
         }elseif ($this->isBlankTool()){
             $controllers = $this->fgc('/Code/blank-controller');
@@ -1166,6 +1188,11 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
     private function getToolEditType()
     {
         return $this->tcSteps['step1']['tcf-tool-edit-type'];
+    }
+
+    private function isFrameworkTool()
+    {
+        return ($this->tcSteps['step1']['tcf-create-framework-tool']) ? $this->tcSteps['step1']['tcf-tool-framework'] : false;
     }
 
     private function hasLanguage()
