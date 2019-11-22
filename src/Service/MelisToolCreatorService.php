@@ -33,17 +33,6 @@ class MelisToolCreatorService  extends MelisCoreGeneralService
         $container = new Container('melistoolcreator');
         $this->tcSteps = $container['melis-toolcreator'];
     }
-	
-//	public function setServiceLocator(ServiceLocatorInterface $sl)
-//	{
-//		$this->serviceLocator = $sl;
-//		return $this;
-//	}
-//
-//	public function getServiceLocator()
-//	{
-//		return $this->serviceLocator;
-//	}
 
     /**
      * This method triggered from AJAX request to finalize
@@ -92,6 +81,8 @@ class MelisToolCreatorService  extends MelisCoreGeneralService
 
         // Send event
         $this->sendEvent('melis_tool_creator_generate_tool_end', $this->tcSteps);
+
+        exit;
 
         return new JsonModel(['success' => true]);
     }
