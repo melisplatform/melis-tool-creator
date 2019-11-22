@@ -9,19 +9,19 @@
 
 namespace MelisToolCreator\Service;
 
-use Zend\ServiceManager\ServiceLocatorAwareInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+//use Zend\ServiceManager\ServiceLocatorAwareInterface;
+//use Zend\ServiceManager\ServiceLocatorInterface;
+use MelisCore\Service\MelisCoreGeneralService;
 use Zend\Session\Container;
-use Zend\Stdlib\ArrayUtils;
+//use Zend\Stdlib\ArrayUtils;
 use Zend\View\Model\JsonModel;
 use Symfony\Component;
 
 /**
  * This service manage the creation of the new tool
  */
-class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
+class MelisToolCreatorService  extends MelisCoreGeneralService
 {
-	protected $serviceLocator;
     private $moduleTplDir;
     private $tcSteps;
 
@@ -34,16 +34,16 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
         $this->tcSteps = $container['melis-toolcreator'];
     }
 	
-	public function setServiceLocator(ServiceLocatorInterface $sl)
-	{
-		$this->serviceLocator = $sl;
-		return $this;
-	}
-	
-	public function getServiceLocator()
-	{
-		return $this->serviceLocator;
-	}
+//	public function setServiceLocator(ServiceLocatorInterface $sl)
+//	{
+//		$this->serviceLocator = $sl;
+//		return $this;
+//	}
+//
+//	public function getServiceLocator()
+//	{
+//		return $this->serviceLocator;
+//	}
 
     /**
      * This method triggered from AJAX request to finalize
@@ -53,6 +53,9 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
      */
     public function createTool()
     {
+        // Send event
+        $this->sendEvent('melis_tool_creator_generate_tool_start', []);
+
         $moduleName = $this->moduleName();
 
         /**
@@ -86,6 +89,9 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
 
         // Generating sub dir and files of the module
         $this->generateModuleSubDirsAndFiles($moduleDirs, $moduleDir);
+
+        // Send event
+        $this->sendEvent('melis_tool_creator_generate_tool_end', $this->tcSteps);
 
         return new JsonModel(['success' => true]);
     }
@@ -188,6 +194,10 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
             if (in_array($dir, ['public', 'Listener', 'Model']))
                 return true;
 
+        if ($this->isFrameworkTool())
+            if (in_array($dir, ['Listener', 'Model', 'Service']))
+                return true;
+
         return false;
     }
 
@@ -216,15 +226,12 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
                     }
                 }elseif ($file == 'app.framework.php' && $this->isFrameworkTool()){
 
-                    $configFile = $this->moduleTplDir.'/Config/framework-'. $this->isFrameworkTool() .'-config';
-                    $phpConfigFile = $this->sp('', $configFile, $this->fgc('/Config/'.$file));
-
-
-
+                    $configFile = $this->fgc('/Code/framework-'. $this->isFrameworkTool() .'-config');
+                    $phpConfigFile = $this->sp('#TCFRAMEWORKCONFIG', $configFile, $this->fgc('/Config/'.$file));
+                    $this->generateFile($file, $targetDir, $phpConfigFile);
                 }
             }
         }
-        exit;
     }
 
     /**
@@ -560,6 +567,15 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
         }
 
         $pk = $this->hasPrimaryKey();
+
+        if ($this->isFrameworkTool() && !empty($pk)){
+            $frameworkCtrl = $this->fgc('/Controller/Framework-Modal-IndexController.php');
+            $frameworkCtrl = $this->sp('#TCFRAMEWORK', $this->isFrameworkTool(), $frameworkCtrl);
+            $frameworkCtrl = $this->sp('#TCPRIMARYKEY', $pk['Field'], $frameworkCtrl);
+            $this->generateFile('IndexController.php', $targetDir, $frameworkCtrl);
+            return;
+        }
+
         if (!empty($pk)){
 
             $modulePropCtrlFile = $this->fgc('/Controller/PropertiesController.php');
@@ -735,6 +751,9 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
 
     private function generateModuleListeners($targetDir)
     {
+        if ($this->isFrameworkTool())
+            return;
+
         // Save listener
         $saveListener = $this->fgc('/Listener/SavePropertiesListener');
         $saveLangDispatch = '';
@@ -765,38 +784,47 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
 
         if ($this->isDbTool()){
 
-            // Common view file for tool
-            $listViews = [
-                'table-filter-limit',
-                'table-filter-refresh',
-                'table-filter-search',
-                'table-action-edit',
-                'table-action-delete',
-                'tool-content',
-                'tool-header',
-                'tool',
-            ];
-
-            if ($this->getToolEditType() == 'modal'){
-                $listViews[] = 'modal-form';
-                $propViews[] = 'properties-form';
-            }else{
-                $propViews = [
-                    'prop-tool-main-content',
-                    'prop-tool-content',
-                    'prop-tool-header',
-                    'prop-tool'
+            if (!$this->isFrameworkTool()){
+                // Common view file for tool
+                $listViews = [
+                    'table-filter-limit',
+                    'table-filter-refresh',
+                    'table-filter-search',
+                    'table-action-edit',
+                    'table-action-delete',
+                    'tool-content',
+                    'tool-header',
+                    'tool',
                 ];
-            }
 
-            $toolViews = [
-                'list' => $listViews,
-                'properties' => $propViews
-            ];
+                if ($this->getToolEditType() == 'modal'){
+                    $listViews[] = 'modal-form';
+                    $propViews[] = 'properties-form';
+                }else{
+                    $propViews = [
+                        'prop-tool-main-content',
+                        'prop-tool-content',
+                        'prop-tool-header',
+                        'prop-tool'
+                    ];
+                }
 
-            if ($this->hasLanguage()){
-                $toolViews['language'] = [
-                    'language-form'
+                $toolViews = [
+                    'list' => $listViews,
+                    'properties' => $propViews
+                ];
+
+                if ($this->hasLanguage()){
+                    $toolViews['language'] = [
+                        'language-form'
+                    ];
+                }
+            }else{
+                $toolViews = [
+                    'index' => [
+                        'framework-tool',
+                        'framework-modal-tool',
+                    ]
                 ];
             }
 
@@ -831,11 +859,14 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
             mkdir($viewDir, 0777);
 
             foreach ($files As $file){
-                if (is_bool(strpos($file, 'blank')))
-                    $fileName = 'render-'.$file.'.phtml';
-                else{
+                if (!is_bool(strpos($file, 'blank'))){
                     // Blank view template
                     $fileName = 'blank-render-'.$this->sp('blank-', '', $file).'.phtml';
+                }elseif (!is_bool(strpos($file, 'framework'))){
+                    // Framework view template
+                    $fileName = 'framework-render-'.$this->sp('framework-', '', $file).'.phtml';
+                }else{
+                    $fileName = 'render-'.$file.'.phtml';
                 }
 
                 if (is_file($this->moduleTplDir.'/View/'.$fileName)){
@@ -843,6 +874,7 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
                     // Renaming view file for tool properties
                     $fileName = str_replace('prop-', '', $fileName);
                     $fileName = str_replace('blank-', '', $fileName);
+                    $fileName = str_replace('framework-', '', $fileName);
                     $this->generateFile($fileName, $viewDir, $fileContent);
                 }
             }
@@ -860,24 +892,28 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
         if (!$this->isDbTool())
             return;
 
-        $addBtnScript = $this->fgc('/Asset/'.$this->getToolEditType().'-add-btn');
-        $saveScript = $this->fgc('/Asset/'.$this->getToolEditType().'-save');
-        $ediBtnScript = $this->fgc('/Asset/'.$this->getToolEditType().'-edit-btn');
-        $closeTabDelete = ($this->getToolEditType() == 'tab') ? $this->fgc('/Asset/tab-delete') : '';
-        $langSave = ($this->hasLanguage()) ? $this->fgc('/Asset/'.$this->getToolEditType().'-lang-save'): '';
+        if (!$this->isFrameworkTool()){
+            $addBtnScript = $this->fgc('/Asset/'.$this->getToolEditType().'-add-btn');
+            $saveScript = $this->fgc('/Asset/'.$this->getToolEditType().'-save');
+            $ediBtnScript = $this->fgc('/Asset/'.$this->getToolEditType().'-edit-btn');
+            $closeTabDelete = ($this->getToolEditType() == 'tab') ? $this->fgc('/Asset/tab-delete') : '';
+            $langSave = ($this->hasLanguage()) ? $this->fgc('/Asset/'.$this->getToolEditType().'-lang-save'): '';
 
-        $saveScript = $this->sp('#TCSAVELANG', $langSave, $saveScript);
+            $saveScript = $this->sp('#TCSAVELANG', $langSave, $saveScript);
 
-        $pk = $this->hasPrimaryKey();
-        if (!empty($pk))
-            $saveScript = $this->sp('#TCPKEY', $pk['Field'], $saveScript);
+            $pk = $this->hasPrimaryKey();
+            if (!empty($pk))
+                $saveScript = $this->sp('#TCPKEY', $pk['Field'], $saveScript);
 
-        $fileContent = $this->fgc('/Asset/tool.js');
-        $fileContent = $this->sp('#TCADDBTN', $addBtnScript, $fileContent);
-        $fileContent = $this->sp('#TCSAVE', $saveScript, $fileContent);
-        $fileContent = $this->sp('#TCEDIT', $ediBtnScript, $fileContent);
-        $fileContent = $this->sp('#TCCLOSETABDELETE', $closeTabDelete, $fileContent);
-        $this->generateFile('tool.js', $targetDir, $fileContent);
+            $fileContent = $this->fgc('/Asset/tool.js');
+            $fileContent = $this->sp('#TCADDBTN', $addBtnScript, $fileContent);
+            $fileContent = $this->sp('#TCSAVE', $saveScript, $fileContent);
+            $fileContent = $this->sp('#TCEDIT', $ediBtnScript, $fileContent);
+            $fileContent = $this->sp('#TCCLOSETABDELETE', $closeTabDelete, $fileContent);
+            $this->generateFile('tool.js', $targetDir, $fileContent);
+        }else{
+            // @TODO Assets of third party tool
+        }
     }
 
     /**
@@ -891,7 +927,7 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
         $coreLang = $this->getServiceLocator()->get('MelisCoreTableLang');
         $languages = $coreLang->fetchAll()->toArray();
 
-        if ($this->isDbTool()){
+        if ($this->isDbTool() && !$this->isFrameworkTool()){
 
             $translationsSrv = $this->getServiceLocator()->get('MelisCoreTranslation');
             $commonTransTpl = require $this->moduleTplDir.'/Language/languages.php';
@@ -956,7 +992,7 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
                     'title' => $this->moduleName(),
                 ];
             }
-        }elseif ($this->isBlankTool()){
+        }elseif ($this->isBlankTool() || $this->isFrameworkTool()){
             $translations = [];
 
             $title = '';
@@ -1012,6 +1048,9 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
      */
     private function generateModuleModel($targetDir)
     {
+        if ($this->isFrameworkTool())
+            return;
+
         $fileContent = $this->fgc('/Model/ModuleTpl');
 
         $this->generateFile($this->moduleName().'.php', $targetDir, $fileContent);
@@ -1113,6 +1152,9 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
      */
     private function generateModuleService($targetDir)
     {
+        if ($this->isFrameworkTool())
+            return;
+
         // Service Factory
         $serviceFactoryPath = $targetDir . '/Factory';
         mkdir($serviceFactoryPath, 0777);

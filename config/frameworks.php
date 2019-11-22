@@ -7,6 +7,12 @@ return [
         'lumen',
         'silex',
     ],
+    'framework-setup' => [
+        'laravel' => 'url/route',
+        'symfony',
+        'lumen',
+        'silex',
+    ],
     'form-elements' => [
         'elements' => [
             [
