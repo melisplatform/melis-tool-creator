@@ -82,8 +82,6 @@ class MelisToolCreatorService  extends MelisCoreGeneralService
         // Send event
         $this->sendEvent('melis_tool_creator_generate_tool_end', $this->tcSteps);
 
-        exit;
-
         return new JsonModel(['success' => true]);
     }
 
@@ -110,6 +108,9 @@ class MelisToolCreatorService  extends MelisCoreGeneralService
 
             if ($this->hasMicroServicesAccess() && !$this->isBlankTool())
                 $config .= PHP_EOL . "\t\t\t".  'include __DIR__ . \'/config/app.microservice.php\',';
+
+            if ($this->isFrameworkTool())
+                $config .= PHP_EOL . "\t\t\t". 'include __DIR__ . \'/config/app.framework.php\',';
         }
 
         $moduleFile = $this->sp('#TCMODULE', $code, $moduleFile);
@@ -216,7 +217,6 @@ class MelisToolCreatorService  extends MelisCoreGeneralService
                         $this->generateFile('app.microservice.php', $targetDir, $content);
                     }
                 }elseif ($file == 'app.framework.php' && $this->isFrameworkTool()){
-
                     $configFile = $this->fgc('/Code/framework-'. $this->isFrameworkTool() .'-config');
                     $phpConfigFile = $this->sp('#TCFRAMEWORKCONFIG', $configFile, $this->fgc('/Config/'.$file));
                     $this->generateFile($file, $targetDir, $phpConfigFile);
@@ -814,7 +814,6 @@ class MelisToolCreatorService  extends MelisCoreGeneralService
                 $toolViews = [
                     'index' => [
                         'framework-tool',
-                        'framework-modal-tool',
                     ]
                 ];
             }
@@ -904,6 +903,7 @@ class MelisToolCreatorService  extends MelisCoreGeneralService
             $this->generateFile('tool.js', $targetDir, $fileContent);
         }else{
             // @TODO Assets of third party tool
+            return;
         }
     }
 
@@ -1157,8 +1157,8 @@ class MelisToolCreatorService  extends MelisCoreGeneralService
         $fileContent = $this->fgc('/Service/service');
 
         if ($this->hasLanguage()) {
-            $langsection = $this->fgc('/Code/service-lang-section');
-            $fileContent = str_replace('#SERVICESECTIONLANG', $langsection, $fileContent);
+            $langSection = $this->fgc('/Code/service-lang-section');
+            $fileContent = str_replace('#SERVICESECTIONLANG', $langSection, $fileContent);
         } else {
             $fileContent = str_replace('#SERVICESECTIONLANG', '', $fileContent);
         }
@@ -1223,7 +1223,7 @@ class MelisToolCreatorService  extends MelisCoreGeneralService
         return $this->tcSteps['step1']['tcf-tool-edit-type'];
     }
 
-    private function isFrameworkTool()
+    public function isFrameworkTool()
     {
         return ($this->tcSteps['step1']['tcf-create-framework-tool']) ? $this->tcSteps['step1']['tcf-tool-framework'] : false;
     }

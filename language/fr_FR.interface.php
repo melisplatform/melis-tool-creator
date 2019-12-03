@@ -143,7 +143,6 @@ return [
     'tr_melistoolcreator_err_long_100' => 'Valeur trop longue, elle doit être de moins de 100 caractères',
     'tr_melistoolcreator_err_long_250' => 'Valeur trop longue, elle doit être de moins de 250 caractères',
     'tr_melistoolcreator_err_no_selected_db' => 'Veuillez choisir une table avant de procéder à l\'étape suivante',
-    'tr_melistoolcreator_err_no_primary_key' => 'La table sélectionnée n\'a pas de clef primaire',
     'tr_melistoolcreator_err_no_selected_col' => 'Veuillez choisir au moins une colonne pour procéder à l\'étape suivante',
     'tr_melistoolcreator_err_module_exist' => '"%s" existe déjà, veuillez en choisir un autre',
     'tr_melistoolcreator_err_select_pri_key_tbl' => 'Dans la table secondaire sélectionnez la clef étrangère vers la table principale',

@@ -130,7 +130,6 @@ class ToolCreatorController extends AbstractActionController
                     $nxtStep = 1;
                 elseif ($tcfDbTbl['step1']['tcf-tool-type'] == 'blank')
                     $nxtStep = 2;
-
         }
 
         /**
@@ -1366,6 +1365,8 @@ class ToolCreatorController extends AbstractActionController
 
         $request = $this->getRequest();
 
+        $viewStp->frameworkSetupUrl = false;
+
         if ($validate){
 
             $validateModule = $request->getPost()->toArray();
@@ -1387,9 +1388,17 @@ class ToolCreatorController extends AbstractActionController
                 $viewStp->restartRequired = true;
             }
 
+            $isFrameworkTool = $toolCreatorSrv->isFrameworkTool();
+            if ($isFrameworkTool)
+                $viewStp->frameworkSetupUrl = 'melis/' .$isFrameworkTool. '-module-create';
+
             $viewStp->finalized = $validate;
             $viewStp->hasError = [];
         }
+
+//        $viewStp->finalized = true;
+//        $viewStp->frameworkSetupUrl = 'melis/laravel-module-create';
+//        $viewStp->restartRequired = true;
 
         $viewStp->form = $factory->createForm($appConfigForm);
 

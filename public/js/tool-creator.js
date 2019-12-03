@@ -71,12 +71,12 @@ $(function(){
                 }else{
                     melisHelper.melisKoNotification(data.textTitle, data.textMessage, data.errors);
                     tcHighlightErrors(0, data.errors, ".tool-creator-step-"+curStep);
-                    $("#id_melistoolcreator_steps #loader").remove()
+                    $("#id_melistoolcreator_steps #loader").remove();
                 }
             }, 500);
 
         }).error(function(xhr, textStatus, errorThrown){
-            alert( translations.tr_meliscore_error_message );
+            console.log( translations.tr_meliscore_error_message );
             // alert(xhr.responseText);
         });
     });
@@ -118,6 +118,23 @@ $(function(){
     $body.on("click", ".melis-toolcreator-steps-table-tabs .widget-head a[data-toggle='tab']", function(){
        var type =$(this).data("type");
     });
+
+    function resetLangDbSelection(disableTlb){
+
+        $(".melis-toolcreator-steps-language-db-table-list li").removeClass("melis-toolcreator-disable-db-tbl-item");
+        if (typeof disableTlb !== "undefined"){
+            $(".melis-toolcreator-steps-language-db-table-list li[data-table-name='"+disableTlb+"']").addClass("melis-toolcreator-disable-db-tbl-item");
+        }
+
+        $(".melis-toolcreator-steps-language-db-table-list li .fa").removeClass("fa-check-square-o")
+            .addClass("fa-square-o")
+            .removeClass("text-success");
+        $(".melis-toolcreator-steps-language-db-table-columns").html("");
+        $(".melis-toolcreator-steps-language-db-table-list input[name='tcf-db-table-language-tbl']").val("");
+        $(".melis-toolcreator-steps-language-db-table-list input[name='tcf-db-table-language-pri-fk']").val("");
+        $(".melis-toolcreator-steps-language-db-table-list input[name='tcf-db-table-language-lang-fk']").val("");
+        $(".melis-toolcreator-steps-table-list.melis-toolcreator-steps-language-db-table-list #loader").remove();
+    }
 
     $body.on("click", ".melis-toolcreator-steps-table-list li", function(){
 
@@ -180,22 +197,7 @@ $(function(){
         });
     });
 
-    function resetLangDbSelection(disableTlb){
 
-        $(".melis-toolcreator-steps-language-db-table-list li").removeClass("melis-toolcreator-disable-db-tbl-item");
-        if (typeof disableTlb !== "undefined"){
-            $(".melis-toolcreator-steps-language-db-table-list li[data-table-name='"+disableTlb+"']").addClass("melis-toolcreator-disable-db-tbl-item");
-        }
-
-        $(".melis-toolcreator-steps-language-db-table-list li .fa").removeClass("fa-check-square-o")
-                                                                    .addClass("fa-square-o")
-                                                                    .removeClass("text-success");
-        $(".melis-toolcreator-steps-language-db-table-columns").html("");
-        $(".melis-toolcreator-steps-language-db-table-list input[name='tcf-db-table-language-tbl']").val("");
-        $(".melis-toolcreator-steps-language-db-table-list input[name='tcf-db-table-language-pri-fk']").val("");
-        $(".melis-toolcreator-steps-language-db-table-list input[name='tcf-db-table-language-lang-fk']").val("");
-        $(".melis-toolcreator-steps-table-list.melis-toolcreator-steps-language-db-table-list #loader").remove();
-    }
 
     $body.on("click", ".melis-toolcreator-steps-tbl-cols .tcf-fa-checkbox", function(){
 
@@ -333,6 +335,7 @@ $(function(){
             $(this).removeClass("fa-check-square-o");
             $("#tool-creator-step-3 input[name='"+$(this).data("field-name")+"']").val("");
         }else{
+            var ptFkInpt;
             // Checking
             if ($(this).hasClass("melis-tc-lang-tbl-pt-fk")){
                 $(".melis-tc-lang-tbl-pt-fk.fa").addClass("fa-square-o")
@@ -344,9 +347,9 @@ $(function(){
                     .removeClass("text-success")
                     .removeClass("fa-check-square-o");
 
-                $ptFkInpt = $("#tool-creator-step-3 input[name='"+ltFk.data("field-name")+"']");
-                if ($ptFkInpt.val() === $(this).data("tbl-name")) {
-                    $ptFkInpt.val("");
+                ptFkInpt = $("#tool-creator-step-3 input[name='"+ltFk.data("field-name")+"']");
+                if (ptFkInpt.val() === $(this).data("tbl-name")) {
+                    ptFkInpt.val("");
                 }
 
             }else{
@@ -359,9 +362,9 @@ $(function(){
                     .removeClass("text-success")
                     .removeClass("fa-check-square-o");
 
-                $ptFkInpt = $("#tool-creator-step-3 input[name='"+ptFk.data("field-name")+"']");
-                if ($ptFkInpt.val() === $(this).data("tbl-name")) {
-                    $ptFkInpt.val("");
+                ptFkInpt = $("#tool-creator-step-3 input[name='"+ptFk.data("field-name")+"']");
+                if (ptFkInpt.val() === $(this).data("tbl-name")) {
+                    ptFkInpt.val("");
                 }
             }
 
