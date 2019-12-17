@@ -1485,7 +1485,7 @@ class ToolCreatorController extends AbstractActionController
         // Tool creator session container
         $container = new Container('melistoolcreator');
 
-        $container['melis-toolcreator']['step1']['tcf-name'] = 'IDDTDoíl';
+        $container['melis-toolcreator']['step5']['tcf-db-table-col-type'][1] = 'File';
 //        $container['melis-toolcreator']['step1']['tcf-tool-edit-type'] = 'tab';
         exit;
     }
@@ -1516,5 +1516,23 @@ class ToolCreatorController extends AbstractActionController
         $res = $toolCreatorSrv->describeTable('aaa');
         print_r($res);
         die();
+    }
+
+    public function formAction()
+    {
+        $srv = $this->getServiceLocator()->get('FormElementManager');
+        $element = $srv->get('MelisCmsTemplateSelect');
+
+        print_r($element);
+
+        $element->setName('test_test');
+
+
+        $viewHelper = $this->getServiceLocator()->get('ViewHelperManager');
+        $fielRow = $viewHelper->get('MelisFieldRow');
+
+        echo $fielRow->render($element);
+
+        exit;
     }
 }

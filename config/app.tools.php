@@ -468,10 +468,7 @@ return [
                                         'raw_view' => 'tr_melistoolcreator_select_raw_view',
                                         'char_length_limit' => 'tr_melistoolcreator_select_char_len_50',
                                         'dot_color' => 'tr_melistoolcreator_select_dot_color',
-                                        'site_name' => 'tr_melistoolcreator_select_site_name',
-                                        'lang_name' => 'tr_melistoolcreator_select_lang_name',
-                                        'tpl_name' => 'tr_melistoolcreator_select_tpl_name',
-                                        'admin_name' => 'tr_melistoolcreator_select_admin_name',
+                                        'admin_name' => 'tr_melistoolcreator_select_admin_name'
                                     ],
                                 ],
                                 'attributes' => [
@@ -566,10 +563,7 @@ return [
                                         'MelisCoreTinyMCE' => 'tr_melistoolcreator_select_textarea_tinymce',
                                         'Datepicker' => 'Date Picker',
                                         'Datetimepicker' => 'Datetime Picker',
-                                        'MelisCmsPluginSiteSelect' => 'Melis site',
-                                        'MelisCmsLanguageSelect' => 'Melis Page Language',
-                                        'MelisCmsTemplateSelect' => 'Melis Template',
-                                        'MelisCoreUserSelect' => 'Melis BO Users',
+                                        'MelisCoreUserSelect' => 'Melis BO Users'
                                     ],
                                 ],
                                 'attributes' => [
