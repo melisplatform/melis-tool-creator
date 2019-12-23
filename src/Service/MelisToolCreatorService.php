@@ -99,11 +99,7 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
         mkdir($moduleDir, 0777);
         $moduleFile = $this->fgc('/Module/Module.php');
 
-        if ($this->hasMicroservicesAccess()) {
-            $moduleFile = str_replace('#CONFIGMICROSERVICES', 'include __DIR__ . \'/config/app.microservice.php\',', $moduleFile);
-        } else {
-            $moduleFile = str_replace('#CONFIGMICROSERVICES', '', $moduleFile);
-        }
+        $moduleFile = str_replace('#CONFIGMICROSERVICES', 'include __DIR__ . \'/config/app.microservice.php\',', $moduleFile);
 
         $this->generateFile('Module.php', $moduleDir, $moduleFile);
     }
@@ -181,10 +177,8 @@ class MelisToolCreatorService  implements  ServiceLocatorAwareInterface
                     $interfaceContent = $this->fgc('/Config/app.interface.php');
                     $this->generateFile('app.interface.php', $targetDir, $interfaceContent);
                 }elseif ($file == 'app.microservice.php'){
-                    if ($this->hasMicroservicesAccess()) {
-                        $content = $this->fgc('/Config/app.microservice.php');
-                        $this->generateFile('app.microservice.php', $targetDir, $content);
-                    }
+                    $content = $this->fgc('/Config/app.microservice.php');
+                    $this->generateFile('app.microservice.php', $targetDir, $content);
                 }
             }
         }
