@@ -35,5 +35,5 @@ class IndexController extends AbstractActionController
         $view->content = $response;
 
         return $view;
-    }
+    }#TCFORMCONTENT
 }

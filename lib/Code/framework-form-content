@@ -1,0 +1,17 @@
+    /**
+     * Render the form view content of the tool
+     * @return ViewModel
+     */
+    public function renderToolFormAction()
+    {
+        $view = new ViewModel();
+
+        $thirdPartySrv = $this->getServiceLocator()->get('MelisPlatformService');
+        $thirdPartySrv->setRoute('/melis/moduletpl/form/'.$this->params()->fromQuery('id'));
+        $response = $thirdPartySrv->getContent();
+
+        $view->content = $response;
+        $view->id = $this->params()->fromQuery('id', 0);
+
+        return $view;
+    }

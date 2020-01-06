@@ -249,7 +249,8 @@ class MelisToolCreatorService  extends MelisCoreGeneralService
                     if ($this->hasLanguage())
                         $toolInterface = $this->sp('#TCTOOLINTERFACE', $this->fgc('/Code/' . $this->getToolEditType() . '-lang-interface'), $toolInterface);
             }else
-                $toolsTreeContent = $this->sp('#TCTOOLSTREE', $this->fgc('/Code/framework-toolstree'), $toolsTreeContent);
+
+                $toolsTreeContent = $this->sp('#TCTOOLSTREE', $this->fgc('/Code/framework-' . $this->getToolEditType(). '-toolstree'), $toolsTreeContent);
 
         }else{
             $toolsTreeContent = $this->sp('#TCTOOLSTREE', $this->fgc('/Code/iframe-toolstree'), $toolsTreeContent);
@@ -544,14 +545,14 @@ class MelisToolCreatorService  extends MelisCoreGeneralService
     private function generateModuleController($targetDir)
     {
 
-        if ($this->isIframeTool()){
+        if ($this->isIframeTool()) {
             $iframeCtrl = $this->fgc('/Controller/IndexController.php');
             $iframeCtrl = $this->sp('#TCIFRAMEURL', $this->tcSteps['step1']['tcf-tool-iframe-url'], $iframeCtrl);
             $this->generateFile('IndexController.php', $targetDir, $iframeCtrl);
             return;
         }
 
-        if ($this->isBlankTool()){
+        if ($this->isBlankTool()) {
             $blnkListCtrl = $this->fgc('/Controller/Blank-ListController.php');
             $this->generateFile('ListController.php', $targetDir, $blnkListCtrl);
             return;
@@ -559,10 +560,17 @@ class MelisToolCreatorService  extends MelisCoreGeneralService
 
         $pk = $this->hasPrimaryKey();
 
-        if ($this->isFrameworkTool() && !empty($pk)){
-            $frameworkCtrl = $this->fgc('/Controller/Framework-Modal-IndexController.php');
+        if ($this->isFrameworkTool() && !empty($pk)) {
+            $frameworkCtrl = $this->fgc('/Controller/Framework-IndexController.php');
             $frameworkCtrl = $this->sp('#TCFRAMEWORK', $this->isFrameworkTool(), $frameworkCtrl);
             $frameworkCtrl = $this->sp('#TCPRIMARYKEY', $pk['Field'], $frameworkCtrl);
+
+            $formContent = '';
+            if ($this->getToolEditType() == 'tab') {
+                $formContent = "\n\n".$this->fgc('/Code/framework-form-content');
+            }
+            $frameworkCtrl = $this->sp('#TCFORMCONTENT', $formContent, $frameworkCtrl);
+
             $this->generateFile('IndexController.php', $targetDir, $frameworkCtrl);
             return;
         }
@@ -811,11 +819,20 @@ class MelisToolCreatorService  extends MelisCoreGeneralService
                     ];
                 }
             }else{
-                $toolViews = [
-                    'index' => [
-                        'framework-tool',
-                    ]
-                ];
+                if ($this->getToolEditType() != 'tab'){
+                    $toolViews = [
+                        'index' => [
+                            'framework-tool',
+                        ]
+                    ];
+                } else {
+                    $toolViews = [
+                        'index' => [
+                            'framework-tool',
+                            'framework-tool-form'
+                        ]
+                    ];
+                }
             }
 
         }elseif ($this->isIframeTool()){

@@ -1,0 +1,31 @@
+                                        'moduletpl_tool' => [
+                                            'conf' => [
+                                                'id' => 'id_moduletpl_tool',
+                                                'melisKey' => 'moduletpl_tool',
+                                                'name' => 'tr_moduletpl_title',
+                                                'icon' => 'fa fa-puzzle-piece'
+                                            ],
+                                            'forward' => [
+                                                'module' => 'ModuleTpl',
+                                                'controller' => 'Index',
+                                                'action' => 'render-tool',
+                                                'jscallback' => '',
+                                                'jsdatas' => []
+                                            ],
+                                            'interface' => [
+                                                'moduletpl_tool_form' => [
+                                                    'conf' => [
+                                                        'id' => 'id_moduletpl_tool_form',
+                                                        'melisKey' => 'moduletpl_tool_form',
+                                                        'name' => 'tr_moduletpl_tool_form'
+                                                    ],
+                                                    'forward' => [
+                                                        'module' => 'ModuleTpl',
+                                                        'controller' => 'Index',
+                                                        'action' => 'render-tool-form',
+                                                        'jscallback' => '',
+                                                        'jsdatas' => []
+                                                    ]
+                                                ]
+                                            ]
+                                        ]
