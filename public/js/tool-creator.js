@@ -94,6 +94,15 @@ $(function(){
     $body.on("change", "input[name='tcf-tool-type']", function(){
         $(".tcf-tool-type").parents(".form-group").hide();
         $(".tcf-tool-type-"+$(this).val()).parents(".form-group").show();
+
+        if ($("input[name='tcf-tool-framework'].tcf-tool-type-"+$(this).val()).length) {
+
+            if ($("input[name='tcf-create-framework-tool']").parents(".make-switch").find(".switch-animate").hasClass("switch-on"))  {
+                $("input[name='tcf-tool-framework'].tcf-tool-type-"+$(this).val()).parents(".form-group").show();
+            }else{
+                $("input[name='tcf-tool-framework'].tcf-tool-type-"+$(this).val()).parents(".form-group").hide();
+            }
+        }
     });
 
     $body.on("click", ".tc-reload-dbtbl-cached", function(){
@@ -311,10 +320,10 @@ $(function(){
             $(this).removeClass("text-success");
             $(this).removeClass("fa-check-square-o");
             $(".melis-tc-tool-language-db-list").hide(1000, "linear", function(){
-                $("#tool-creator-step-3 input[name='tcf-db-table-has-language']").val("");
-                $("#tool-creator-step-3 input[name='tcf-db-table-language-tbl']").val("");
-                $("#tool-creator-step-3 input[name='tcf-db-table-language-pri-fk']").val("");
-                $("#tool-creator-step-3 input[name='tcf-db-table-language-lang-fk']").val("");
+                $(".tool-creator-step-3 input[name='tcf-db-table-has-language']").val("");
+                $(".tool-creator-step-3 input[name='tcf-db-table-language-tbl']").val("");
+                $(".tool-creator-step-3 input[name='tcf-db-table-language-pri-fk']").val("");
+                $(".tool-creator-step-3 input[name='tcf-db-table-language-lang-fk']").val("");
             });
         }else{
             // Checking
@@ -322,7 +331,7 @@ $(function(){
             $(this).addClass("fa-check-square-o");
             $(this).addClass("text-success");
             $(".melis-tc-tool-language-db-list").show(1000, "linear", function(){
-                $("#tool-creator-step-3 input[name='tcf-db-table-has-language']").val(1);
+                $(".tool-creator-step-3 input[name='tcf-db-table-has-language']").val(1);
             });
         }
     });
@@ -333,7 +342,7 @@ $(function(){
             $(this).addClass("fa-square-o");
             $(this).removeClass("text-success");
             $(this).removeClass("fa-check-square-o");
-            $("#tool-creator-step-3 input[name='"+$(this).data("field-name")+"']").val("");
+            $(".tool-creator-step-3 input[name='"+$(this).data("field-name")+"']").val("");
         }else{
             var ptFkInpt;
             // Checking
@@ -347,7 +356,7 @@ $(function(){
                     .removeClass("text-success")
                     .removeClass("fa-check-square-o");
 
-                ptFkInpt = $("#tool-creator-step-3 input[name='"+ltFk.data("field-name")+"']");
+                ptFkInpt = $(".tool-creator-step-3 input[name='"+ltFk.data("field-name")+"']");
                 if (ptFkInpt.val() === $(this).data("tbl-name")) {
                     ptFkInpt.val("");
                 }
@@ -362,13 +371,13 @@ $(function(){
                     .removeClass("text-success")
                     .removeClass("fa-check-square-o");
 
-                ptFkInpt = $("#tool-creator-step-3 input[name='"+ptFk.data("field-name")+"']");
+                ptFkInpt = $(".tool-creator-step-3 input[name='"+ptFk.data("field-name")+"']");
                 if (ptFkInpt.val() === $(this).data("tbl-name")) {
                     ptFkInpt.val("");
                 }
             }
 
-            $("#tool-creator-step-3 input[name='"+$(this).data("field-name")+"']").val($(this).data("tbl-name"));
+            $(".tool-creator-step-3 input[name='"+$(this).data("field-name")+"']").val($(this).data("tbl-name"));
 
             $(this).removeClass("fa-square-o");
             $(this).addClass("fa-check-square-o");

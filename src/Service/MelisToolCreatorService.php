@@ -200,23 +200,41 @@ class MelisToolCreatorService  extends MelisCoreGeneralService
     private function generateModuleConfigs($targetDir)
     {
         $moduleConfigFiles = $this->moduleTplDir.'/Config';
-        foreach (scandir($moduleConfigFiles) As $file){
-            if (is_file($moduleConfigFiles.'/'.$file)){
-                if ($file == 'app.toolstree.php'){
+        foreach (scandir($moduleConfigFiles) As $file) {
+
+            if (is_file($moduleConfigFiles.'/'.$file)) {
+
+                if ($file == 'app.toolstree.php') {
+
                     $this->generateModuleToolstreeConfig($targetDir);
-                }elseif ($file == 'app.tools.php' && ($this->isDbTool() || $this->isBlankTool()) && !$this->isFrameworkTool()){
+
+                } elseif ($file == 'app.tools.php' && ($this->isDbTool() || $this->isBlankTool()) && !$this->isFrameworkTool()) {
+
                     $this->generateModuleToolConfig($targetDir);
-                }elseif ($file == 'module.config.php'){
+
+                } elseif ($file == 'module.config.php') {
+
                     $this->generateModuleConfig($targetDir);
-                }elseif ($file == 'app.interface.php' && ($this->isDbTool() || $this->isBlankTool())){
-                    $interfaceContent = $this->fgc('/Config/app.interface.php');
-                    $this->generateFile('app.interface.php', $targetDir, $interfaceContent);
-                }elseif ($file == 'app.microservice.php'){
+
+                } elseif ($file == 'app.interface.php' && ($this->isDbTool() || $this->isBlankTool())) {
+
+                    $fileName = 'app.interface.php';
+                    if ($this->isBlankTool())
+                        $fileName = 'blank-'.$fileName;
+
+                    $interfaceContent = $this->fgc('/Config/'.$fileName);
+
+                    $this->generateFile(str_replace('blank-', '', $fileName), $targetDir, $interfaceContent);
+
+                } elseif ($file == 'app.microservice.php') {
+
                     if ($this->hasMicroServicesAccess() && !$this->isFrameworkTool()) {
                         $content = $this->fgc('/Config/app.microservice.php');
                         $this->generateFile('app.microservice.php', $targetDir, $content);
                     }
-                }elseif ($file == 'app.framework.php' && $this->isFrameworkTool()){
+
+                } elseif ($file == 'app.framework.php' && $this->isFrameworkTool()) {
+
                     $configFile = $this->fgc('/Code/framework-'. $this->isFrameworkTool() .'-config');
                     $phpConfigFile = $this->sp('#TCFRAMEWORKCONFIG', $configFile, $this->fgc('/Config/'.$file));
                     $this->generateFile($file, $targetDir, $phpConfigFile);
@@ -248,8 +266,7 @@ class MelisToolCreatorService  extends MelisCoreGeneralService
                 else
                     if ($this->hasLanguage())
                         $toolInterface = $this->sp('#TCTOOLINTERFACE', $this->fgc('/Code/' . $this->getToolEditType() . '-lang-interface'), $toolInterface);
-            }else
-
+            } else
                 $toolsTreeContent = $this->sp('#TCTOOLSTREE', $this->fgc('/Code/framework-' . $this->getToolEditType(). '-toolstree'), $toolsTreeContent);
 
         }else{
@@ -544,7 +561,6 @@ class MelisToolCreatorService  extends MelisCoreGeneralService
      */
     private function generateModuleController($targetDir)
     {
-
         if ($this->isIframeTool()) {
             $iframeCtrl = $this->fgc('/Controller/IndexController.php');
             $iframeCtrl = $this->sp('#TCIFRAMEURL', $this->tcSteps['step1']['tcf-tool-iframe-url'], $iframeCtrl);
@@ -552,18 +568,9 @@ class MelisToolCreatorService  extends MelisCoreGeneralService
             return;
         }
 
-        if ($this->isBlankTool()) {
-            $blnkListCtrl = $this->fgc('/Controller/Blank-ListController.php');
-            $this->generateFile('ListController.php', $targetDir, $blnkListCtrl);
-            return;
-        }
-
-        $pk = $this->hasPrimaryKey();
-
-        if ($this->isFrameworkTool() && !empty($pk)) {
+        if ($this->isFrameworkTool()) {
             $frameworkCtrl = $this->fgc('/Controller/Framework-IndexController.php');
             $frameworkCtrl = $this->sp('#TCFRAMEWORK', $this->isFrameworkTool(), $frameworkCtrl);
-            $frameworkCtrl = $this->sp('#TCPRIMARYKEY', $pk['Field'], $frameworkCtrl);
 
             $formContent = '';
             if ($this->getToolEditType() == 'tab') {
@@ -575,6 +582,13 @@ class MelisToolCreatorService  extends MelisCoreGeneralService
             return;
         }
 
+        if ($this->isBlankTool()) {
+            $blnkListCtrl = $this->fgc('/Controller/Blank-ListController.php');
+            $this->generateFile('ListController.php', $targetDir, $blnkListCtrl);
+            return;
+        }
+
+        $pk = $this->hasPrimaryKey();
         if (!empty($pk)){
 
             $modulePropCtrlFile = $this->fgc('/Controller/PropertiesController.php');
@@ -845,18 +859,28 @@ class MelisToolCreatorService  extends MelisCoreGeneralService
 
         }elseif ($this->isBlankTool()){
 
-            $listViews = [
-                'table-filter-limit',
-                'table-filter-refresh',
-                'table-filter-search',
-                'blank-tool-content',
-                'blank-tool-header',
-                'tool',
-            ];
+            if (!$this->isFrameworkTool()) {
+                $listViews = [
+                    'table-filter-limit',
+                    'table-filter-refresh',
+                    'table-filter-search',
+                    'blank-tool-content',
+                    'blank-tool-header',
+                    'tool',
+                ];
 
-            $toolViews = [
-                'list' => $listViews
-            ];
+                $toolViews = [
+                    'list' => $listViews
+                ];
+            } else {
+                // Framework blank tool
+                $toolViews = [
+                    'index' => [
+                        'framework-tool',
+                    ]
+                ];
+
+            }
         }
 
         // Generating Views to the target module directory

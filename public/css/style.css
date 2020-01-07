@@ -194,3 +194,7 @@
 .tcf-fa-checkbox-editable.fa-check-square-o:not(.text-success){
     cursor: no-drop;
 }
+
+.melis-toolcreator-steps .bwizard-steps li:before{
+    left: -1px;
+}

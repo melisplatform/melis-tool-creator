@@ -1485,7 +1485,7 @@ class ToolCreatorController extends AbstractActionController
         // Tool creator session container
         $container = new Container('melistoolcreator');
 
-        $container['melis-toolcreator']['step1']['tcf-name'] = 'Cal';
+        $container['melis-toolcreator']['step1']['tcf-name'] = 'Newstooltab';
 //        $container['melis-toolcreator']['step1']['tcf-tool-edit-type'] = 'tab';
         exit;
     }

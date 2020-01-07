@@ -27,18 +27,20 @@
                 <?php $ctr = 0; foreach ($this->step6Form As $key => $form):?>
                     <div id="toolcreator-text-transaltions-<?php echo $key ?>" class="tab-pane <?php echo ($ctr++) ? '': 'active'?>">
                         <?php
+
                             foreach ($form As $tblType => $tblForm){
 
                                 if (count($form) > 1){
                                     echo '<h4>'.$this->translate('tr_melistoolcreator_'.$tblType).'</h4>';
                                 }
 
+                                $tblForm->setAttribute('id', $tblForm->getAttribute('id').'-'.$tblType.'-'.$key);
                                 $tblForm->setAttribute('style', 'margin-bottom: 20px');
                                 $tblForm->prepare();
 
                                 echo $this->form()->openTag($tblForm);
 
-                                foreach ($tblForm->getElements() As $key => $val){
+                                foreach ($tblForm->getElements() As $val){
 
                                     if ($val->getOption('col-name'))
                                         echo '<div class="row">';

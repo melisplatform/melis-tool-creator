@@ -106,25 +106,25 @@ return [
                                 ],
                             ]
                         ],
-                        [
-                            'spec' => [
-                                'type' => 'Checkbox',
-                                'name' => 'tcf-create-microservice',
-                                'options' => [
-                                    'label' => 'tr_melistoolcreator_tcf_microservices_title',
-                                    'tooltip' => 'tr_melistoolcreator_tcf_microservices_tooltip',
-                                    'switch_options' => [
-                                        'label-on' => 'tr_meliscore_common_yes',
-                                        'label-off' => 'tr_meliscore_common_no',
-                                        'icon' => "glyphicon glyphicon-resize-horizontal",
-                                    ],
-                                ],
-                                'attributes' => [
-                                    'id' => 'tcf-create-microservice',
-                                    'class' => 'tcf-tool-type tcf-tool-type-db'
-                                ],
-                            ],
-                        ],
+//                        [
+//                            'spec' => [
+//                                'type' => 'Checkbox',
+//                                'name' => 'tcf-create-microservice',
+//                                'options' => [
+//                                    'label' => 'tr_melistoolcreator_tcf_microservices_title',
+//                                    'tooltip' => 'tr_melistoolcreator_tcf_microservices_tooltip',
+//                                    'switch_options' => [
+//                                        'label-on' => 'tr_meliscore_common_yes',
+//                                        'label-off' => 'tr_meliscore_common_no',
+//                                        'icon' => "glyphicon glyphicon-resize-horizontal",
+//                                    ],
+//                                ],
+//                                'attributes' => [
+//                                    'id' => 'tcf-create-microservice',
+//                                    'class' => 'tcf-tool-type tcf-tool-type-db'
+//                                ],
+//                            ],
+//                        ],
                     ],
                     'input_filter' => [
                         'tcf-name' => [
@@ -194,7 +194,6 @@ return [
                 'melistoolcreator_step2_form' => [
                     'attributes' => [
                         'name' => 'tool-creator-step-2',
-                        'id' => 'tool-creator-step-2',
                         'class' => 'tool-creator-step-2',
                         'method' => 'POST',
                         'action' => '',
@@ -216,7 +215,6 @@ return [
                                     'tooltip' => 'tr_melistoolcreator_tcf-title tooltip',
                                 ],
                                 'attributes' => [
-                                    'id' => 'tcf-title',
                                     'value' => '',
                                     'placeholder' => '',
                                     'required' => 'required',
@@ -232,7 +230,6 @@ return [
                                     'tooltip' => 'tr_melistoolcreator_tcf-desc tooltip',
                                 ],
                                 'attributes' => [
-                                    'id' => 'tcf-desc',
                                     'value' => '',
                                     'placeholder' => '',
                                     'class' => 'form-control',
@@ -610,8 +607,8 @@ return [
                 ],
                 'melistoolcreator_step6_form' => [
                     'attributes' => [
-                        'name' => '',
-                        'id' => '',
+                        'name' => 'tool-creator-step-6',
+                        'id' => 'tool-creator-step-6',
                         'class' => 'tool-creator-step-6',
                         'method' => 'POST',
                         'action' => '',
