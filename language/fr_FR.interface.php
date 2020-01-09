@@ -75,8 +75,8 @@ return [
     'tr_melistoolcreator_finalization_success_desc' => 'Vous pouvez activer/désactiver l\'outil en changeant son statut depuis la liste des modules dans Configuration système / Modules',
     'tr_melistoolcreator_execute_aadtnl_setup' => 'Exécution d\'une configuration supplémentaire',
     'tr_melistoolcreator_please_wait' => 'Veuillez patienter',
-    'tr_melistoolcreator_yes' => 'Non',
-    'tr_melistoolcreator_no' => 'No',
+    'tr_melistoolcreator_yes' => 'Oui',
+    'tr_melistoolcreator_no' => 'Non',
 
     // Texts
     'tr_melistoolcreator_db_tables' => 'Tables de la base de données',
