@@ -8,7 +8,7 @@
                     __DIR__ .'/../../../thirdparty/Laravel/Modules/ModuleTpl/Resources/lang/en/messages.php'
                 ],
                 'fr_FR' => [
-                    __DIR__ .'/../../../thirdparty/Laravel/Modules/ModuleTpl/Resources/lang/en/messages.php'
+                    __DIR__ .'/../../../thirdparty/Laravel/Modules/ModuleTpl/Resources/lang/fr/messages.php'
                 ]
             ]
         ]
