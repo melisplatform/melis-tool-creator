@@ -20,8 +20,8 @@ return [
                     'type' => 'Checkbox',
                     'name' => 'tcf-create-framework-tool',
                     'options' => [
-                        'label' => 'Create framework tool',
-                        'tooltip' => 'Create framework tool',
+                        'label' => 'tr_melistoolcreator_tcf-create-framework-tool',
+                        'tooltip' => 'tr_melistoolcreator_tcf-create-framework-tool tooltip',
                         'switch_options' => [
                             'label-on' => 'tr_meliscore_common_yes',
                             'label-off' => 'tr_meliscore_common_no',
@@ -39,8 +39,8 @@ return [
                     'type' => 'Radio',
                     'name' => 'tcf-tool-framework',
                     'options' => [
-                        'label' => 'Select Framework',
-                        'tooltip' => 'tr_melistoolcreator_tcf_tool_type tooltip',
+                        'label' => 'tr_melistoolcreator_tcf-tool-framework',
+                        'tooltip' => 'tr_melistoolcreator_tcf-tool-framework tooltip',
                         'radio-button' => true,
                         'label_options' => [
                             'disable_html_escape' => true,

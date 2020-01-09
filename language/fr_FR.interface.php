@@ -73,6 +73,8 @@ return [
     'tr_melistoolcreator_finalization_success_title' => 'l\'outil a été créé avec succès',
     'tr_melistoolcreator_finalization_success_desc_with_counter' => 'La plateforme va se recharger dans <strong><span id="tc-restart-cd">5</span></strong>',
     'tr_melistoolcreator_finalization_success_desc' => 'Vous pouvez activer/désactiver l\'outil en changeant son statut depuis la liste des modules dans Configuration système / Modules',
+    'tr_melistoolcreator_execute_aadtnl_setup' => 'Exécution d\'une configuration supplémentaire',
+    'tr_melistoolcreator_please_wait' => 'Veuillez patienter',
 
     // Texts
     'tr_melistoolcreator_db_tables' => 'Tables de la base de données',
@@ -133,6 +135,10 @@ return [
     'tr_melistoolcreator_tcf-desc tooltip' => 'La description de l\'outil est affichée en dessous du titre dans l\'outil',
     'tr_melistoolcreator_inpt_name' => 'Nom',
     'tr_melistoolcreator_inpt_name tooltip' => 'Description tooltip',
+    'tr_melistoolcreator_tcf-create-framework-tool' => 'Créer un outil avec framework',
+    'tr_melistoolcreator_tcf-create-framework-tool tooltip' => 'Cette option crée un module avec un autre framework',
+    'tr_melistoolcreator_tcf-tool-framework' => 'Sélectionnez le framework',
+    'tr_melistoolcreator_tcf-tool-framework tooltip' => 'Le framework qui sera utilisé pour gérer le contenu de l\'outil généré',
 
     // Error messages
     'tr_melistoolcreator_err_message' => 'Impossible de passer à l\'étape suivante, veuillez réessayer',

@@ -73,6 +73,8 @@ return [
     'tr_melistoolcreator_finalization_success_title' => 'The tool has been successfully created',
     'tr_melistoolcreator_finalization_success_desc_with_counter' => 'The platform will refresh in <strong><span id="tc-restart-cd">5</span></strong>',
     'tr_melistoolcreator_finalization_success_desc' => 'You can manually activate/deactivate the tool now by changing its status from the list of modules in System configuration / Modules',
+    'tr_melistoolcreator_execute_aadtnl_setup' => 'Executing additional setup',
+    'tr_melistoolcreator_please_wait' => 'Please wait',
 
     // Texts
     'tr_melistoolcreator_db_tables' => 'Tables',
@@ -133,6 +135,10 @@ return [
     'tr_melistoolcreator_tcf-desc tooltip' => 'The tool description is displayed below the top title inside the tool',
     'tr_melistoolcreator_inpt_name' => 'Name',
     'tr_melistoolcreator_inpt_name tooltip' => 'Tooltip description',
+    'tr_melistoolcreator_tcf-create-framework-tool' => 'Create framework tool',
+    'tr_melistoolcreator_tcf-create-framework-tool tooltip' => 'This will create another module on third-party framework',
+    'tr_melistoolcreator_tcf-tool-framework' => 'Select Framework',
+    'tr_melistoolcreator_tcf-tool-framework tooltip' => 'The third-party framework that will be use to manage the content of the tool',
 
     // Error messages
     'tr_melistoolcreator_err_message' => 'Unable to proceed to the next step, please try again',
