@@ -37,7 +37,7 @@ return [
     'tr_melistoolcreator_tcf-name tooltip' => 'Nom de l\'outil /module. Seul les caractères alphabétiques sont autorisés',
 
     'tr_melistoolcreator_tcf_tool_type' => 'Type d\'outil',
-    'tr_melistoolcreator_tcf_tool_type tooltip' => 'Outil BDD permet de créer et éditer un outil basé sur une table de la base de données. iFrame permet de charger une URL dans un outil depuis Melis Platform. Blank permet de concevoir uniquement la structure d\'un module.',
+    'tr_melistoolcreator_tcf_tool_type tooltip' => 'Outil BDD permet de créer et éditer un outil basé sur une table de la base de données. <br>iFrame permet de charger une URL dans un outil depuis Melis Platform. <br>Blank permet de concevoir uniquement la structure d\'un module.',
     'tr_melistoolcreator_tcf_tool_type_db' => 'Outil BDD <span class="melis-radio-box-circle"></span>',
     'tr_melistoolcreator_tcf_tool_type_iframe' => 'Outil en iFrame <span class="melis-radio-box-circle"></span>',
     'tr_melistoolcreator_tcf_tool_type_blank' => 'Blank <span class="melis-radio-box-circle"></span>',
@@ -75,6 +75,8 @@ return [
     'tr_melistoolcreator_finalization_success_desc' => 'Vous pouvez activer/désactiver l\'outil en changeant son statut depuis la liste des modules dans Configuration système / Modules',
     'tr_melistoolcreator_execute_aadtnl_setup' => 'Exécution d\'une configuration supplémentaire',
     'tr_melistoolcreator_please_wait' => 'Veuillez patienter',
+    'tr_melistoolcreator_yes' => 'Non',
+    'tr_melistoolcreator_no' => 'No',
 
     // Texts
     'tr_melistoolcreator_db_tables' => 'Tables de la base de données',
@@ -135,8 +137,8 @@ return [
     'tr_melistoolcreator_tcf-desc tooltip' => 'La description de l\'outil est affichée en dessous du titre dans l\'outil',
     'tr_melistoolcreator_inpt_name' => 'Nom',
     'tr_melistoolcreator_inpt_name tooltip' => 'Description tooltip',
-    'tr_melistoolcreator_tcf-create-framework-tool' => 'Créer un outil avec framework',
-    'tr_melistoolcreator_tcf-create-framework-tool tooltip' => 'Cette option crée un module avec un autre framework',
+    'tr_melistoolcreator_tcf-create-framework-tool' => 'Créer un outil avec un framework tiers',
+    'tr_melistoolcreator_tcf-create-framework-tool tooltip' => 'Sélectionnez si vous souhaitez utiliser un framework tiers',
     'tr_melistoolcreator_tcf-tool-framework' => 'Sélectionnez le framework',
     'tr_melistoolcreator_tcf-tool-framework tooltip' => 'Le framework qui sera utilisé pour gérer le contenu de l\'outil généré',
 

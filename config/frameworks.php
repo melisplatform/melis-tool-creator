@@ -23,8 +23,8 @@ return [
                         'label' => 'tr_melistoolcreator_tcf-create-framework-tool',
                         'tooltip' => 'tr_melistoolcreator_tcf-create-framework-tool tooltip',
                         'switch_options' => [
-                            'label-on' => 'tr_meliscore_common_yes',
-                            'label-off' => 'tr_meliscore_common_no',
+                            'label-on' => 'tr_melistoolcreator_yes',
+                            'label-off' => 'tr_melistoolcreator_no',
                             'icon' => "glyphicon glyphicon-resize-horizontal",
                         ],
                     ],
