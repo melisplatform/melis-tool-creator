@@ -138,9 +138,9 @@ return [
     'tr_melistoolcreator_inpt_name' => 'Name',
     'tr_melistoolcreator_inpt_name tooltip' => 'Tooltip description',
     'tr_melistoolcreator_tcf-create-framework-tool' => 'Create a tool with a third-party framework',
-    'tr_melistoolcreator_tcf-create-framework-tool tooltip' => 'Select if you would like to used a third-party framework',
+    'tr_melistoolcreator_tcf-create-framework-tool tooltip' => 'Select if you would like to use a third-party framework',
     'tr_melistoolcreator_tcf-tool-framework' => 'Select Framework',
-    'tr_melistoolcreator_tcf-tool-framework tooltip' => 'The third-party framework that will be use to manage the content of the tool',
+    'tr_melistoolcreator_tcf-tool-framework tooltip' => 'The third-party framework that will be used to manage the content of the tool',
 
     // Error messages
     'tr_melistoolcreator_err_message' => 'Unable to proceed to the next step, please try again',
