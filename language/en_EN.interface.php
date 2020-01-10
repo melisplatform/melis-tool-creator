@@ -171,6 +171,7 @@ return [
     'tr_melistoolcreator_common_table_delete_button' => 'Delete',
     'tr_melistoolcreator_common_table_column_action' => 'Action',
     'tr_melistoolcreator_common_button_add' => 'Add',
+    'tr_melistoolcreator_common_add_item' => 'Add item',
     'tr_melistoolcreator_common_button_close' => 'Close',
     'tr_melistoolcreator_common_button_save' => 'Save',
     'tr_melistoolcreator_common_button_yes' => 'Yes',

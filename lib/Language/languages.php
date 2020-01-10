@@ -7,6 +7,7 @@
         // Common tool translations
         'common_entry_id' => 'tr_melistoolcreator_common_id',
         'common_button_add' => 'tr_melistoolcreator_common_button_add',
+        'common_add_item' => 'tr_melistoolcreator_common_add_item',
         'common_button_close' => 'tr_melistoolcreator_common_button_close',
         'common_button_save' => 'tr_melistoolcreator_common_button_save',
         'common_button_yes' => 'tr_melistoolcreator_common_button_yes',
