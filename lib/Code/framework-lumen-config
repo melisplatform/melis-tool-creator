@@ -5,10 +5,10 @@
         'translations' => [
             'locale' => [
                 'en_EN' => [
-                    __DIR__ .'/../../../thirdparty/Laravel/Modules/ModuleTpl/Resources/lang/en/messages.php'
+                    __DIR__ .'/../../../thirdparty/Lumen/modules/ModuleTpl/language/en/messages.php'
                 ],
                 'fr_FR' => [
-                    __DIR__ .'/../../../thirdparty/Laravel/Modules/ModuleTpl/Resources/lang/fr/messages.php'
+                    __DIR__ .'/../../../thirdparty/Lumen/modules/ModuleTpl/language/fr/messages.php'
                 ]
             ]
         ]
