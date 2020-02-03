@@ -106,7 +106,7 @@ class MelisToolCreatorService  extends MelisCoreGeneralService
             if (!$this->isFrameworkTool())
                 $config .= PHP_EOL . "\t\t\t". 'include __DIR__ . \'/config/app.tools.php\',';
 
-            if ($this->hasMicroServicesAccess() && !$this->isBlankTool())
+            if (!$this->isFrameworkTool() && !$this->isBlankTool())
                 $config .= PHP_EOL . "\t\t\t".  'include __DIR__ . \'/config/app.microservice.php\',';
 
             if ($this->isFrameworkTool())
@@ -228,7 +228,7 @@ class MelisToolCreatorService  extends MelisCoreGeneralService
 
                 } elseif ($file == 'app.microservice.php') {
 
-                    if ($this->hasMicroServicesAccess() && !$this->isFrameworkTool()) {
+                    if (!$this->isFrameworkTool()) {
                         $content = $this->fgc('/Config/app.microservice.php');
                         $this->generateFile('app.microservice.php', $targetDir, $content);
                     }
@@ -1266,7 +1266,7 @@ class MelisToolCreatorService  extends MelisCoreGeneralService
 
     public function isFrameworkTool()
     {
-        return ($this->tcSteps['step1']['tcf-create-framework-tool']) ? $this->tcSteps['step1']['tcf-tool-framework'] : false;
+        return (!empty($this->tcSteps['step1']['tcf-create-framework-tool'])) ? $this->tcSteps['step1']['tcf-tool-framework'] : false;
     }
 
     private function hasLanguage()

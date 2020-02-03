@@ -106,25 +106,6 @@ return [
                                 ],
                             ]
                         ],
-//                        [
-//                            'spec' => [
-//                                'type' => 'Checkbox',
-//                                'name' => 'tcf-create-microservice',
-//                                'options' => [
-//                                    'label' => 'tr_melistoolcreator_tcf_microservices_title',
-//                                    'tooltip' => 'tr_melistoolcreator_tcf_microservices_tooltip',
-//                                    'switch_options' => [
-//                                        'label-on' => 'tr_meliscore_common_yes',
-//                                        'label-off' => 'tr_meliscore_common_no',
-//                                        'icon' => "glyphicon glyphicon-resize-horizontal",
-//                                    ],
-//                                ],
-//                                'attributes' => [
-//                                    'id' => 'tcf-create-microservice',
-//                                    'class' => 'tcf-tool-type tcf-tool-type-db'
-//                                ],
-//                            ],
-//                        ],
                     ],
                     'input_filter' => [
                         'tcf-name' => [

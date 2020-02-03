@@ -19,9 +19,6 @@
             $scrpt = '$(".tcf-tool-type").parents(".form-group").hide();
             $(".tcf-tool-type-'.$toolType.'").parents(".form-group").show();';
 
-            if (!$form->get('tcf-create-framework-tool')->getValue())
-                $scrpt .= '$("label[for=\'tcf-tool-framework\']").parents(".form-group").hide();';
-
             echo sprintf($scrptTag, $scrpt);
         }
     ?>
