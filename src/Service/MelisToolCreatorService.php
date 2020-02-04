@@ -299,6 +299,14 @@ class MelisToolCreatorService  extends MelisCoreGeneralService
 
             $tblCols = $this->fgc('/Code/tbl-cols');
 
+
+            $mainTableCols = $this->getTableColumns($this->tcSteps['step3']['tcf-db-table']);
+
+            $langTableCols = [];
+            if ($this->hasLanguage()) {
+                $langTableCols = $this->getTableColumns($this->tcSteps['step3']['tcf-db-table-language-tbl']);
+            }
+
             // Dividing length of table to several columns
             $colWidth = number_format(100/count($this->tcSteps['step4']['tcf-db-table-cols']), 0);
             foreach ($this->tcSteps['step4']['tcf-db-table-cols'] As $key => $col){
@@ -314,13 +322,21 @@ class MelisToolCreatorService  extends MelisCoreGeneralService
                  * This will avoid duplication of columns in
                  * searchable keys and to avoid sql issue
                  */
-                if (!is_bool(strpos($col, 'tclangtblcol_')))
-                    $col = $this->sp('tclangtblcol_', '', $col);
+                if (!is_bool(strpos($col, 'tclangtblcol_'))) {
 
-                if (!isset($strSearchableCols[$col]))
-                    $strSearchableCols[$col] = $col;
-                else
-                    $strSearchableCols[$col] = $this->tcSteps['step3']['tcf-db-table'].'.'.$col;
+                    $col = $this->sp('tclangtblcol_', '', $col);
+                    if (in_array($col, $mainTableCols)) {
+                        $col = $this->tcSteps['step3']['tcf-db-table-language-tbl'].'.'.$col;
+                    }
+                } else {
+                    if ($this->hasLanguage()) {
+                        if (in_array($col, $langTableCols)) {
+                            $col = $this->tcSteps['step3']['tcf-db-table'].'.'.$col;
+                        }
+                    }
+                }
+
+                $strSearchableCols[$col] = $col;
             }
 
             // Format array to string
@@ -1307,6 +1323,17 @@ class MelisToolCreatorService  extends MelisCoreGeneralService
         }
 
         return $primaryKey;
+    }
+
+    public function getTableColumns($table)
+    {
+        $selectedTbl = $this->describeTable($table);
+
+        $tblCols = [];
+        foreach ($selectedTbl As $col)
+            $tblCols[] = $col['Field'];
+
+        return $tblCols;
     }
 
     public function describeTable($table)
