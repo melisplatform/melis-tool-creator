@@ -46,7 +46,7 @@
 
                             foreach ($cols As $col){
                                 echo '<tr>';
-                                echo '<th>' . $this->translate('tr_melistoolcreator_' . $col) . '</th>';
+                                echo '<td><b>' . $this->translate('tr_melistoolcreator_' . $col) . '</b></td>';
 
                                 foreach ($this->languages As $lang){
 
@@ -136,7 +136,7 @@
                                         $cVol = str_replace('tclangtblcol_', '', $cVol);
 
                                         echo '<tr>';
-                                        echo '<th>' . $cVol . '</th>';
+                                        echo '<td><b>' . $cVol . '</b></td>';
                                         echo '<td>' . $isRequired . '</td>';
                                         echo '<td>' . $fieldType[$cKey] . '</td>';
                                         echo '</tr>';
@@ -182,9 +182,9 @@
                                                         $rwCols .= '<tr>';
 
                                                         if ($rwCtr < 1)
-                                                            $rwCols .= '<th rowspan="tcrowctr"><h3>'.$lang['lang_name'].'</h3></th>';
+                                                            $rwCols .= '<td rowspan="tcrowctr"><h3>'.$lang['lang_name'].'</h3></td>';
 
-                                                        $rwCols .= '<th>'.$colName.'</th>';
+                                                        $rwCols .= '<td><b>'.$colName.'</b></td>';
                                                         $rwCols .= '<td>'.$cVal.'</td>';
 
                                                         $desc = !empty($tVal[$colKeyPrefx.$colName.'_tcinputdesc']) ? $tVal[$colKeyPrefx.$colName.'_tcinputdesc'] : '-';

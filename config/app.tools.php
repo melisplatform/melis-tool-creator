@@ -48,9 +48,6 @@ return [
                                     'label_options' => [
                                         'disable_html_escape' => true,
                                     ],
-                                    'label_attributes' => [
-                                        'class' => 'melis-radio-box'
-                                    ],
                                     'value_options' => [
                                         'db' => 'tr_melistoolcreator_tcf_tool_type_db',
                                         'iframe' => 'tr_melistoolcreator_tcf_tool_type_iframe',
@@ -90,9 +87,6 @@ return [
                                     'radio-button' => true,
                                     'label_options' => [
                                         'disable_html_escape' => true,
-                                    ],
-                                    'label_attributes' => [
-                                        'class' => 'melis-radio-box'
                                     ],
                                     'value_options' => [
                                         'modal' => 'Modal',

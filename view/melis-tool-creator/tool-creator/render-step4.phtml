@@ -1,5 +1,10 @@
 <div id="<?php echo $this->id; ?>" class="steps-content">
 
+    <?php
+        $form = $this->step4Form;
+        echo $this->form()->openTag($form);
+    ?>
+
     <div class="row">
 
         <div class="col-sm-12">
@@ -14,11 +19,6 @@
                 </div>
             </div>
         <?php } ?>
-
-        <?php
-            $form = $this->step4Form;
-            echo $this->form()->openTag($form);
-        ?>
 
         <div class="col-sm-12">
             <?php if ($this->langTblCols) { ?>
@@ -219,12 +219,11 @@
                 </div>
             </div>
         <?php } ?>
-
-        <?php
-            echo $this->form()->closeTag();
-        ?>
+        
     </div>
-
+    <?php
+        echo $this->form()->closeTag();
+    ?>
 
     <button class="btn btn-default btn-steps" data-curstep="4" data-nxtstep="3"><?php echo $this->translate('tr_melistoolcreator_back') ?></button>
     <button class="btn btn-default pull-right btn-steps tcf-validate" data-curstep="4" data-nxtstep="5"><?php echo $this->translate('tr_melistoolcreator_next') ?></button>

@@ -18,6 +18,7 @@
                 <div id="moduletpl-text-transaltions-<?php echo $this->id . '-' .$key ?>" class="tab-pane <?php echo ($ctr++) ? '': 'active'?>">
                     <?php
                         $form->prepare();
+                        $form->setAttribute('id', $form->getAttribute('id').'-'.$key);
                         echo $this->form()->openTag($form);
                         echo $this->melisFieldCollection($form);
                         echo $this->form()->closeTag();

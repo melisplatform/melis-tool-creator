@@ -75,7 +75,7 @@ $(function(){
                 }
             }, 500);
 
-        }).error(function(xhr, textStatus, errorThrown){
+        }).fail(function(xhr, textStatus, errorThrown){
             console.log( translations.tr_meliscore_error_message );
             // alert(xhr.responseText);
         });

@@ -9,11 +9,8 @@
 
 namespace MelisToolCreator\Service;
 
-//use Zend\ServiceManager\ServiceLocatorAwareInterface;
-//use Zend\ServiceManager\ServiceLocatorInterface;
 use MelisCore\Service\MelisCoreGeneralService;
 use Zend\Session\Container;
-//use Zend\Stdlib\ArrayUtils;
 use Zend\View\Model\JsonModel;
 use Symfony\Component;
 
@@ -27,7 +24,7 @@ class MelisToolCreatorService  extends MelisCoreGeneralService
 
     public function __construct()
     {
-        $this->moduleTplDir = __DIR__ .'/../../lib';
+        $this->moduleTplDir = __DIR__ .'/../../template';
 
         // Tool creator session container
         $container = new Container('melistoolcreator');
