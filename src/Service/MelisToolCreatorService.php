@@ -180,7 +180,7 @@ class MelisToolCreatorService  extends MelisCoreGeneralService
                 return true;
 
         if ($this->isBlankTool())
-            if (in_array($dir, ['public', 'Listener', 'Model']))
+            if (in_array($dir, ['public', 'Listener', 'Model', 'Service']))
                 return true;
 
         if ($this->isFrameworkTool())
@@ -225,7 +225,7 @@ class MelisToolCreatorService  extends MelisCoreGeneralService
 
                 } elseif ($file == 'app.microservice.php') {
 
-                    if (!$this->isFrameworkTool()) {
+                    if (!$this->isBlankTool() && !$this->isFrameworkTool()) {
                         $content = $this->fgc('/Config/app.microservice.php');
                         $this->generateFile('app.microservice.php', $targetDir, $content);
                     }
