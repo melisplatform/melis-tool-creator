@@ -19,6 +19,7 @@
 </ul>
 <?php
     $form = $this->step3Form;
+    $form->setAttribute('id', $form->getAttribute('id').'-'.$this->type);
     echo $this->form()->openTag($form);
-    echo $this->formCollection($form);
+    echo $this->formCollection($form, false);
     echo $this->form()->closeTag();

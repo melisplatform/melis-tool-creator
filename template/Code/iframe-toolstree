@@ -1,0 +1,15 @@
+                                        'moduletpl_tool' => [
+                                            'conf' => [
+                                                'id' => 'id_moduletpl_tool',
+                                                'melisKey' => 'moduletpl_tool',
+                                                'name' => 'tr_moduletpl_title',
+                                                'icon' => 'fa fa-puzzle-piece',
+                                            ],
+                                            'forward' => [
+                                                'module' => 'ModuleTpl',
+                                                'controller' => 'Index',
+                                                'action' => 'render-iframe',
+                                                'jscallback' => '',
+                                                'jsdatas' => []
+                                            ],
+                                        ]

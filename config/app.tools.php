@@ -23,8 +23,8 @@ return [
                     'elements' => [
                         [
                             'spec' => [
-                                'name' => 'tcf-name',
                                 'type' => 'MelisText',
+                                'name' => 'tcf-name',
                                 'options' => [
                                     'label' => 'tr_melistoolcreator_tcf-name',
                                     'tooltip' => 'tr_melistoolcreator_tcf-name tooltip',
@@ -39,43 +39,67 @@ return [
                         ],
                         [
                             'spec' => [
-                                'type' => 'Zend\Form\Element\Radio',
+                                'type' => 'Radio',
                                 'name' => 'tcf-tool-type',
                                 'options' => [
                                     'label' => 'tr_melistoolcreator_tcf_tool_type',
                                     'tooltip' => 'tr_melistoolcreator_tcf_tool_type tooltip',
+                                    'radio-button' => true,
                                     'label_options' => [
                                         'disable_html_escape' => true,
                                     ],
-                                    'label_attributes' => [
-                                        'class' => 'melis-radio-box'
+                                    'value_options' => [
+                                        'db' => 'tr_melistoolcreator_tcf_tool_type_db',
+                                        'iframe' => 'tr_melistoolcreator_tcf_tool_type_iframe',
+                                        'blank' => 'tr_melistoolcreator_tcf_tool_type_blank'
+                                    ],
+                                ],
+                                'attributes' => [
+                                    'value' => 'db',
+                                    'required' => 'required',
+                                ],
+                            ]
+                        ],
+                        [
+                            'spec' => [
+                                'type' => 'MelisText',
+                                'name' => 'tcf-tool-iframe-url',
+                                'options' => [
+                                    'label' => 'tr_melistoolcreator_tcf_tool_iframe_url',
+                                    'tooltip' => 'tr_melistoolcreator_tcf_tool_iframe_url tooltip',
+                                ],
+                                'attributes' => [
+                                    'id' => 'tcf-tool-iframe',
+                                    'value' => '',
+                                    'placeholder' => '',
+                                    'required' => 'required',
+                                    'class' => 'tcf-tool-type tcf-tool-type-iframe form-control'
+                                ],
+                            ],
+                        ],
+                        [
+                            'spec' => [
+                                'type' => 'Radio',
+                                'name' => 'tcf-tool-edit-type',
+                                'options' => [
+                                    'label' => 'tr_melistoolcreator_tcf_tool_edit_type',
+                                    'tooltip' => 'tr_melistoolcreator_tcf_tool_edit_type tooltip',
+                                    'radio-button' => true,
+                                    'label_options' => [
+                                        'disable_html_escape' => true,
                                     ],
                                     'value_options' => [
-                                        'modal' => 'Modal <span class="melis-radio-box-circle"></span>',
-                                        'tab' => 'Tabulation <span class="melis-radio-box-circle"></span>',
+                                        'modal' => 'Modal',
+                                        'tab' => 'Tabulation',
                                     ],
                                 ],
                                 'attributes' => [
                                     'value' => 'modal',
-                                    'class' => 'moudle-name',
                                     'required' => 'required',
+                                    'class' => 'tcf-tool-type tcf-tool-type-db'
                                 ],
                             ]
-                        ]
-                        /*[
-                            'spec' => [
-                                'name' => 'tcf-module-toolstree',
-                                'type' => 'MelisText',
-                                'options' => [
-                                    'label' => 'Tools tree',
-                                    'tooltip' => 'Tools tree',
-                                ],
-                                'attributes' => [
-                                    'id' => 'tcf-module-toolstree',
-                                    'class' => 'hidden',
-                                ],
-                            ],
-                        ],*/
+                        ],
                     ],
                     'input_filter' => [
                         'tcf-name' => [
@@ -114,8 +138,8 @@ return [
                                 ['name' => 'StringTrim'],
                             ],
                         ],
-                        /*'tcf-module-toolstree' => [
-                            'name'     => 'tcf-module-toolstree',
+                        'tcf-tool-iframe-url' => [
+                            'name'     => 'tcf-tool-iframe-url',
                             'required' => true,
                             'validators' => [
                                 [
@@ -126,18 +150,25 @@ return [
                                         ],
                                     ],
                                 ],
+                                [
+                                    'name' => 'regex',
+                                    'options' => [
+                                        'pattern' => '%^(?:(?:https?|ftp)://)(?:\S+(?::\S*)?@|\d{1,3}(?:\.\d{1,3}){3}|(?:(?:[a-z\d\x{00a1}-\x{ffff}]+-?)*[a-z\d\x{00a1}-\x{ffff}]+)(?:\.(?:[a-z\d\x{00a1}-\x{ffff}]+-?)*[a-z\d\x{00a1}-\x{ffff}]+)*(?:\.[a-z\x{00a1}-\x{ffff}]{2,6}))(?::\d+)?(?:[^\s]*)?$%iu',
+                                        'messages' => [\Zend\Validator\Regex::NOT_MATCH => 'tr_melistoolcreator_invalid_url'],
+                                        'encoding' => 'UTF-8',
+                                    ],
+                                ]
                             ],
                             'filters'  => [
                                 ['name' => 'StripTags'],
                                 ['name' => 'StringTrim'],
                             ],
-                        ],*/
+                        ],
                     ],
                 ],
                 'melistoolcreator_step2_form' => [
                     'attributes' => [
                         'name' => 'tool-creator-step-2',
-                        'id' => 'tool-creator-step-2',
                         'class' => 'tool-creator-step-2',
                         'method' => 'POST',
                         'action' => '',
@@ -159,7 +190,6 @@ return [
                                     'tooltip' => 'tr_melistoolcreator_tcf-title tooltip',
                                 ],
                                 'attributes' => [
-                                    'id' => 'tcf-title',
                                     'value' => '',
                                     'placeholder' => '',
                                     'required' => 'required',
@@ -175,7 +205,6 @@ return [
                                     'tooltip' => 'tr_melistoolcreator_tcf-desc tooltip',
                                 ],
                                 'attributes' => [
-                                    'id' => 'tcf-desc',
                                     'value' => '',
                                     'placeholder' => '',
                                     'class' => 'form-control',
@@ -402,10 +431,45 @@ return [
                                 ]
                             ],
                         ],
+                        [
+                            'spec' => [
+                                'name' => 'tcf-db-table-col-display',
+                                'type' => 'Select',
+                                'options' => [
+                                    'value_options' => [
+                                        'raw_view' => 'tr_melistoolcreator_select_raw_view',
+                                        'char_length_limit' => 'tr_melistoolcreator_select_char_len_50',
+                                        'dot_color' => 'tr_melistoolcreator_select_dot_color',
+                                        'admin_name' => 'tr_melistoolcreator_select_admin_name'
+                                    ],
+                                ],
+                                'attributes' => [
+                                    'class' => 'form-control',
+                                ]
+                            ],
+                        ],
                     ],
                     'input_filter' => [
                         'tcf-db-table-cols' => [
                             'name'     => 'tcf-db-table-cols',
+                            'required' => true,
+                            'validators' => [
+                                [
+                                    'name' => 'NotEmpty',
+                                    'options' => [
+                                        'messages' => [
+                                            \Zend\Validator\NotEmpty::IS_EMPTY => 'tr_melistoolcreator_err_empty',
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            'filters'  => [
+                                ['name' => 'StripTags'],
+                                ['name' => 'StringTrim'],
+                            ],
+                        ],
+                        'tcf-db-table-col-display' => [
+                            'name'     => 'tcf-db-table-col-display',
                             'required' => true,
                             'validators' => [
                                 [
@@ -465,16 +529,13 @@ return [
                                 'options' => [
                                     'value_options' => [
                                         'MelisText' => 'tr_melistoolcreator_select_text',
-                                        'Switch' => 'ENUM / Switch',
+                                        'Switch' => 'tr_melistoolcreator_select_switch',
                                         'File' => 'File upload',
                                         'TextArea' => 'Textarea',
                                         'MelisCoreTinyMCE' => 'tr_melistoolcreator_select_textarea_tinymce',
                                         'Datepicker' => 'Date Picker',
                                         'Datetimepicker' => 'Datetime Picker',
-                                        'MelisCmsPluginSiteSelect' => 'Melis site',
-                                        'MelisCmsLanguageSelect' => 'Melis Page Language',
-                                        'MelisCmsTemplateSelect' => 'Melis Template',
-                                        'MelisCoreUserSelect' => 'Melis BO Users',
+                                        'MelisCoreUserSelect' => 'Melis BO Users'
                                     ],
                                 ],
                                 'attributes' => [
@@ -521,8 +582,8 @@ return [
                 ],
                 'melistoolcreator_step6_form' => [
                     'attributes' => [
-                        'name' => '',
-                        'id' => '',
+                        'name' => 'tool-creator-step-6',
+                        'id' => 'tool-creator-step-6',
                         'class' => 'tool-creator-step-6',
                         'method' => 'POST',
                         'action' => '',

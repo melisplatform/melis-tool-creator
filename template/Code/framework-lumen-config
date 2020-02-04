@@ -1,0 +1,15 @@
+    'third-party-framework' => [
+        'index-path' => [
+            '/Lumen/public/index.php'
+        ],
+        'translations' => [
+            'locale' => [
+                'en_EN' => [
+                    __DIR__ .'/../../../thirdparty/Lumen/module/ModuleTpl/language/en/messages.php'
+                ],
+                'fr_FR' => [
+                    __DIR__ .'/../../../thirdparty/Lumen/module/ModuleTpl/language/fr/messages.php'
+                ]
+            ]
+        ]
+    ]

@@ -1,0 +1,15 @@
+    'third-party-framework' => [
+        'index-path' => [
+            '/Symfony/public/index.php'
+        ],
+        'translations' => [
+            'locale' => [
+                'en_EN' => [
+                    __DIR__ .'/../../../thirdparty/Laravel/Modules/ModuleTpl/Resources/lang/en/messages.php'
+                ],
+                'fr_FR' => [
+                    __DIR__ .'/../../../thirdparty/Laravel/Modules/ModuleTpl/Resources/lang/fr/messages.php'
+                ]
+            ]
+        ]
+    ]

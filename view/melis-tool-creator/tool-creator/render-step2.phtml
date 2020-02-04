@@ -23,6 +23,7 @@
                     <div id="toolcreator-text-transaltions-<?php echo $key ?>" class="tab-pane <?php echo ($ctr++) ? '': 'active'?>">
                         <?php
                             $form->prepare();
+                            $form->setAttribute('id', $form->getAttribute('id').'-'.$key);
 
                             $form->setAttribute('id', $key.'-'.$form->getAttribute('id'));
 

@@ -35,8 +35,17 @@ return [
     // Steps
     'tr_melistoolcreator_module' => 'Outil',
     'tr_melistoolcreator_tcf-name tooltip' => 'Nom de l\'outil /module. Seul les caractères alphabétiques sont autorisés',
-    'tr_melistoolcreator_tcf_tool_type' => 'Type d\'édition',
-    'tr_melistoolcreator_tcf_tool_type tooltip' => 'Sélectionnez le type d\'édition que vous voulez pour votre outil. Modal ouvrira les éléments dans une popin centrée qui va bien avec peu de champs à éditer. Tabulation ouvrira une nouvelle tabulation principale dans Melis Platform et conviendra mieux aux longs formulaires qui nécessitent plus de place et de visibilité',
+
+    'tr_melistoolcreator_tcf_tool_type' => 'Type d\'outil',
+    'tr_melistoolcreator_tcf_tool_type tooltip' => 'Outil BDD permet de créer et éditer un outil basé sur une table de la base de données. iFrame permet de charger une URL dans un outil depuis Melis Platform. Blank permet de concevoir uniquement la structure d\'un module.',
+    'tr_melistoolcreator_tcf_tool_type_db' => 'Outil BDD <span class="melis-radio-box-circle"></span>',
+    'tr_melistoolcreator_tcf_tool_type_iframe' => 'Outil en iFrame <span class="melis-radio-box-circle"></span>',
+    'tr_melistoolcreator_tcf_tool_type_blank' => 'Blank <span class="melis-radio-box-circle"></span>',
+    'tr_melistoolcreator_tcf_tool_iframe_url' => 'URL à charger à l\'intérieur de l\'outil',
+    'tr_melistoolcreator_tcf_tool_iframe_url tooltip' => 'L\'outil chargera cette URL dans une nouvelle tabulation quand vous cliquerez sur son nom dans le menu principal',
+
+    'tr_melistoolcreator_tcf_tool_edit_type' => 'Type d\'édition',
+    'tr_melistoolcreator_tcf_tool_edit_type tooltip' => 'Sélectionnez le type d\'édition que vous voulez pour votre outil. Modal ouvrira les éléments dans une popin centrée qui va bien avec peu de champs à éditer. Tabulation ouvrira une nouvelle tabulation principale dans Melis Platform et conviendra mieux aux longs formulaires qui nécessitent plus de place et de visibilité',
     'tr_melistoolcreator_module_title' => 'Propriétés de l\'outil',
     'tr_melistoolcreator_module_desc' => 'Entrez le nom de l\'outil /du module. <br>Puis choisissez le type d\'edition. Modal ouvrira les éléments dans une popin centrée qui va bien avec peu de champs à éditer. <br>Tabulation ouvrira une nouvelle tabulation principale dans Melis Platform et conviendra mieux aux longs formulaires qui nécessitent plus de place et de visibilité',
     'tr_melistoolcreator_texts' => 'Textes',
@@ -64,6 +73,10 @@ return [
     'tr_melistoolcreator_finalization_success_title' => 'l\'outil a été créé avec succès',
     'tr_melistoolcreator_finalization_success_desc_with_counter' => 'La plateforme va se recharger dans <strong><span id="tc-restart-cd">5</span></strong>',
     'tr_melistoolcreator_finalization_success_desc' => 'Vous pouvez activer/désactiver l\'outil en changeant son statut depuis la liste des modules dans Configuration système / Modules',
+    'tr_melistoolcreator_execute_aadtnl_setup' => 'Exécution d\'une configuration supplémentaire',
+    'tr_melistoolcreator_please_wait' => 'Veuillez patienter',
+    'tr_melistoolcreator_yes' => 'Oui',
+    'tr_melistoolcreator_no' => 'Non',
 
     // Texts
     'tr_melistoolcreator_db_tables' => 'Tables de la base de données',
@@ -75,6 +88,7 @@ return [
     'tr_melistoolcreator_col_null' => 'Null',
     'tr_melistoolcreator_col_default' => 'Défaut',
     'tr_melistoolcreator_col_extra' => 'Extra',
+    'tr_melistoolcreator_col_display' => 'Affichage',
     'tr_melistoolcreator_col_editable' => 'Editable',
     'tr_melistoolcreator_col_mandatory' => 'Obligatoire',
     'tr_melistoolcreator_col_field_type' => 'Input type',
@@ -103,9 +117,18 @@ return [
     'tr_melistoolcreator_choose' => 'Choisissez',
     'tr_melistoolcreator_select_text' => 'Texte / Champs normal',
     'tr_melistoolcreator_select_textarea_tinymce' => 'Rich HTML (TinyMCE)',
+    'tr_melistoolcreator_select_switch' => 'Switch ON/OFF vert/rouge',
+    'tr_melistoolcreator_select_raw_view' => 'Valeur en base',
+    'tr_melistoolcreator_select_char_len_50' => 'Valeur coupée à 50 char',
+    'tr_melistoolcreator_select_dot_color' => 'Point vert/rouge',
+    'tr_melistoolcreator_select_site_name' => 'Site',
+    'tr_melistoolcreator_select_lang_name' => 'Langue',
+    'tr_melistoolcreator_select_tpl_name' => 'Template',
+    'tr_melistoolcreator_select_admin_name' => 'Utilisateur BO',
 
     // Forms
     'tr_melistoolcreator_tcf-name' => 'Nom de l\'outil',
+    'tr_melistoolcreator_tcf-tool-iframe-url' => 'Iframe Url',
     'tr_melistoolcreator_tcf-module-toolstree' => 'Arbre des outils',
     'tr_melistoolcreator_tcf-module-toolstree tooltip' => 'Arbre des outils',
     'tr_melistoolcreator_tcf-title' => 'Titre de l\'outil',
@@ -114,19 +137,20 @@ return [
     'tr_melistoolcreator_tcf-desc tooltip' => 'La description de l\'outil est affichée en dessous du titre dans l\'outil',
     'tr_melistoolcreator_inpt_name' => 'Nom',
     'tr_melistoolcreator_inpt_name tooltip' => 'Description tooltip',
-
-    // Warning message
-    'tr_melistoolcreator_warning_message' => 'For a better experience of this tool we recommend to use a wider screen',//TO REMOVE
+    'tr_melistoolcreator_tcf-create-framework-tool' => 'Créer un outil avec un framework tiers',
+    'tr_melistoolcreator_tcf-create-framework-tool tooltip' => 'Sélectionnez si vous souhaitez utiliser un framework tiers',
+    'tr_melistoolcreator_tcf-tool-framework' => 'Sélectionnez le framework',
+    'tr_melistoolcreator_tcf-tool-framework tooltip' => 'Le framework qui sera utilisé pour gérer le contenu de l\'outil généré',
 
     // Error messages
     'tr_melistoolcreator_err_message' => 'Impossible de passer à l\'étape suivante, veuillez réessayer',
     'tr_melistoolcreator_err_invalid_module' => 'Seul les caractères alphabétiques sont autorisés',
+    'tr_melistoolcreator_invalid_url' => 'URL invalide',
     'tr_melistoolcreator_err_empty' => 'Champ requis, ne peut être vide',
     'tr_melistoolcreator_err_long_50' => 'Valeur trop longue, elle doit être de moins de 50 caractères',
     'tr_melistoolcreator_err_long_100' => 'Valeur trop longue, elle doit être de moins de 100 caractères',
     'tr_melistoolcreator_err_long_250' => 'Valeur trop longue, elle doit être de moins de 250 caractères',
     'tr_melistoolcreator_err_no_selected_db' => 'Veuillez choisir une table avant de procéder à l\'étape suivante',
-    'tr_melistoolcreator_err_no_primary_key' => 'La table sélectionnée n\'a pas de clef primaire',
     'tr_melistoolcreator_err_no_selected_col' => 'Veuillez choisir au moins une colonne pour procéder à l\'étape suivante',
     'tr_melistoolcreator_err_module_exist' => '"%s" existe déjà, veuillez en choisir un autre',
     'tr_melistoolcreator_err_select_pri_key_tbl' => 'Dans la table secondaire sélectionnez la clef étrangère vers la table principale',
@@ -147,6 +171,7 @@ return [
     'tr_melistoolcreator_common_table_delete_button' => 'Supprimer',
     'tr_melistoolcreator_common_table_column_action' => 'Action',
     'tr_melistoolcreator_common_button_add' => 'Ajouter',
+    'tr_melistoolcreator_common_add_item' => 'Ajouter élément',
     'tr_melistoolcreator_common_button_close' => 'Fermer',
     'tr_melistoolcreator_common_button_save' => 'Enregistrer',
     'tr_melistoolcreator_common_button_yes' => 'Oui',
@@ -163,4 +188,8 @@ return [
     'tr_melistoolcreator_delete_item' => 'Supprimer l\'élément',
     'tr_melistoolcreator_delete_success' => 'Elément supprimé avec succès',
     'tr_melistoolcreator_must_numeric' => 'Champ requis doit être un nombre',
+
+    // Addition step1
+    'tr_melistoolcreator_tcf_microservices_title' => 'Créer un accès aux microservices',
+    'tr_melistoolcreator_tcf_microservices_tooltip' => 'Créer un fichier de config pour ajouter le service généré dans la liste des services pour la plateforme',
 ];

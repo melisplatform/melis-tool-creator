@@ -1,0 +1,34 @@
+            /*
+             * This will assign data to required fields if the column is empty
+             * for language fields
+             */
+            $engineLangTbl = $this->getServiceLocator()->get('MelisEngineTableCmsLang');
+            $langTbl = $this->getServiceLocator()->get('ModuleTplLangTable');
+
+            foreach ($tableData As $key => $val){
+                foreach ($val As $col => $data){
+                    $langName = '';
+                    if (in_array($col, [#TCREQUIRETBLFIELDS]) && $data == ''){
+                        $langRes = $langTbl->getTableGateway()->select([
+                            '#TCPFKEY = '. $val['DT_RowId'],
+                            $col .' IS NOT NULL'
+                        ])->current();
+
+                        if (!empty($langRes) && $langRes->$col != ''){
+                            $data = $langRes->$col;
+                            // Adding language name
+                            $cmsLang = $engineLangTbl->getEntryById($langRes->#TCLANGFKEY)->current();
+                            if (!empty($cmsLang))
+                                $langName = '('. $cmsLang->lang_cms_name .')';
+                        }
+                    }
+
+#TCTABLECOLDISPLAYFILTER
+
+                    $tableData[$key][$col] = $data;
+
+                    if (!empty($langName)){
+                        $tableData[$key][$col] .= ' '. $langName;
+                    }
+                }
+            }

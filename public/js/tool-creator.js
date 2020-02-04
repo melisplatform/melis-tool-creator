@@ -26,7 +26,7 @@ $(function(){
                  * This form contains input with the same name attribute of "tcf-db-table-cols"
                  */
                 var multInpt = "";
-                if ($.inArray(v.name, ["tcf-db-table-cols", "tcf-db-table-col-editable", "tcf-db-table-col-required", "tcf-db-table-col-type", ""]) != -1){
+                if ($.inArray(v.name, ["tcf-db-table-cols", "tcf-db-table-col-display", "tcf-db-table-col-editable", "tcf-db-table-col-required", "tcf-db-table-col-type", ""]) != -1){
                     multInpt = "[]";
                 }
 
@@ -71,12 +71,12 @@ $(function(){
                 }else{
                     melisHelper.melisKoNotification(data.textTitle, data.textMessage, data.errors);
                     tcHighlightErrors(0, data.errors, ".tool-creator-step-"+curStep);
-                    $("#id_melistoolcreator_steps #loader").remove()
+                    $("#id_melistoolcreator_steps #loader").remove();
                 }
             }, 500);
 
-        }).error(function(xhr, textStatus, errorThrown){
-            alert( translations.tr_meliscore_error_message );
+        }).fail(function(xhr, textStatus, errorThrown){
+            console.log( translations.tr_meliscore_error_message );
             // alert(xhr.responseText);
         });
     });
@@ -90,6 +90,20 @@ $(function(){
             $(divContainer + " .form-control[name='"+key +"']").prev("label").css("color","red");
         });
     }
+
+    $body.on("change", "input[name='tcf-tool-type']", function(){
+        $(".tcf-tool-type").parents(".form-group").hide();
+        $(".tcf-tool-type-"+$(this).val()).parents(".form-group").show();
+
+        if ($("input[name='tcf-tool-framework'].tcf-tool-type-"+$(this).val()).length) {
+
+            if ($("input[name='tcf-create-framework-tool']").parents(".make-switch").find(".switch-animate").hasClass("switch-on"))  {
+                $("input[name='tcf-tool-framework'].tcf-tool-type-"+$(this).val()).parents(".form-group").show();
+            }else{
+                $("input[name='tcf-tool-framework'].tcf-tool-type-"+$(this).val()).parents(".form-group").hide();
+            }
+        }
+    });
 
     $body.on("click", ".tc-reload-dbtbl-cached", function(){
 
@@ -113,6 +127,23 @@ $(function(){
     $body.on("click", ".melis-toolcreator-steps-table-tabs .widget-head a[data-toggle='tab']", function(){
        var type =$(this).data("type");
     });
+
+    function resetLangDbSelection(disableTlb){
+
+        $(".melis-toolcreator-steps-language-db-table-list li").removeClass("melis-toolcreator-disable-db-tbl-item");
+        if (typeof disableTlb !== "undefined"){
+            $(".melis-toolcreator-steps-language-db-table-list li[data-table-name='"+disableTlb+"']").addClass("melis-toolcreator-disable-db-tbl-item");
+        }
+
+        $(".melis-toolcreator-steps-language-db-table-list li .fa").removeClass("fa-check-square-o")
+            .addClass("fa-square-o")
+            .removeClass("text-success");
+        $(".melis-toolcreator-steps-language-db-table-columns").html("");
+        $(".melis-toolcreator-steps-language-db-table-list input[name='tcf-db-table-language-tbl']").val("");
+        $(".melis-toolcreator-steps-language-db-table-list input[name='tcf-db-table-language-pri-fk']").val("");
+        $(".melis-toolcreator-steps-language-db-table-list input[name='tcf-db-table-language-lang-fk']").val("");
+        $(".melis-toolcreator-steps-table-list.melis-toolcreator-steps-language-db-table-list #loader").remove();
+    }
 
     $body.on("click", ".melis-toolcreator-steps-table-list li", function(){
 
@@ -175,22 +206,7 @@ $(function(){
         });
     });
 
-    function resetLangDbSelection(disableTlb){
 
-        $(".melis-toolcreator-steps-language-db-table-list li").removeClass("melis-toolcreator-disable-db-tbl-item");
-        if (typeof disableTlb !== "undefined"){
-            $(".melis-toolcreator-steps-language-db-table-list li[data-table-name='"+disableTlb+"']").addClass("melis-toolcreator-disable-db-tbl-item");
-        }
-
-        $(".melis-toolcreator-steps-language-db-table-list li .fa").removeClass("fa-check-square-o")
-                                                                    .addClass("fa-square-o")
-                                                                    .removeClass("text-success");
-        $(".melis-toolcreator-steps-language-db-table-columns").html("");
-        $(".melis-toolcreator-steps-language-db-table-list input[name='tcf-db-table-language-tbl']").val("");
-        $(".melis-toolcreator-steps-language-db-table-list input[name='tcf-db-table-language-pri-fk']").val("");
-        $(".melis-toolcreator-steps-language-db-table-list input[name='tcf-db-table-language-lang-fk']").val("");
-        $(".melis-toolcreator-steps-table-list.melis-toolcreator-steps-language-db-table-list #loader").remove();
-    }
 
     $body.on("click", ".melis-toolcreator-steps-tbl-cols .tcf-fa-checkbox", function(){
 
@@ -201,9 +217,14 @@ $(function(){
                                                                                                 .removeClass("text-success")
                                                                                                 .removeClass("fa-check-square-o")
                                                                                                 .next("input").attr("checked", false);
+
+                if ($(this).hasClass("tfc-table-list")) {
+                    // Disabling field type select input
+                    $("select[name='tcf-db-table-col-display'][data-col-type='"+$(this).data("col-type")+"']").attr("disabled", true);
+                }
             }else{
                 // Unchecking select all checkbox
-                $(".tcf-fa-checkbox.tcf-fa-checkall[data-col-type='"+$(this).data("col-type")+"'").addClass("fa-square-o")
+                $(".tcf-fa-checkbox.tcf-fa-checkall[data-col-type='"+$(this).data("col-type")+"']").addClass("fa-square-o")
                                                                                                 .removeClass("text-success")
                                                                                                 .removeClass("fa-check-square-o");
             }
@@ -231,13 +252,23 @@ $(function(){
                 $(this).parents("tr").find("select[name='tcf-db-table-col-type']").attr("disabled", true);
             }
 
+
+            if ($(this).hasClass("tfc-table-list")) {
+                // Disabling field type select input
+                $(this).parents("tr").find("select[name='tcf-db-table-col-display']").attr("disabled", true);
+            }
+
         }else{
             // Checking
             if ($(this).hasClass("tcf-fa-checkall")){
-                $(".tcf-fa-checkbox.tcf-fa-checkitem[data-col-type='"+$(this).data("col-type")+"'").removeClass("fa-square-o")
+                $(".tcf-fa-checkbox.tcf-fa-checkitem[data-col-type='"+$(this).data("col-type")+"']").removeClass("fa-square-o")
                                                                                                 .addClass("fa-check-square-o")
                                                                                                 .addClass("text-success")
                                                                                                 .next("input").attr("checked", true);
+                if ($(this).hasClass("tfc-table-list")) {
+                    // Disabling field type select input
+                    $("select[name='tcf-db-table-col-display'][data-col-type='"+$(this).data("col-type")+"']").attr("disabled", false);
+                }
             }
 
             $(this).removeClass("fa-square-o")
@@ -247,7 +278,7 @@ $(function(){
 
             // Set check "select all checkbox"
             if ($(".tcf-fa-checkbox.tcf-fa-checkitem").length === $(".tcf-fa-checkbox.tcf-fa-checkitem.fa-check-square-o").length){
-                $(".tcf-fa-checkbox.tcf-fa-checkall[data-col-type='"+$(this).data("col-type")+"'").removeClass("fa-square-o")
+                $(".tcf-fa-checkbox.tcf-fa-checkall[data-col-type='"+$(this).data("col-type")+"']").removeClass("fa-square-o")
                                                                                             .addClass("fa-check-square-o")
                                                                                             .addClass("text-success");
             }
@@ -274,6 +305,11 @@ $(function(){
                 // Enabling field type select input
                 $(this).parents("tr").find("select[name='tcf-db-table-col-type']").attr("disabled", false);
             }
+
+            if ($(this).hasClass("tfc-table-list")) {
+                // Disabling field type select input
+                $(this).parents("tr").find("select[name='tcf-db-table-col-display']").attr("disabled", false);
+            }
         }
     });
 
@@ -284,10 +320,10 @@ $(function(){
             $(this).removeClass("text-success");
             $(this).removeClass("fa-check-square-o");
             $(".melis-tc-tool-language-db-list").hide(1000, "linear", function(){
-                $("#tool-creator-step-3 input[name='tcf-db-table-has-language']").val("");
-                $("#tool-creator-step-3 input[name='tcf-db-table-language-tbl']").val("");
-                $("#tool-creator-step-3 input[name='tcf-db-table-language-pri-fk']").val("");
-                $("#tool-creator-step-3 input[name='tcf-db-table-language-lang-fk']").val("");
+                $(".tool-creator-step-3 input[name='tcf-db-table-has-language']").val("");
+                $(".tool-creator-step-3 input[name='tcf-db-table-language-tbl']").val("");
+                $(".tool-creator-step-3 input[name='tcf-db-table-language-pri-fk']").val("");
+                $(".tool-creator-step-3 input[name='tcf-db-table-language-lang-fk']").val("");
             });
         }else{
             // Checking
@@ -295,7 +331,7 @@ $(function(){
             $(this).addClass("fa-check-square-o");
             $(this).addClass("text-success");
             $(".melis-tc-tool-language-db-list").show(1000, "linear", function(){
-                $("#tool-creator-step-3 input[name='tcf-db-table-has-language']").val(1);
+                $(".tool-creator-step-3 input[name='tcf-db-table-has-language']").val(1);
             });
         }
     });
@@ -306,8 +342,9 @@ $(function(){
             $(this).addClass("fa-square-o");
             $(this).removeClass("text-success");
             $(this).removeClass("fa-check-square-o");
-            $("#tool-creator-step-3 input[name='"+$(this).data("field-name")+"']").val("");
+            $(".tool-creator-step-3 input[name='"+$(this).data("field-name")+"']").val("");
         }else{
+            var ptFkInpt;
             // Checking
             if ($(this).hasClass("melis-tc-lang-tbl-pt-fk")){
                 $(".melis-tc-lang-tbl-pt-fk.fa").addClass("fa-square-o")
@@ -319,9 +356,9 @@ $(function(){
                     .removeClass("text-success")
                     .removeClass("fa-check-square-o");
 
-                $ptFkInpt = $("#tool-creator-step-3 input[name='"+ltFk.data("field-name")+"']");
-                if ($ptFkInpt.val() === $(this).data("tbl-name")) {
-                    $ptFkInpt.val("");
+                ptFkInpt = $(".tool-creator-step-3 input[name='"+ltFk.data("field-name")+"']");
+                if (ptFkInpt.val() === $(this).data("tbl-name")) {
+                    ptFkInpt.val("");
                 }
 
             }else{
@@ -334,17 +371,27 @@ $(function(){
                     .removeClass("text-success")
                     .removeClass("fa-check-square-o");
 
-                $ptFkInpt = $("#tool-creator-step-3 input[name='"+ptFk.data("field-name")+"']");
-                if ($ptFkInpt.val() === $(this).data("tbl-name")) {
-                    $ptFkInpt.val("");
+                ptFkInpt = $(".tool-creator-step-3 input[name='"+ptFk.data("field-name")+"']");
+                if (ptFkInpt.val() === $(this).data("tbl-name")) {
+                    ptFkInpt.val("");
                 }
             }
 
-            $("#tool-creator-step-3 input[name='"+$(this).data("field-name")+"']").val($(this).data("tbl-name"));
+            $(".tool-creator-step-3 input[name='"+$(this).data("field-name")+"']").val($(this).data("tbl-name"));
 
             $(this).removeClass("fa-square-o");
             $(this).addClass("fa-check-square-o");
             $(this).addClass("text-success");
+        }
+    });
+
+    $body.on("switch-change", "div.make-switch[data-input-name='tcf-create-framework-tool']", function(e, data){
+        if(data.value === false){
+            $("label[for='tcf-tool-framework']").parents(".form-group").hide();
+            // $("input[name='tcf-tool-framework']").attr("disabled", true);
+        }else{
+            $("label[for='tcf-tool-framework']").parents(".form-group").show();
+            // $("input[name='tcf-tool-framework']").attr("disabled", false);
         }
     });
 

@@ -1,5 +1,10 @@
 <div id="<?php echo $this->id; ?>" class="steps-content">
 
+    <?php
+        $form = $this->step4Form;
+        echo $this->form()->openTag($form);
+    ?>
+
     <div class="row">
 
         <div class="col-sm-12">
@@ -14,11 +19,6 @@
                 </div>
             </div>
         <?php } ?>
-
-        <?php
-            $form = $this->step4Form;
-            echo $this->form()->openTag($form);
-        ?>
 
         <div class="col-sm-12">
             <?php if ($this->langTblCols) { ?>
@@ -47,7 +47,7 @@
                                             $checkBoxIcon = "fa-square-o";
                                     }
                                 ?>
-                                <th><i class="fa <?php echo $checkBoxIcon ?> fa-lg tcf-fa-checkbox tcf-fa-checkall" data-col-type="pri-cols"></i></th>
+                                <th><i class="fa <?php echo $checkBoxIcon ?> fa-lg tcf-fa-checkbox tcf-fa-checkall tfc-table-list" data-col-type="pri-cols"></i></th>
                                 <th>#</th>
                                 <th><?php echo $this->translate('tr_melistoolcreator_col_pk') ?></th>
                                 <th><?php echo $this->translate('tr_melistoolcreator_col_name') ?></th>
@@ -55,6 +55,7 @@
                                 <th><?php echo $this->translate('tr_melistoolcreator_col_null') ?></th>
                                 <th><?php echo $this->translate('tr_melistoolcreator_col_default') ?></th>
                                 <th><?php echo $this->translate('tr_melistoolcreator_col_extra') ?></th>
+                                <th><?php echo $this->translate('tr_melistoolcreator_col_display') ?></th>
                             </tr>
                         </thead>
                         <?php
@@ -69,6 +70,9 @@
 
                                 $checkBox = $form->get('tcf-db-table-cols')->setCheckedValue($col['Field']);
 
+                                $colDsplay = $form->get('tcf-db-table-col-display');
+                                $colDsplay->setAttribute('data-col-type', 'pri-cols');
+
                                 $checkBoxIcon = "fa-check-square-o text-success";
                                 $checkBox->setChecked(true);
 
@@ -76,12 +80,20 @@
                                     if (!in_array($col['Field'], $this->tblColumns)){
                                         $checkBox->setChecked(false);
                                         $checkBoxIcon = "fa-square-o";
+
+                                        $colDsplay->setAttribute('disabled', 'disabled');
+                                        $colDsplay->setValue('rawView');
+
+                                    }else{
+                                        $colDsplay->removeAttribute('disabled');
+                                        $key = array_search($col['Field'], $this->tblColumns);
+                                        $colDsplay->setValue($this->tblColumnsDisplay[$key]);
                                     }
                                 }
 
                                 echo '<tr>
                                         <td>
-                                            <i class="fa '.$checkBoxIcon.' fa-lg tcf-fa-checkbox tcf-fa-checkitem" data-col-type="pri-cols"></i>
+                                            <i class="fa '.$checkBoxIcon.' fa-lg tcf-fa-checkbox tcf-fa-checkitem tfc-table-list" data-col-type="pri-cols"></i>
                                             '.$this->formElement($checkBox).'
                                         </td>
                                         <td>'.$ctr++.'</td>
@@ -91,6 +103,7 @@
                                         <td>'.$col['Null'].'</td>
                                         <td>'.$col['Default'].'</td>
                                         <td>'.$col['Extra'].'</td>
+                                        <td>'.$this->formElement($colDsplay).'</td>
                                     </tr>';
                             }
                         ?>
@@ -124,7 +137,7 @@
                                             $checkBoxIcon = "fa-square-o";
                                     }
                                 ?>
-                                <th><i class="fa <?php echo $checkBoxIcon ?> fa-lg tcf-fa-checkbox tcf-fa-checkall" data-col-type="lang-cols"></i></th>
+                                <th><i class="fa <?php echo $checkBoxIcon ?> fa-lg tcf-fa-checkbox tcf-fa-checkall tfc-table-list" data-col-type="lang-cols"></i></th>
                                 <th>#</th>
                                 <th><?php echo $this->translate('tr_melistoolcreator_col_pk') ?></th>
                                 <th><?php echo $this->translate('tr_melistoolcreator_col_fk') ?></th>
@@ -133,6 +146,7 @@
                                 <th><?php echo $this->translate('tr_melistoolcreator_col_null') ?></th>
                                 <th><?php echo $this->translate('tr_melistoolcreator_col_default') ?></th>
                                 <th><?php echo $this->translate('tr_melistoolcreator_col_extra') ?></th>
+                                <th><?php echo $this->translate('tr_melistoolcreator_col_display') ?></th>
                             </tr>
                             </thead>
                             <?php
@@ -149,6 +163,9 @@
                                     $langCOls = 'tclangtblcol_'.$col['Field'];
                                     $checkBox = $form->get('tcf-db-table-cols')->setCheckedValue($langCOls);
 
+                                    $colDsplay = $form->get('tcf-db-table-col-display');
+                                    $colDsplay->setAttribute('data-col-type', 'lang-cols');
+
                                     $checkBoxIcon = "fa-check-square-o text-success";
                                     $checkBox->setChecked(true);
 
@@ -156,6 +173,13 @@
                                         if (!in_array($langCOls, $this->tblColumns)){
                                             $checkBox->setChecked(false);
                                             $checkBoxIcon = "fa-square-o";
+
+                                            $colDsplay->setAttribute('disabled', 'disabled');
+                                            $colDsplay->setValue('rawView');
+                                        }else{
+                                            $colDsplay->removeAttribute('disabled');
+                                            $key = array_search($langCOls, $this->tblColumns);
+                                            $colDsplay->setValue($this->tblColumnsDisplay[$key]);
                                         }
                                     }
 
@@ -166,9 +190,15 @@
                                         }
                                     }
 
-                                    echo '<tr>
+                                    $skipCol = false;
+                                    if ($col['Field'] == $this->fkMainTbl){
+                                        $skipCol = true;
+                                    }
+
+                                    if (!$skipCol){
+                                        echo '<tr>
                                             <td>
-                                                <i class="fa '.$checkBoxIcon.' fa-lg tcf-fa-checkbox tcf-fa-checkitem" data-col-type="lang-cols"></i>
+                                                <i class="fa '.$checkBoxIcon.' fa-lg tcf-fa-checkbox tcf-fa-checkitem tfc-table-list" data-col-type="lang-cols"></i>
                                                 '.$this->formElement($checkBox).'
                                             </td>
                                             <td>'.$ctr++.'</td>
@@ -179,7 +209,9 @@
                                             <td>'.$col['Null'].'</td>
                                             <td>'.$col['Default'].'</td>
                                             <td>'.$col['Extra'].'</td>
+                                            <td>'.$this->formElement($colDsplay).'</td>
                                         </tr>';
+                                    }
                                 }
                             ?>
                         </table>
@@ -187,12 +219,11 @@
                 </div>
             </div>
         <?php } ?>
-
-        <?php
-            echo $this->form()->closeTag();
-        ?>
+        
     </div>
-
+    <?php
+        echo $this->form()->closeTag();
+    ?>
 
     <button class="btn btn-default btn-steps" data-curstep="4" data-nxtstep="3"><?php echo $this->translate('tr_melistoolcreator_back') ?></button>
     <button class="btn btn-default pull-right btn-steps tcf-validate" data-curstep="4" data-nxtstep="5"><?php echo $this->translate('tr_melistoolcreator_next') ?></button>

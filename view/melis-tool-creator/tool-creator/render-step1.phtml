@@ -6,36 +6,22 @@
             <?php
                 $form = $this->step1Form;
                 echo $this->form()->openTag($form);
-            ?>
-            <div class="form-group">
-                <?php
-                    $moduleField = $form->get('tcf-name');
-                    $moduleField->setLabelOptions(array('disable_html_escape' => true));
-                    $label = $moduleField->getLabel().' *<i class="fa fa-info-circle fa-lg pull-right tip-info" data-toggle="tooltip" data-placement="left" title="" data-original-title="'.$moduleField->getOption('tooltip').'"></i>';
-                    $moduleField->setLabel($label);
-                    echo $this->formLabel($moduleField);
-                    echo $this->formElement($moduleField);
-                    echo $this->formElementErrors($moduleField, array('class' => 'text-danger'));
-                ?>
-            </div>
-            <div class="form-group">
-                <?php
-                    $typeField = $form->get('tcf-tool-type');
-                    $inputLabel = $typeField->getLabelAttributes();
-                    $typeField->setLabelAttributes(array('class', null));
-                    $label = $typeField->getLabel().'<i class="fa fa-info-circle fa-lg pull-right tip-info" data-toggle="tooltip" data-placement="left" title="" data-original-title="'.$typeField->getOption('tooltip').'"></i>';
-                    $typeField->setLabel($label);
-                    echo $this->formLabel($typeField);
-                    $typeField->setLabelAttributes($inputLabel);
-                    echo $this->formElement($typeField);
-                ?>
-            </div>
-            <?php
+                echo $this->melisFieldCollection($form);
                 echo $this->form()->closeTag();
             ?>
         </div>
     </div>
+    <?php
+        $toolType = $form->get('tcf-tool-type')->getValue();
 
+        if (!empty($toolType)){
+            $scrptTag = '<script>%s</script>';
+            $scrpt = '$(".tcf-tool-type").parents(".form-group").hide();
+            $(".tcf-tool-type-'.$toolType.'").parents(".form-group").show();';
+
+            echo sprintf($scrptTag, $scrpt);
+        }
+    ?>
     <div style="text-align: right;">
         <button class="btn btn-default btn-steps tcf-validate" data-curstep="1" data-nxtstep="2" data-validate="true"><?php echo $this->translate('tr_melistoolcreator_next') ?></button>
     </div>

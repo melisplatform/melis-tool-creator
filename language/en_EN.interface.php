@@ -35,8 +35,17 @@ return [
     // Steps
     'tr_melistoolcreator_module' => 'Tool',
     'tr_melistoolcreator_tcf-name tooltip' => 'Name of the tool /module. Only alphabetic characters are authorized',
-    'tr_melistoolcreator_tcf_tool_type' => 'Edition type',
-    'tr_melistoolcreator_tcf_tool_type tooltip' => 'Select the edition type you want for your tool. Modal will open items in a centered modal and it suits items with few editable fields. Tabulation will open a main new tab in Melis Platform and will be more suited for long forms that require space and more visibility.',
+
+    'tr_melistoolcreator_tcf_tool_type' => 'Type of tool',
+    'tr_melistoolcreator_tcf_tool_type tooltip' => 'DB tool allows to create and edit a tool based on a table from the database. iFrame tool allows to charge a URL in a tool from Melis Platform. Blank tool allows to create only the structure of a module.',
+    'tr_melistoolcreator_tcf_tool_type_db' => 'DB Tool',
+    'tr_melistoolcreator_tcf_tool_type_iframe' => 'iFrame Tool',
+    'tr_melistoolcreator_tcf_tool_type_blank' => 'Blank',
+    'tr_melistoolcreator_tcf_tool_iframe_url' => 'URL to load inside the tool',
+    'tr_melistoolcreator_tcf_tool_iframe_url tooltip' => 'The tool will load this URL inside a tabulation when you’ll click on his name inside the main menu',
+
+    'tr_melistoolcreator_tcf_tool_edit_type' => 'Edition type',
+    'tr_melistoolcreator_tcf_tool_edit_type tooltip' => 'Select the edition type you want for your tool. Modal will open items in a centered modal and it suits items with few editable fields. Tabulation will open a main new tab in Melis Platform and will be more suited for long forms that require space and more visibility.',
     'tr_melistoolcreator_module_title' => 'Tool\'s properties',
     'tr_melistoolcreator_module_desc' => 'Enter the name of the tool / module. <br>Then choose the edition\'s type. Modal will open items in a centered modal and it suits items with few editable fields. <br>Tabulation will open a main new tab in Melis Platform and will be more suited for long forms that require space and more visibility.', 
     'tr_melistoolcreator_texts' => 'Texts',
@@ -64,6 +73,10 @@ return [
     'tr_melistoolcreator_finalization_success_title' => 'The tool has been successfully created',
     'tr_melistoolcreator_finalization_success_desc_with_counter' => 'The platform will refresh in <strong><span id="tc-restart-cd">5</span></strong>',
     'tr_melistoolcreator_finalization_success_desc' => 'You can manually activate/deactivate the tool now by changing its status from the list of modules in System configuration / Modules',
+    'tr_melistoolcreator_execute_aadtnl_setup' => 'Executing additional setup',
+    'tr_melistoolcreator_please_wait' => 'Please wait',
+    'tr_melistoolcreator_yes' => 'Yes',
+    'tr_melistoolcreator_no' => 'No',
 
     // Texts
     'tr_melistoolcreator_db_tables' => 'Tables',
@@ -75,6 +88,7 @@ return [
     'tr_melistoolcreator_col_null' => 'Null',
     'tr_melistoolcreator_col_default' => 'Default',
     'tr_melistoolcreator_col_extra' => 'Extra',
+    'tr_melistoolcreator_col_display' => 'Display',
     'tr_melistoolcreator_col_editable' => 'Editable',
     'tr_melistoolcreator_col_mandatory' => 'Mandatory',
     'tr_melistoolcreator_col_field_type' => 'Input type',
@@ -103,9 +117,18 @@ return [
     'tr_melistoolcreator_choose' => 'Choose',
     'tr_melistoolcreator_select_text' => 'Text / Classic input',
     'tr_melistoolcreator_select_textarea_tinymce' => 'HTML Riche (TinyMCE)',
+    'tr_melistoolcreator_select_switch' => 'Switch ON/OFF green/red',
+    'tr_melistoolcreator_select_raw_view' => 'Raw view',
+    'tr_melistoolcreator_select_char_len_50' => 'Raw value truncated at 50 char',
+    'tr_melistoolcreator_select_dot_color' => 'Color dot green/red',
+    'tr_melistoolcreator_select_site_name' => 'Site',
+    'tr_melistoolcreator_select_lang_name' => 'Language',
+    'tr_melistoolcreator_select_tpl_name' => 'Template',
+    'tr_melistoolcreator_select_admin_name' => 'BO User',
 
     // Forms
     'tr_melistoolcreator_tcf-name' => 'Tool name',
+    'tr_melistoolcreator_tcf-tool-iframe-url' => 'Iframe Url',
     'tr_melistoolcreator_tcf-module-toolstree' => 'Toolstree',
     'tr_melistoolcreator_tcf-module-toolstree tooltip' => 'Toolstree',
     'tr_melistoolcreator_tcf-title' => 'Tool title',
@@ -114,19 +137,20 @@ return [
     'tr_melistoolcreator_tcf-desc tooltip' => 'The tool description is displayed below the top title inside the tool',
     'tr_melistoolcreator_inpt_name' => 'Name',
     'tr_melistoolcreator_inpt_name tooltip' => 'Tooltip description',
-
-    // Warning message
-    'tr_melistoolcreator_warning_message' => 'For a better experience of this tool we recommend to use a wider screen',//TO REMOVE
+    'tr_melistoolcreator_tcf-create-framework-tool' => 'Create a tool with a third-party framework',
+    'tr_melistoolcreator_tcf-create-framework-tool tooltip' => 'Select if you would like to use a third-party framework',
+    'tr_melistoolcreator_tcf-tool-framework' => 'Select Framework',
+    'tr_melistoolcreator_tcf-tool-framework tooltip' => 'The third-party framework that will be used to manage the content of the tool',
 
     // Error messages
     'tr_melistoolcreator_err_message' => 'Unable to proceed to the next step, please try again',
     'tr_melistoolcreator_err_invalid_module' => 'Only alphabetic characters are authorized',
+    'tr_melistoolcreator_invalid_url' => 'Invalid Url',
     'tr_melistoolcreator_err_empty' => 'The input is required and cannot be empty',
     'tr_melistoolcreator_err_long_50' => 'Value is too long, it should be less than 50 characters',
     'tr_melistoolcreator_err_long_100' => 'Value is too long, it should be less than 100 characters',
     'tr_melistoolcreator_err_long_250' => 'Value is too long, it should be less than 250 characters',
     'tr_melistoolcreator_err_no_selected_db' => 'Please select a table before proceeding to the next step',
-    'tr_melistoolcreator_err_no_primary_key' => 'The selected table has no primary key',
     'tr_melistoolcreator_err_no_selected_col' => 'Please select at least one table column to proceed to the next step',
     'tr_melistoolcreator_err_module_exist' => '"%s" already exists, please try another one',
     'tr_melistoolcreator_err_select_pri_key_tbl' => 'In the secondary table select the foreign key to the main table',
@@ -147,11 +171,12 @@ return [
     'tr_melistoolcreator_common_table_delete_button' => 'Delete',
     'tr_melistoolcreator_common_table_column_action' => 'Action',
     'tr_melistoolcreator_common_button_add' => 'Add',
+    'tr_melistoolcreator_common_add_item' => 'Add item',
     'tr_melistoolcreator_common_button_close' => 'Close',
     'tr_melistoolcreator_common_button_save' => 'Save',
     'tr_melistoolcreator_common_button_yes' => 'Yes',
     'tr_melistoolcreator_common_button_no' => 'No',
-    'tr_melistoolcreator_created_success' => 'Item created succesfully',
+    'tr_melistoolcreator_created_success' => 'Item created successfully',
     'tr_melistoolcreator_unable_to_save' => 'Unable to save',
     'tr_melistoolcreator_save_success' => 'Item saved successfully',
     'tr_melistoolcreator_value_must_not_is_empty' => 'The input is required and cannot be empty',
@@ -163,4 +188,8 @@ return [
     'tr_melistoolcreator_delete_item' => 'Delete item',
     'tr_melistoolcreator_delete_success' => 'Item deleted successfully',
     'tr_melistoolcreator_must_numeric' => 'The input must be numeric',
+
+    // Addition step1
+    'tr_melistoolcreator_tcf_microservices_title' => 'Create microservices access',
+    'tr_melistoolcreator_tcf_microservices_tooltip' => 'Create config to add the service generated in the list of services for the platform',
 ];
