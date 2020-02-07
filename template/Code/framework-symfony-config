@@ -4,7 +4,7 @@
         ],
         'translations' => [
             'files' => [
-                __DIR__ .'/../../melis-platform-framework-symfony/Resources/translations/melis/symfony-translations.phtml'
+                $_SERVER['DOCUMENT_ROOT'] .'/../vendor/melisplatform/melis-platform-framework-symfony/Resources/translations/melis/symfony-translations.phtml'
             ]
         ]
     ]
