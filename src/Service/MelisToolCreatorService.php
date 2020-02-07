@@ -219,7 +219,10 @@ class MelisToolCreatorService  extends MelisCoreGeneralService
                     if ($this->isBlankTool())
                         $fileName = 'blank-'.$fileName;
 
-                    $interfaceContent = $this->fgc('/Config/'.$fileName);
+                    if ($this->isFrameworkTool())
+                        $interfaceContent = $this->fgc('/Code/framework-'.strtolower($this->isFrameworkTool()).'-interface');
+                    else
+                        $interfaceContent = $this->fgc('/Config/'.$fileName);
 
                     $this->generateFile(str_replace('blank-', '', $fileName), $targetDir, $interfaceContent);
 
