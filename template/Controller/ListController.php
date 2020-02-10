@@ -78,7 +78,7 @@ class ListController extends AbstractActionController
             $sortOrder = $sortOrder[0]['dir'];
 
             $tableData = $moduleTplService->getList($start, $length, $melisTool->getSearchableColumns(), $search, $selCol, $sortOrder, $langId)->toArray();
-            $dataCount = count($moduleTplService->getList(null, null, $melisTool->getSearchableColumns(), null, null, 'ASC', $langId)->toArray());
+            $dataCount = count($moduleTplService->getList(null, null, $melisTool->getSearchableColumns(), $search, null, 'ASC', $langId)->toArray());
 
             #TCCOREEVENTSERVICE
 

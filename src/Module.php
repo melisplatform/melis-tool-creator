@@ -33,41 +33,8 @@ class Module
             include __DIR__ . '/../config/module.config.php',
             include __DIR__ . '/../config/app.interface.php',
             include __DIR__ . '/../config/app.toolstree.php',
+            include __DIR__ . '/../config/app.tools.php',
         );
-
-        // Existing frameworks
-        $frameworks = [];
-        $thirdPartyDir = require __DIR__.'/../config/frameworks.php';
-        foreach ($thirdPartyDir['frameworks'] As $pf){
-            // Checking if the module exist in the vendor directory
-            $pfDir = __DIR__ .'/../../melis-platform-framework-'.$pf;
-            if (is_dir($pfDir))
-                $frameworks[$pf] = ucfirst($pf);
-        }
-
-        $toolsConfig = include __DIR__ . '/../config/app.tools.php';
-
-        if (!empty($frameworks)){
-
-            // Frameworks that available to generate tool
-            $thirdPartyDir['form-elements']['elements'][1]['spec']['options']['value_options'] = $frameworks;
-            // Getting the first data to be the default selected item
-            foreach ($frameworks As $key => $fw){
-                $thirdPartyDir['form-elements']['elements'][1]['spec']['attributes']['value'] = $key;
-                break;
-            }
-
-            // Adding to the form config
-            // Form elements
-            foreach ($thirdPartyDir['form-elements']['elements'] As $spcs)
-                $toolsConfig['plugins']['melistoolcreator']['forms']['melistoolcreator_step1_form']['elements'][] = $spcs;
-            // Form elements filters
-            foreach ($thirdPartyDir['form-elements']['input_filter'] As $spcs)
-                $toolsConfig['plugins']['melistoolcreator']['forms']['melistoolcreator_step1_form']['input_filter'][] = $spcs;
-        }
-
-        // Adding to final config
-        $configFiles[] = $toolsConfig;
 
         foreach ($configFiles as $file)
             $config = ArrayUtils::merge($config, $file);
