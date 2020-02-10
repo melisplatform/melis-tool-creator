@@ -14,10 +14,16 @@
     <?php
         $toolType = $form->get('tcf-tool-type')->getValue();
 
-        if (!empty($toolType)){
+        if (!empty($toolType)) {
             $scrptTag = '<script>%s</script>';
             $scrpt = '$(".tcf-tool-type").parents(".form-group").hide();
             $(".tcf-tool-type-'.$toolType.'").parents(".form-group").show();';
+
+            if ($form->has('tcf-create-framework-tool')) {
+                $scrpt .= 'if ($("input[name=\'tcf-create-framework-tool\']").parents(".make-switch").find(".switch-animate").hasClass("switch-off")) {
+                    $("input[name=\'tcf-tool-framework\']").parents(".form-group").hide();
+                }';
+            }
 
             echo sprintf($scrptTag, $scrpt);
         }

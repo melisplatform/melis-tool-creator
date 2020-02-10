@@ -35,8 +35,9 @@
 
                                         $val->setLabelOptions(array('disable_html_escape' => true));
                                         $required = $val->getAttribute('required') ? ' *' : '';
-                                        $label = $val->getLabel().$required.'<i class="fa fa-info-circle fa-lg pull-right tip-info" data-toggle="tooltip" data-placement="left" title="" data-original-title="'.$val->getOption('tooltip').'"></i>';
+                                        $label = $val->getLabel().$required.'<i class="fa fa-info-circle fa-lg tip-info" data-toggle="tooltip" data-placement="left" title="" data-original-title="'.$val->getOption('tooltip').'"></i>';
 
+                                        $val->setLabelAttributes(['class' => 'd-flex flex-row justify-content-between']);
                                         $val->setLabel($label);
 
                                         if (!empty($this->formElementErrors($val))){
@@ -65,5 +66,5 @@
     </div>
 
     <button class="btn btn-default btn-steps" data-curstep="2" data-nxtstep="1"><?php echo $this->translate('tr_melistoolcreator_back') ?></button>
-    <button class="btn btn-default pull-right btn-steps tcf-validate" data-curstep="2" data-nxtstep="3"><?php echo $this->translate('tr_melistoolcreator_next') ?></button>
+    <button class="btn btn-default float-right btn-steps tcf-validate" data-curstep="2" data-nxtstep="3"><?php echo $this->translate('tr_melistoolcreator_next') ?></button>
 </div>
