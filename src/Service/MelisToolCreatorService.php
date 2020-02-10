@@ -558,7 +558,12 @@ class MelisToolCreatorService  extends MelisCoreGeneralService
                 $services = '';
             }
         }elseif ($this->isBlankTool()){
-            $controllers = $this->fgc('/Code/blank-controller');
+            if ($this->isFrameworkTool())
+                $blankCtrl = '/Code/framework-blank-controller';
+            else
+                $blankCtrl = '/Code/blank-controller';
+
+            $controllers = $this->fgc($blankCtrl);
             $services = $this->fgc('/Code/blank-service');
         }else{
             $controllers = $this->fgc('/Code/iframe-controller');
