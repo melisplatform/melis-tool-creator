@@ -137,10 +137,6 @@ return [
     'tr_melistoolcreator_tcf-desc tooltip' => 'La description de l\'outil est affichée en dessous du titre dans l\'outil',
     'tr_melistoolcreator_inpt_name' => 'Nom',
     'tr_melistoolcreator_inpt_name tooltip' => 'Description tooltip',
-    'tr_melistoolcreator_tcf-create-framework-tool' => 'Créer un outil avec un framework tiers',
-    'tr_melistoolcreator_tcf-create-framework-tool tooltip' => 'Sélectionnez si vous souhaitez utiliser un framework tiers',
-    'tr_melistoolcreator_tcf-tool-framework' => 'Sélectionnez le framework',
-    'tr_melistoolcreator_tcf-tool-framework tooltip' => 'Le framework qui sera utilisé pour gérer le contenu de l\'outil généré',
 
     // Error messages
     'tr_melistoolcreator_err_message' => 'Impossible de passer à l\'étape suivante, veuillez réessayer',

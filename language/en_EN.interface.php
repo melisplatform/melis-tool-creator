@@ -116,9 +116,9 @@ return [
     'tr_melistoolcreator_refresh_db_tooltip' => 'Refreshing database tables list might take a few minutes',
     'tr_melistoolcreator_choose' => 'Choose',
     'tr_melistoolcreator_select_text' => 'Text / Classic input',
-    'tr_melistoolcreator_select_textarea_tinymce' => 'HTML Riche (TinyMCE)',
+    'tr_melistoolcreator_select_textarea_tinymce' => 'HTML Rich (TinyMCE)',
     'tr_melistoolcreator_select_switch' => 'Switch ON/OFF green/red',
-    'tr_melistoolcreator_select_raw_view' => 'Raw view',
+    'tr_melistoolcreator_select_raw_view' => 'Raw value',
     'tr_melistoolcreator_select_char_len_50' => 'Raw value truncated at 50 char',
     'tr_melistoolcreator_select_dot_color' => 'Color dot green/red',
     'tr_melistoolcreator_select_site_name' => 'Site',
@@ -137,10 +137,6 @@ return [
     'tr_melistoolcreator_tcf-desc tooltip' => 'The tool description is displayed below the top title inside the tool',
     'tr_melistoolcreator_inpt_name' => 'Name',
     'tr_melistoolcreator_inpt_name tooltip' => 'Tooltip description',
-    'tr_melistoolcreator_tcf-create-framework-tool' => 'Create a tool with a third-party framework',
-    'tr_melistoolcreator_tcf-create-framework-tool tooltip' => 'Select if you would like to use a third-party framework',
-    'tr_melistoolcreator_tcf-tool-framework' => 'Select Framework',
-    'tr_melistoolcreator_tcf-tool-framework tooltip' => 'The third-party framework that will be used to manage the content of the tool',
 
     // Error messages
     'tr_melistoolcreator_err_message' => 'Unable to proceed to the next step, please try again',
