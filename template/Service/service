@@ -18,15 +18,7 @@ class ModuleTplService extends MelisEngineGeneralService
 {
     public function getItemById($id)
     {
-        $arrayParameters = $this->makeArrayFromParameters(__METHOD__, func_get_args());
-        $arrayParameters = $this->sendEvent('ModuleTpl_service_get_item_start', $arrayParameters);
-
-        $ModuleTplTable = $this->getServiceLocator()->get('ModuleTplTable');
-        $item = $ModuleTplTable->getEntryById($arrayParameters['id'])->current();
-
-        $arrayParameters['results'] = $item;
-        $arrayParameters = $this->sendEvent('ModuleTpl_service_get_item_end', $arrayParameters);
-        return $arrayParameters['results'];
+        #SERVICEGETITEMBYIDCONTENT
     }
 
     public function getList($start = null, $limit = null, $searchKeys = [], $searchValue = null, $orderKey = null, $order = 'ASC', $langId = 1)

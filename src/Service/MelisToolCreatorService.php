@@ -1150,6 +1150,23 @@ class MelisToolCreatorService  extends MelisCoreGeneralService
 
         $fileContent = $this->sp('#TCPJOINSYNTX', $JoinSyntx, $fileContent);
         $fileContent = $this->sp('#TCPPRIMARYTABLE', $this->tcSteps['step3']['tcf-db-table'], $fileContent);
+
+        // Adding get-item-by-id function when the tool also has language enabled
+        if ($this->hasLanguage()) {
+            $tblJoinSyntax = $this->fgc('/Code/table-get-item-join-syntax');
+            $tblJoinSyntax = $this->sp('#TCPLANGTABLE', $this->tcSteps['step3']['tcf-db-table-language-tbl'], $tblJoinSyntax);
+            $tblJoinSyntax = $this->sp('#TCPLANGTBLFK', $this->tcSteps['step3']['tcf-db-table-language-pri-fk'], $tblJoinSyntax);
+            $tblJoinSyntax = $this->sp('#TCPPRIMARYTABLE', $this->tcSteps['step3']['tcf-db-table'], $tblJoinSyntax);
+            $tblJoinSyntax = $this->sp('#TCPPRIMARYTBLPK', $primayTblPK, $tblJoinSyntax);
+
+            $getItemContents = $this->fgc('/Code/table-get-item-contents-with-lang');
+            $getItemContents = $this->sp('#TCPJOINSYNTX', $tblJoinSyntax, $getItemContents);
+            $getItemContents = $this->sp('#TCPPRIMARYTABLE', $this->tcSteps['step3']['tcf-db-table'], $getItemContents);
+            $fileContent = $this->sp('#GETITEMBYID', $getItemContents, $fileContent);
+        } else {
+            $fileContent = $this->sp('#GETITEMBYID', '', $fileContent);
+        }
+
         $this->generateFile($moduleName.'Table.php', $targetDir, $fileContent);
 
         if ($this->hasLanguage()){
@@ -1220,8 +1237,12 @@ class MelisToolCreatorService  extends MelisCoreGeneralService
 
         if ($this->hasLanguage()) {
             $langSection = $this->fgc('/Code/service-lang-section');
+            $getItemByIdContent = $this->fgc('/Code/service-get-item-contents-with-lang');
             $fileContent = str_replace('#SERVICESECTIONLANG', $langSection, $fileContent);
+            $fileContent = str_replace('#SERVICEGETITEMBYIDCONTENT', $getItemByIdContent, $fileContent);
         } else {
+            $getItemByIdContent = $this->fgc('/Code/service-get-item-contents');
+            $fileContent = str_replace('#SERVICEGETITEMBYIDCONTENT', $getItemByIdContent, $fileContent);
             $fileContent = str_replace('#SERVICESECTIONLANG', '', $fileContent);
         }
 

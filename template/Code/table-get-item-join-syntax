@@ -1,0 +1,6 @@
+        $select->join(
+            '#TCPLANGTABLE',
+            new Expression('#TCPLANGTABLE.#TCPLANGTBLFK = #TCPPRIMARYTABLE.#TCPPRIMARYTBLPK'),
+            ['*'],
+            $select::JOIN_LEFT
+        );

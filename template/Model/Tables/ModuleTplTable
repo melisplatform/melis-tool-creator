@@ -63,4 +63,6 @@ class ModuleTplTable extends MelisGenericTable
 
         return $resultSet;
     }
+
+    #GETITEMBYID
 }
