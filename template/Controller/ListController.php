@@ -78,7 +78,7 @@ class ListController extends AbstractActionController
             $sortOrder = $sortOrder[0]['dir'];
 
             $tableData = $moduleTplService->getList($start, $length, $melisTool->getSearchableColumns(), $search, $selCol, $sortOrder, $langId)->toArray();
-            $dataCount = count($moduleTplService->getList(null, null, $melisTool->getSearchableColumns(), $search, null, 'ASC', $langId)->toArray());
+            $dataCount = $moduleTplService->getList(null, null, $melisTool->getSearchableColumns(), $search, null, 'ASC', $langId, true)->current();
 
             #TCCOREEVENTSERVICE
 
@@ -93,7 +93,7 @@ class ListController extends AbstractActionController
         return new JsonModel([
             'draw' => (int) $draw,
             'recordsTotal' => count($tableData),
-            'recordsFiltered' =>  $dataCount,
+            'recordsFiltered' =>  $dataCount->totalRecords,
             'data' => $tableData,
         ]);
     }

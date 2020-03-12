@@ -26,11 +26,16 @@ class ModuleTplTable extends MelisGenericTable
         #TCPRIMARYKEYCOLUMN
     }
 
-    public function getList($start = null, $limit = null, $searchKeys = [], $searchValue = null, $orderKey = null, $order = 'ASC', $langId = 1)
+    public function getList($start = null, $limit = null, $searchKeys = [], $searchValue = null, $orderKey = null, $order = 'ASC', $langId = 1, $count = false)
     {
         $select = $this->tableGateway->getSql()->select();
 
-        $select->columns(['*', new Expression('#TCPPRIMARYTABLE.'.$this->idField.' As DT_RowId')]);
+        $slct = ['*', new Expression('melis_calendar.'.$this->idField.' As DT_RowId')];
+        if ($count) {
+          $slct = [new Expression('COUNT('.$this->idField.') As totalRecords')];
+        }   
+
+        $select->columns($slct);
 
 #TCPJOINSYNTX
 
@@ -48,7 +53,7 @@ class ModuleTplTable extends MelisGenericTable
         if ($orderKey == $this->idField)
             $orderKey = 'DT_RowId';
 
-        if (!is_null($orderKey))
+        if (!is_null($orderKey) && !$count)
             $select->order($orderKey.' '.$order);
 
         if (!is_null($start))
@@ -57,6 +62,7 @@ class ModuleTplTable extends MelisGenericTable
         if (!is_null($limit))
             $select->limit((int) $limit);
 
+        if (!$count) 
         $select->group('DT_RowId');
 
         $resultSet = $this->tableGateway->selectWith($select);
