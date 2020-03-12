@@ -18,35 +18,28 @@ class ModuleTplService extends MelisEngineGeneralService
 {
     public function getItemById($id)
     {
-        $arrayParameters = $this->makeArrayFromParameters(__METHOD__, func_get_args());
-        $arrayParameters = $this->sendEvent('ModuleTpl_service_get_item_start', $arrayParameters);
-
-        $ModuleTplTable = $this->getServiceLocator()->get('ModuleTplTable');
-        $item = $ModuleTplTable->getEntryById($arrayParameters['id'])->current();
-
-        $arrayParameters['results'] = $item;
-        $arrayParameters = $this->sendEvent('ModuleTpl_service_get_item_end', $arrayParameters);
-        return $arrayParameters['results'];
+        #SERVICEGETITEMBYIDCONTENT
     }
 
-    public function getList($start = null, $limit = null, $searchKeys = [], $searchValue = null, $orderKey = null, $order = 'ASC', $langId = 1)
+    public function getList($start = null, $limit = null, $searchKeys = [], $searchValue = null, $orderKey = null, $order = 'ASC', $langId = 1, $count = false)
     {
         $arrayParameters = $this->makeArrayFromParameters(__METHOD__, func_get_args());
-        $arrayParameters = $this->sendEvent('ModuleTpl_service_get_list_start', $arrayParameters);
+        $arrayParameters = $this->sendEvent('moduletpl_service_get_list_start', $arrayParameters);
 
-        $ModuleTplTable = $this->getServiceLocator()->get('ModuleTplTable');
-        $list = $ModuleTplTable->getList(
+        $moduleTplTable = $this->getServiceLocator()->get('ModuleTplTable');
+        $list = $moduleTplTable->getList(
             $arrayParameters['start'],
             $arrayParameters['limit'],
             $arrayParameters['searchKeys'],
             $arrayParameters['searchValue'],
             $arrayParameters['orderKey'],
             $arrayParameters['order'],
-            $arrayParameters['langId']
+            $arrayParameters['langId'],
+            $arrayParameters['count']
         );
 
         $arrayParameters['results'] = $list;
-        $arrayParameters = $this->sendEvent('ModuleTpl_service_get_list_end', $arrayParameters);
+        $arrayParameters = $this->sendEvent('moduletpl_service_get_list_end', $arrayParameters);
         return $arrayParameters['results'];
     }
 
@@ -56,8 +49,8 @@ class ModuleTplService extends MelisEngineGeneralService
         $arrayParameters = $this->sendEvent('moduletpl_service_save_item_start', $arrayParameters);
 
         if ($data) {
-            $ModuleTplTable = $this->getServiceLocator()->get('ModuleTplTable');
-            $res = $ModuleTplTable->save($arrayParameters['data'], $arrayParameters['id']);
+            $moduleTplTable = $this->getServiceLocator()->get('ModuleTplTable');
+            $res = $moduleTplTable->save($arrayParameters['data'], $arrayParameters['id']);
         }
 
         $arrayParameters['result'] = $res;
@@ -70,8 +63,8 @@ class ModuleTplService extends MelisEngineGeneralService
         $arrayParameters = $this->makeArrayFromParameters(__METHOD__, func_get_args());
         $arrayParameters = $this->sendEvent('moduletpl_service_delete_item_start', $arrayParameters);
 
-        $ModuleTplTable = $this->getServiceLocator()->get('ModuleTplTable');
-        $res = $ModuleTplTable->deleteById($arrayParameters['id']);
+        $moduleTplTable = $this->getServiceLocator()->get('ModuleTplTable');
+        $res = $moduleTplTable->deleteById($arrayParameters['id']);
 
         $arrayParameters['result'] = $res;
         $arrayParameters = $this->sendEvent('moduletpl_service_delete_item_end', $arrayParameters);
