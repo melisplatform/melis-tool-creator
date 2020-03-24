@@ -30,10 +30,10 @@ class ModuleTplTable extends MelisGenericTable
     {
         $select = $this->tableGateway->getSql()->select();
 
-        $slct = ['*', new Expression('melis_calendar.'.$this->idField.' As DT_RowId')];
+        $slct = ['*', new Expression($this->tableGateway->getTable() . '.' . $this->idField.' As DT_RowId')];
         if ($count) {
-          $slct = [new Expression('COUNT('.$this->idField.') As totalRecords')];
-        }   
+          $slct = [new Expression('COUNT(' . $this->tableGateway->getTable() . '.' . $this->idField . ') As totalRecords')];
+        }  
 
         $select->columns($slct);
 
