@@ -10,29 +10,35 @@
 namespace ModuleTpl\Model\Tables;
 
 use MelisCore\Model\Tables\MelisGenericTable;
-use Zend\Db\Sql\Expression;
-use Zend\Db\Sql\Predicate\Like;
-use Zend\Db\Sql\Predicate\PredicateSet;
-use Zend\Db\TableGateway\TableGateway;
+use Laminas\Db\Sql\Expression;
+use Laminas\Db\Sql\Predicate\Like;
+use Laminas\Db\Sql\Predicate\PredicateSet;
+use Laminas\Db\TableGateway\TableGateway;
 
 class ModuleTplTable extends MelisGenericTable
 {
-    protected $tableGateway;
-    protected $idField;
-    
-    public function __construct(TableGateway $tableGateway)
+    /**
+     * Model table
+     */
+    const TABLE = '#TCPRIMARYTABLE';
+
+    /**
+     * Table primary key
+     */
+    const PRIMARY_KEY = '#TCPRIMARYKEY';
+
+    public function __construct()
     {
-        parent::__construct($tableGateway);
-        #TCPRIMARYKEYCOLUMN
+        $this->idField = self::PRIMARY_KEY;
     }
 
     public function getList($start = null, $limit = null, $searchKeys = [], $searchValue = null, $orderKey = null, $order = 'ASC', $langId = 1, $count = false)
     {
-        $select = $this->tableGateway->getSql()->select();
+        $select = $this->getTableGateway()->getSql()->select();
 
-        $slct = ['*', new Expression($this->tableGateway->getTable() . '.' . $this->idField.' As DT_RowId')];
+        $slct = ['*', new Expression($this->getTableGateway()->getTable() . '.' . $this->idField.' As DT_RowId')];
         if ($count) {
-          $slct = [new Expression('COUNT(' . $this->tableGateway->getTable() . '.' . $this->idField . ') As totalRecords')];
+          $slct = [new Expression('COUNT(' . $this->getTableGateway()->getTable() . '.' . $this->idField . ') As totalRecords')];
         }  
 
         $select->columns($slct);
@@ -65,10 +71,10 @@ class ModuleTplTable extends MelisGenericTable
         if (!$count) 
         $select->group('DT_RowId');
 
-        $resultSet = $this->tableGateway->selectWith($select);
+        $resultSet = $this->getTableGateway()->selectWith($select);
 
         return $resultSet;
     }
 
-    #GETITEMBYID
+#GETITEMBYID
 }

@@ -5,7 +5,7 @@
             mkdir($target, 0777);
 
         // File Input
-        $fileInput = new \Zend\InputFilter\FileInput($elemName);
+        $fileInput = new \Laminas\InputFilter\FileInput($elemName);
         $fileInput->setRequired(true);
         $fileInput->getFilterChain()->attachByName(
             'filerenameupload',

@@ -59,26 +59,18 @@ return [
             ],
         ],
     ],
-    'translator' => [
-        'locale' => 'en_EN',
-    ],
+
     'service_manager' => [
         'aliases' => [
-            'translator' => 'MvcTranslator',
-        ],
-        'factories' => [
-            'MelisToolCreatorService' => 'MelisToolCreator\Service\Factory\MelisToolCreatorServiceFactory',
+            'MelisToolCreatorService' => \MelisToolCreator\Service\MelisToolCreatorService::class,
         ],
     ],
     'controllers' => [
         'invokables' => [
-            'MelisToolCreator\Controller\ToolCreator' => 'MelisToolCreator\Controller\ToolCreatorController',
+            'MelisToolCreator\Controller\ToolCreator' => \MelisToolCreator\Controller\ToolCreatorController::class,
         ],
     ],
     'view_manager' => [
-        'display_not_found_reason' => true,
-        'display_exceptions'       => true,
-        'doctype'                  => 'HTML5',
         'template_map' => [
             'melis-tool-creator/step1'          => __DIR__ . '/../view/melis-tool-creator/tool-creator/render-step1.phtml',
             'melis-tool-creator/step2'          => __DIR__ . '/../view/melis-tool-creator/tool-creator/render-step2.phtml',

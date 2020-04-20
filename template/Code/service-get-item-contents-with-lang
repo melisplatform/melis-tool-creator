@@ -1,7 +1,7 @@
 $arrayParameters = $this->makeArrayFromParameters(__METHOD__, func_get_args());
         $arrayParameters = $this->sendEvent('ModuleTpl_service_get_item_start', $arrayParameters);
 
-        $ModuleTplTable = $this->getServiceLocator()->get('ModuleTplTable');
+        $ModuleTplTable = $this->getServiceManager()->get('ModuleTplTable');
         $item = $ModuleTplTable->getItemById($arrayParameters['id'])->toArray();
 
         $arrayParameters['results'] = $item;

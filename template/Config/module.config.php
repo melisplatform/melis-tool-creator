@@ -40,9 +40,6 @@ return [
         	],
         ],
     ],
-    'translator' => [
-        'locale' => 'en_EN',
-    ],
     'service_manager' => [
 #TCSERVICES
     ],
@@ -52,9 +49,6 @@ return [
         ],
     ],
     'view_manager' => [
-        'display_not_found_reason' => true,
-        'display_exceptions'       => true,
-        'doctype'                  => 'HTML5',
         'template_map' => [
         ],
         'template_path_stack' => [

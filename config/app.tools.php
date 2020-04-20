@@ -19,7 +19,7 @@ return [
                         'method' => 'POST',
                         'action' => '',
                     ],
-                    'hydrator'  => 'Zend\Stdlib\Hydrator\ArraySerializable',
+                    'hydrator'  => 'Laminas\Hydrator\ArraySerializable',
                     'elements' => [
                         [
                             'spec' => [
@@ -110,7 +110,7 @@ return [
                                     'name' => 'regex',
                                     'options' => [
                                         'pattern' => '/^[a-zA-Z\x7f-\xff][a-zA-Z\x7f-\xff]*$/',
-                                        'messages' => [\Zend\Validator\Regex::NOT_MATCH => 'tr_melistoolcreator_err_invalid_module'],
+                                        'messages' => [\Laminas\Validator\Regex::NOT_MATCH => 'tr_melistoolcreator_err_invalid_module'],
                                         'encoding' => 'UTF-8',
                                     ],
                                 ],
@@ -120,7 +120,7 @@ return [
                                         'encoding' => 'UTF-8',
                                         'max'      => 50,
                                         'messages' => [
-                                            \Zend\Validator\StringLength::TOO_LONG => 'tr_melistoolcreator_err_long_50',
+                                            \Laminas\Validator\StringLength::TOO_LONG => 'tr_melistoolcreator_err_long_50',
                                         ],
                                     ],
                                 ],
@@ -128,7 +128,7 @@ return [
                                     'name' => 'NotEmpty',
                                     'options' => [
                                         'messages' => [
-                                            \Zend\Validator\NotEmpty::IS_EMPTY => 'tr_melistoolcreator_err_empty',
+                                            \Laminas\Validator\NotEmpty::IS_EMPTY => 'tr_melistoolcreator_err_empty',
                                         ],
                                     ],
                                 ],
@@ -146,7 +146,7 @@ return [
                                     'name' => 'NotEmpty',
                                     'options' => [
                                         'messages' => [
-                                            \Zend\Validator\NotEmpty::IS_EMPTY => 'tr_melistoolcreator_err_empty',
+                                            \Laminas\Validator\NotEmpty::IS_EMPTY => 'tr_melistoolcreator_err_empty',
                                         ],
                                     ],
                                 ],
@@ -154,7 +154,7 @@ return [
                                     'name' => 'regex',
                                     'options' => [
                                         'pattern' => '%^(?:(?:https?|ftp)://)(?:\S+(?::\S*)?@|\d{1,3}(?:\.\d{1,3}){3}|(?:(?:[a-z\d\x{00a1}-\x{ffff}]+-?)*[a-z\d\x{00a1}-\x{ffff}]+)(?:\.(?:[a-z\d\x{00a1}-\x{ffff}]+-?)*[a-z\d\x{00a1}-\x{ffff}]+)*(?:\.[a-z\x{00a1}-\x{ffff}]{2,6}))(?::\d+)?(?:[^\s]*)?$%iu',
-                                        'messages' => [\Zend\Validator\Regex::NOT_MATCH => 'tr_melistoolcreator_invalid_url'],
+                                        'messages' => [\Laminas\Validator\Regex::NOT_MATCH => 'tr_melistoolcreator_invalid_url'],
                                         'encoding' => 'UTF-8',
                                     ],
                                 ]
@@ -173,7 +173,7 @@ return [
                         'method' => 'POST',
                         'action' => '',
                     ],
-                    'hydrator'  => 'Zend\Stdlib\Hydrator\ArraySerializable',
+                    'hydrator'  => 'Laminas\Hydrator\ArraySerializable',
                     'elements' => [
                         [
                             'spec' => [
@@ -224,7 +224,7 @@ return [
                                         'encoding' => 'UTF-8',
                                         'max'      => 100,
                                         'messages' => [
-                                            \Zend\Validator\StringLength::TOO_LONG => 'tr_melistoolcreator_err_long_100',
+                                            \Laminas\Validator\StringLength::TOO_LONG => 'tr_melistoolcreator_err_long_100',
                                         ],
                                     ],
                                 ],
@@ -232,7 +232,7 @@ return [
                                     'name' => 'NotEmpty',
                                     'options' => [
                                         'messages' => [
-                                            \Zend\Validator\NotEmpty::IS_EMPTY => 'tr_melistoolcreator_err_empty',
+                                            \Laminas\Validator\NotEmpty::IS_EMPTY => 'tr_melistoolcreator_err_empty',
                                         ],
                                     ],
                                 ],
@@ -252,7 +252,7 @@ return [
                                         'encoding' => 'UTF-8',
                                         'max'      => 250,
                                         'messages' => [
-                                            \Zend\Validator\StringLength::TOO_LONG => 'tr_melistoolcreator_err_long_250',
+                                            \Laminas\Validator\StringLength::TOO_LONG => 'tr_melistoolcreator_err_long_250',
                                         ],
                                     ],
                                 ]
@@ -273,7 +273,7 @@ return [
                             'method' => 'POST',
                             'action' => '',
                         ],
-                        'hydrator'  => 'Zend\Stdlib\Hydrator\ArraySerializable',
+                        'hydrator'  => 'Laminas\Hydrator\ArraySerializable',
                         'elements' => [
                             [
                                 'spec' => [
@@ -291,7 +291,7 @@ return [
                                         'name' => 'NotEmpty',
                                         'options' => [
                                             'messages' => [
-                                                \Zend\Validator\NotEmpty::IS_EMPTY => 'tr_melistoolcreator_err_select_pri_tbl',
+                                                \Laminas\Validator\NotEmpty::IS_EMPTY => 'tr_melistoolcreator_err_select_pri_tbl',
                                             ],
                                         ],
                                     ],
@@ -311,7 +311,7 @@ return [
                             'method' => 'POST',
                             'action' => '',
                         ],
-                        'hydrator'  => 'Zend\Stdlib\Hydrator\ArraySerializable',
+                        'hydrator'  => 'Laminas\Hydrator\ArraySerializable',
                         'elements' => [
                             [
                                 'spec' => [
@@ -360,7 +360,7 @@ return [
                                         'name' => 'NotEmpty',
                                         'options' => [
                                             'messages' => [
-                                                \Zend\Validator\NotEmpty::IS_EMPTY => 'tr_melistoolcreator_err_select_lang_tbl',
+                                                \Laminas\Validator\NotEmpty::IS_EMPTY => 'tr_melistoolcreator_err_select_lang_tbl',
                                             ],
                                         ],
                                     ],
@@ -378,7 +378,7 @@ return [
                                         'name' => 'NotEmpty',
                                         'options' => [
                                             'messages' => [
-                                                \Zend\Validator\NotEmpty::IS_EMPTY => 'tr_melistoolcreator_err_select_pri_key_tbl',
+                                                \Laminas\Validator\NotEmpty::IS_EMPTY => 'tr_melistoolcreator_err_select_pri_key_tbl',
                                             ],
                                         ],
                                     ],
@@ -396,7 +396,7 @@ return [
                                         'name' => 'NotEmpty',
                                         'options' => [
                                             'messages' => [
-                                                \Zend\Validator\NotEmpty::IS_EMPTY => 'tr_melistoolcreator_err_select_lang_key_tbl',
+                                                \Laminas\Validator\NotEmpty::IS_EMPTY => 'tr_melistoolcreator_err_select_lang_key_tbl',
                                             ],
                                         ],
                                     ],
@@ -417,7 +417,7 @@ return [
                         'method' => 'POST',
                         'action' => '',
                     ],
-                    'hydrator'  => 'Zend\Stdlib\Hydrator\ArraySerializable',
+                    'hydrator'  => 'Laminas\Hydrator\ArraySerializable',
                     'elements' => [
                         [
                             'spec' => [
@@ -458,7 +458,7 @@ return [
                                     'name' => 'NotEmpty',
                                     'options' => [
                                         'messages' => [
-                                            \Zend\Validator\NotEmpty::IS_EMPTY => 'tr_melistoolcreator_err_empty',
+                                            \Laminas\Validator\NotEmpty::IS_EMPTY => 'tr_melistoolcreator_err_empty',
                                         ],
                                     ],
                                 ],
@@ -476,7 +476,7 @@ return [
                                     'name' => 'NotEmpty',
                                     'options' => [
                                         'messages' => [
-                                            \Zend\Validator\NotEmpty::IS_EMPTY => 'tr_melistoolcreator_err_empty',
+                                            \Laminas\Validator\NotEmpty::IS_EMPTY => 'tr_melistoolcreator_err_empty',
                                         ],
                                     ],
                                 ],
@@ -496,7 +496,7 @@ return [
                         'method' => 'POST',
                         'action' => '',
                     ],
-                    'hydrator'  => 'Zend\Stdlib\Hydrator\ArraySerializable',
+                    'hydrator'  => 'Laminas\Hydrator\ArraySerializable',
                     'elements' => [
                         [
                             'spec' => [
@@ -531,10 +531,10 @@ return [
                                         'MelisText' => 'tr_melistoolcreator_select_text',
                                         'Switch' => 'tr_melistoolcreator_select_switch',
                                         'File' => 'File upload',
-                                        'TextArea' => 'Textarea',
+                                        'Textarea' => 'Textarea',
                                         'MelisCoreTinyMCE' => 'tr_melistoolcreator_select_textarea_tinymce',
-                                        'Datepicker' => 'Date Picker',
-                                        'Datetimepicker' => 'Datetime Picker',
+                                        'DatePicker' => 'Date Picker',
+                                        'DateTimePicker' => 'Datetime Picker',
                                         'MelisCoreUserSelect' => 'Melis BO Users'
                                     ],
                                 ],
@@ -588,7 +588,7 @@ return [
                         'method' => 'POST',
                         'action' => '',
                     ],
-                    'hydrator'  => 'Zend\Stdlib\Hydrator\ArraySerializable',
+                    'hydrator'  => 'Laminas\Hydrator\ArraySerializable',
                     'elements' => [
                         [
                             'spec' => [
@@ -612,7 +612,7 @@ return [
                                     'name' => 'NotEmpty',
                                     'options' => [
                                         'messages' => [
-                                            \Zend\Validator\NotEmpty::IS_EMPTY => 'tr_melistoolcreator_err_empty',
+                                            \Laminas\Validator\NotEmpty::IS_EMPTY => 'tr_melistoolcreator_err_empty',
                                         ],
                                     ],
                                 ],
@@ -630,7 +630,7 @@ return [
                                     'name' => 'NotEmpty',
                                     'options' => [
                                         'messages' => [
-                                            \Zend\Validator\NotEmpty::IS_EMPTY => 'tr_melistoolcreator_err_empty',
+                                            \Laminas\Validator\NotEmpty::IS_EMPTY => 'tr_melistoolcreator_err_empty',
                                         ],
                                     ],
                                 ],
@@ -650,7 +650,7 @@ return [
                         'method' => 'POST',
                         'action' => '',
                     ],
-                    'hydrator'  => 'Zend\Stdlib\Hydrator\ArraySerializable',
+                    'hydrator'  => 'Laminas\Hydrator\ArraySerializable',
                     'elements' => [
                         [
                             'spec' => [

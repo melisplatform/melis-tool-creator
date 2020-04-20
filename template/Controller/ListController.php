@@ -9,10 +9,11 @@
 
 namespace ModuleTpl\Controller;
 
-use Zend\Mvc\Controller\AbstractActionController;
-use Zend\Session\Container;
-use Zend\View\Model\JsonModel;
-use Zend\View\Model\ViewModel;
+
+use Laminas\Session\Container;
+use Laminas\View\Model\JsonModel;
+use Laminas\View\Model\ViewModel;
+use MelisCore\Controller\AbstractActionController;
 
 class ListController extends AbstractActionController
 {
@@ -32,11 +33,11 @@ class ListController extends AbstractActionController
     {
         $view = new ViewModel();
 
-        $melisTool = $this->getServiceLocator()->get('MelisCoreTool');
+        $melisTool = $this->getServiceManager()->get('MelisCoreTool');
         $melisTool->setMelisToolKey('moduletpl', 'moduletpl_tools');
 
         $columns = $melisTool->getColumns();
-        $translator = $this->getServiceLocator()->get('translator');
+        $translator = $this->getServiceManager()->get('translator');
         $columns['actions'] = ['text' => $translator->translate('tr_moduletpl_common_table_column_action')];
 
         $view->tableColumns = $columns;
@@ -47,10 +48,10 @@ class ListController extends AbstractActionController
 
     public function getListAction()
     {
-        $melisTool = $this->getServiceLocator()->get('MelisCoreTool');
+        $melisTool = $this->getServiceManager()->get('MelisCoreTool');
         $melisTool->setMelisToolKey('moduletpl', 'moduletpl_tools');
 
-        $moduleTplService = $this->getServiceLocator()->get('ModuleTplService');
+        $moduleTplService = $this->getServiceManager()->get('ModuleTplService');
 
         $draw = 0;
         $dataCount = 0;

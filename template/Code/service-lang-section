@@ -4,7 +4,7 @@
         $arrayParameters = $this->sendEvent('moduletpl_service_save_lang_start', $arrayParameters);
 
         if ($data) {
-            $langTable = $this->getServiceLocator()->get('ModuleTplLangTable');
+            $langTable = $this->getServiceManager()->get('ModuleTplLangTable');
             $res = $langTable->save($arrayParameters['data'], $arrayParameters['id']);
         }
 
@@ -18,7 +18,7 @@
         $arrayParameters = $this->makeArrayFromParameters(__METHOD__, func_get_args());
         $arrayParameters = $this->sendEvent('moduletpl_service_delete_lang_start', $arrayParameters);
 
-        $langTable = $this->getServiceLocator()->get('ModuleTplLangTable');
+        $langTable = $this->getServiceManager()->get('ModuleTplLangTable');
         $res = $langTable->deleteByFkId($arrayParameters['id']);
 
         $arrayParameters['result'] = $res;

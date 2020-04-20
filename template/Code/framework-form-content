@@ -6,7 +6,7 @@
     {
         $view = new ViewModel();
 
-        $thirdPartySrv = $this->getServiceLocator()->get('MelisPlatformService');
+        $thirdPartySrv = $this->getServiceManager()->get('MelisPlatformService');
         $thirdPartySrv->setRoute('/melis/moduletpl/form/'.$this->params()->fromQuery('id'));
         $response = $thirdPartySrv->getContent();
 

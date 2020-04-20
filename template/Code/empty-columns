@@ -2,8 +2,8 @@
              * This will assign data to required fields if the column is empty
              * for language fields
              */
-            $engineLangTbl = $this->getServiceLocator()->get('MelisEngineTableCmsLang');
-            $langTbl = $this->getServiceLocator()->get('ModuleTplLangTable');
+            $engineLangTbl = $this->getServiceManager()->get('MelisEngineTableCmsLang');
+            $langTbl = $this->getServiceManager()->get('ModuleTplLangTable');
 
             foreach ($tableData As $key => $val){
                 foreach ($val As $col => $data){

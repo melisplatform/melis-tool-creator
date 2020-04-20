@@ -9,17 +9,17 @@
 
 namespace ModuleTpl\Controller;
 
-use Zend\Mvc\Controller\AbstractActionController;
-use Zend\Stdlib\ArrayUtils;
-use Zend\View\Model\JsonModel;
-use Zend\View\Model\ViewModel;
+use Laminas\Stdlib\ArrayUtils;
+use Laminas\View\Model\JsonModel;
+use Laminas\View\Model\ViewModel;
+use MelisCore\Controller\AbstractActionController;
 
 class LanguageController extends AbstractActionController
 {
     public function renderLanguageFormAction()
     {
-        $langTable = $this->getServiceLocator()->get('ModuleTplLangTable');
-        $cmsLang = $this->getServiceLocator()->get('MelisEngineTableCmsLang');
+        $langTable = $this->getServiceManager()->get('ModuleTplLangTable');
+        $cmsLang = $this->getServiceManager()->get('MelisEngineTableCmsLang');
         $languages = $cmsLang->fetchAll()->toArray();
 
         $view = new ViewModel();
@@ -92,7 +92,7 @@ class LanguageController extends AbstractActionController
                     // Assign foreign key value
                     $formData['#TCKEYPRIID'] = $fkId;
 
-                    $langTable = $this->getServiceLocator()->get('ModuleTplService');
+                    $langTable = $this->getServiceManager()->get('ModuleTplService');
                     $langTable->saveLang($formData, $id);
                 }
 
@@ -121,19 +121,19 @@ class LanguageController extends AbstractActionController
         $queryData = $request->getQuery()->toArray();
 
         if (!empty($queryData['id'])){
-            $myToolTabLangTable = $this->getServiceLocator()->get('ModuleTplService');
+            $myToolTabLangTable = $this->getServiceManager()->get('ModuleTplService');
             $myToolTabLangTable->deleteLang($queryData['id']);
         }
     }
 
     private function getForm()
     {
-        $melisCoreConfig = $this->serviceLocator->get('MelisCoreConfig');
+        $melisCoreConfig = $this->getServiceManager()->get('MelisCoreConfig');
         $appConfigForm = $melisCoreConfig->getFormMergedAndOrdered('moduletpl/tools/moduletpl_tools/forms/moduletpl_language_form', 'moduletpl_language_form');
 
         // Factoring ModuleTpl event and pass to view
-        $factory = new \Zend\Form\Factory();
-        $formElements = $this->serviceLocator->get('FormElementManager');
+        $factory = new \Laminas\Form\Factory();
+        $formElements = $this->getServiceManager()->get('FormElementManager');
         $factory->setFormElementManager($formElements);
         $form = $factory->createForm($appConfigForm);
 
@@ -152,7 +152,7 @@ class LanguageController extends AbstractActionController
     {
         $langLabel = '<span>'. $langName .'</span>';
 
-        $moduleSvc = $this->getServiceLocator()->get('ModulesService');
+        $moduleSvc = $this->getServiceManager()->get('ModulesService');
         if (file_exists($moduleSvc->getModulePath('MelisCms').'/public/images/lang-flags/'.$locale.'.png')){
             $langLabel .= '<span class="pull-right"><img src="/MelisCms/images/lang-flags/'.$locale.'.png"></span>';
         }

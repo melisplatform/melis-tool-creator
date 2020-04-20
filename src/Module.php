@@ -9,11 +9,11 @@
 
 namespace MelisToolCreator;
 
-use Zend\Mvc\ModuleRouteListener;
-use Zend\Mvc\MvcEvent;
-use Zend\ModuleManager\ModuleManager;
-use Zend\Session\Container;
-use Zend\Stdlib\ArrayUtils;
+use Laminas\Mvc\ModuleRouteListener;
+use Laminas\Mvc\MvcEvent;
+use Laminas\ModuleManager\ModuleManager;
+use Laminas\Session\Container;
+use Laminas\Stdlib\ArrayUtils;
 
 class Module
 {
@@ -28,13 +28,13 @@ class Module
 
     public function getConfig()
     {
-        $config = array();
-        $configFiles = array(
+        $config = [];
+        $configFiles = [
             include __DIR__ . '/../config/module.config.php',
             include __DIR__ . '/../config/app.interface.php',
             include __DIR__ . '/../config/app.toolstree.php',
             include __DIR__ . '/../config/app.tools.php',
-        );
+        ];
 
         foreach ($configFiles as $file)
             $config = ArrayUtils::merge($config, $file);
@@ -44,13 +44,13 @@ class Module
 
     public function getAutoloaderConfig()
     {
-        return array(
-            'Zend\Loader\StandardAutoloader' => array(
-                'namespaces' => array(
+        return [
+            'Laminas\Loader\StandardAutoloader' => [
+                'namespaces' => [
                     __NAMESPACE__ => __DIR__ . '/src/' . __NAMESPACE__,
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
     }
 
     public function createTranslations($e)
@@ -63,13 +63,12 @@ class Module
         $locale = $container['melis-lang-locale'];
 
         // Load files
-        if (!empty($locale))
-        {
-            $translationType = array(
+        if (!empty($locale)) {
+            $translationType = [
                 'interface',
-            );
+            ];
 
-            $translationList = array();
+            $translationList = [];
             if(file_exists($_SERVER['DOCUMENT_ROOT'].'/../module/MelisModuleConfig/config/translation.list.php')){
                 $translationList = include 'module/MelisModuleConfig/config/translation.list.php';
             }
@@ -94,5 +93,4 @@ class Module
             }
         }
     }
-
 }

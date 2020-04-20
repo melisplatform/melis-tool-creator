@@ -9,14 +9,16 @@
 
 namespace MelisToolCreator\Controller;
 
-use Zend\InputFilter\Input;
-use Zend\InputFilter\InputFilter;
-use Zend\Mvc\Controller\AbstractActionController;
-use Zend\Session\Container;
-use Zend\Stdlib\ArrayUtils;
-use Zend\View\Model\JsonModel;
-use Zend\View\Model\ViewModel;
-use Zend\Db\Metadata\Metadata;
+use Laminas\InputFilter\Input;
+use Laminas\InputFilter\InputFilter;
+use Laminas\Session\Container;
+use Laminas\Stdlib\ArrayUtils;
+use Laminas\View\Model\JsonModel;
+use Laminas\View\Model\ViewModel;
+use Laminas\Db\Metadata\Metadata;
+use MelisCore\Controller\AbstractActionController;
+use MelisCore\Service\MelisGeneralService;
+use MelisToolCreator\Service\MelisToolCreatorService;
 
 class ToolCreatorController extends AbstractActionController
 {
@@ -77,7 +79,7 @@ class ToolCreatorController extends AbstractActionController
         // Database table caching
         $this->getDBTablesCached();
 
-        $config = $this->getServiceLocator()->get('config');
+        $config = $this->getServiceManager()->get('config');
 
         // Retrieving steps form config
         $stepsConfig = $config['plugins']['melistoolcreator']['datas']['steps'];
@@ -151,16 +153,16 @@ class ToolCreatorController extends AbstractActionController
             $viewStp = $this->$stpFunction($viewStp);
         }
 
-        $viewRender = $this->getServiceLocator()->get('ViewRenderer');
+        $viewRender = $this->getServiceManager()->get('ViewRenderer');
 
         if ($validate || ( $curStep > $nxtStep)){
 
             // Retrieving steps form config
-            $config = $this->getServiceLocator()->get('config');
+            $config = $this->getServiceManager()->get('config');
             $stepsConfig = $config['plugins']['melistoolcreator']['datas']['steps'];
 
             // translating error modal title
-            $translator = $this->getServiceLocator()->get('translator');
+            $translator = $this->getServiceManager()->get('translator');
 
             $results = [
                 'textTitle' => $translator->translate($stepsConfig['melistoolcreator_step'.$curStep]['name']),
@@ -206,10 +208,10 @@ class ToolCreatorController extends AbstractActionController
         $container = new Container('melistoolcreator');
 
         // Step form fields
-        $melisMelisCoreConfig = $this->getServiceLocator()->get('MelisCoreConfig');
+        $melisMelisCoreConfig = $this->getServiceManager()->get('MelisCoreConfig');
         $appConfigForm = $melisMelisCoreConfig->getFormMergedAndOrdered('melistoolcreator/forms/melistoolcreator_step1_form', 'melistoolcreator_step1_form');
-        $factory = new \Zend\Form\Factory();
-        $formElements = $this->getServiceLocator()->get('FormElementManager');
+        $factory = new \Laminas\Form\Factory();
+        $formElements = $this->getServiceManager()->get('FormElementManager');
         $factory->setFormElementManager($formElements);
         $step1Form = $factory->createForm($appConfigForm);
 
@@ -236,16 +238,16 @@ class ToolCreatorController extends AbstractActionController
                 /**
                  * Validating the module entered if its already existing on the platform
                  */
-                $modulesSvc = $this->getServiceLocator()->get('ModulesService');
+                $modulesSvc = $this->getServiceManager()->get('ModulesService');
                 $existingModules = array_merge($modulesSvc->getModulePlugins(), \MelisCore\MelisModuleManager::getModules());
 
-                $toolCreatorSrv = $this->getServiceLocator()->get('MelisToolCreatorService');
+                $toolCreatorSrv = $this->getServiceManager()->get('MelisToolCreatorService');
                 $targetModuleName = $toolCreatorSrv->generateModuleNameCase($formData['step-form']['tcf-name']);
 
                 if (in_array($targetModuleName, $existingModules)){
 
                     // Adding error message to module input
-                    $translator = $this->getServiceLocator()->get('translator');
+                    $translator = $this->getServiceManager()->get('translator');
                     $step1Form->get('tcf-name')->setMessages([
                         'ModuleExist' => sprintf($translator->translate('tr_melistoolcreator_err_module_exist'), $formData['step-form']['tcf-name'])
                     ]);
@@ -258,7 +260,7 @@ class ToolCreatorController extends AbstractActionController
             }
         }
 
-        $config = $this->getServiceLocator()->get('MelisCoreConfig');
+        $config = $this->getServiceManager()->get('MelisCoreConfig');
 
         $leftMenuConfig = $config->getItem('meliscore_leftmenu');
 
@@ -284,14 +286,14 @@ class ToolCreatorController extends AbstractActionController
         $container = new Container('melistoolcreator');
 
         // Meliscore languages
-        $coreLang = $this->getServiceLocator()->get('MelisCoreTableLang');
+        $coreLang = $this->getServiceManager()->get('MelisCoreTableLang');
         $languages = $coreLang->fetchAll()->toArray();
 
         // Step form fields
-        $melisMelisCoreConfig = $this->getServiceLocator()->get('MelisCoreConfig');
+        $melisMelisCoreConfig = $this->getServiceManager()->get('MelisCoreConfig');
         $appConfigForm = $melisMelisCoreConfig->getFormMergedAndOrdered('melistoolcreator/forms/melistoolcreator_step2_form', 'melistoolcreator_step2_form');
-        $factory = new \Zend\Form\Factory();
-        $formElements = $this->getServiceLocator()->get('FormElementManager');
+        $factory = new \Laminas\Form\Factory();
+        $formElements = $this->getServiceManager()->get('FormElementManager');
         $factory->setFormElementManager($formElements);
 
         $request = $this->getRequest();
@@ -499,10 +501,10 @@ class ToolCreatorController extends AbstractActionController
         $reloadDbCache = $this->params()->fromPost('reloadDbTblCached', false);
 
         // Step form fields
-        $melisCoreConfig = $this->getServiceLocator()->get('MelisCoreConfig');
+        $melisCoreConfig = $this->getServiceManager()->get('MelisCoreConfig');
         $appConfigForm = $melisCoreConfig->getFormMergedAndOrdered('melistoolcreator/forms/melistoolcreator_step3_form/melistoolcreator_step3_primary_tbl', 'melistoolcreator_step3_primary_tbl');
-        $factory = new \Zend\Form\Factory();
-        $formElements = $this->getServiceLocator()->get('FormElementManager');
+        $factory = new \Laminas\Form\Factory();
+        $formElements = $this->getServiceManager()->get('FormElementManager');
         $factory->setFormElementManager($formElements);
         $step3Form = $factory->createForm($appConfigForm);
 
@@ -532,14 +534,16 @@ class ToolCreatorController extends AbstractActionController
                 $formData = $step3Form->getData();
 
                 // Describe query to get the details of the Database table
-                $sql = 'DESCRIBE '.$formData['tcf-db-table'];
-                $adapter = $this->getServiceLocator()->get('Zend\Db\Adapter\Adapter');
-                $table = $adapter->query($sql, [5]);
+                /**
+                 * @var MelisToolCreatorService $toolCreatorSrv
+                 */
+                $toolCreatorSrv = $this->getServiceManager()->get('MelisToolCreatorService');
+                $table = $toolCreatorSrv->describeTable($formData['tcf-db-table']);
 
                 $hasPrimaryKey = false;
                 $hasPrimaryKeyIdAI = false;
                 $notNullableBlobType = [];
-                foreach ($table->toArray() As $tbl){
+                foreach ($table As $tbl){
 
                     if ($tbl['Key'] == 'PRI'){
                         $hasPrimaryKey = true;
@@ -571,7 +575,7 @@ class ToolCreatorController extends AbstractActionController
                     unset($container['melis-toolcreator']['step3']);
                     $container['melis-toolcreator']['step3']['tcf-db-table'] = $formData['tcf-db-table'];
                 }else{
-                    $translator = $this->getServiceLocator()->get('translator');
+                    $translator = $this->getServiceManager()->get('translator');
 
                     // adding a variable to ViewModel to flag an error
                     if (!$hasPrimaryKey)
@@ -612,7 +616,7 @@ class ToolCreatorController extends AbstractActionController
         $view->tables = $this->getDBTablesCached();
 
         // Rendering the ViewModel to return html string
-        $viewRenderer = $this->getServiceLocator()->get('ViewRenderer');
+        $viewRenderer = $this->getServiceManager()->get('ViewRenderer');
         $html = $viewRenderer->render($view);
 
         $results['html'] = $html;
@@ -632,10 +636,10 @@ class ToolCreatorController extends AbstractActionController
         $view->type = 'language-db';
 
         // Step form fields
-        $melisCoreConfig = $this->getServiceLocator()->get('MelisCoreConfig');
+        $melisCoreConfig = $this->getServiceManager()->get('MelisCoreConfig');
         $appConfigForm = $melisCoreConfig->getFormMergedAndOrdered('melistoolcreator/forms/melistoolcreator_step3_form/melistoolcreator_step3_language_tbl', 'melistoolcreator_step3_language_tbl');
-        $factory = new \Zend\Form\Factory();
-        $formElements = $this->getServiceLocator()->get('FormElementManager');
+        $factory = new \Laminas\Form\Factory();
+        $formElements = $this->getServiceManager()->get('FormElementManager');
         $factory->setFormElementManager($formElements);
         $step3Form = $factory->createForm($appConfigForm);
 
@@ -689,14 +693,16 @@ class ToolCreatorController extends AbstractActionController
             if ($formData['tcf-db-table-has-language'] && !empty($formData['tcf-db-table-language-tbl'])){
 
                 // Describe query to get the details of the Database table
-                $sql = 'DESCRIBE '.$formData['tcf-db-table-language-tbl'];
-                $adapter = $this->getServiceLocator()->get('Zend\Db\Adapter\Adapter');
-                $table = $adapter->query($sql, [5]);
+                /**
+                 * @var MelisToolCreatorService $toolCreatorSrv
+                 */
+                $toolCreatorSrv = $this->getServiceManager()->get('MelisToolCreatorService');
+                $table = $toolCreatorSrv->describeTable($formData['tcf-db-table-language-tbl']);
 
                 $hasPrimaryKeyIdAI = false;
                 $hasPrimaryKey = false;
                 $notNullableBlobType = [];
-                foreach ($table->toArray() As $tbl){
+                foreach ($table As $tbl){
                     if ($tbl['Key'] == 'PRI'){
                         $hasPrimaryKey = true;
                         if ($tbl['Extra'] == 'auto_increment')
@@ -714,7 +720,7 @@ class ToolCreatorController extends AbstractActionController
                     if (empty($results['hasError']))
                         $results['hasError'] = [];
 
-                    $translator = $this->getServiceLocator()->get('translator');
+                    $translator = $this->getServiceManager()->get('translator');
                     // adding a variable to ViewModel to flag an error
 
                     if (!$hasPrimaryKey)
@@ -733,7 +739,6 @@ class ToolCreatorController extends AbstractActionController
                     }
                 }
             }
-
 
             if (!empty($stepCont))
                 $container['melis-toolcreator']['step3'] = ArrayUtils::merge($stepCont, $step3Form->getData());
@@ -760,7 +765,7 @@ class ToolCreatorController extends AbstractActionController
         }
 
         // Rendering the ViewModel to return html string
-        $viewRenderer = $this->getServiceLocator()->get('ViewRenderer');
+        $viewRenderer = $this->getServiceManager()->get('ViewRenderer');
         $html = $viewRenderer->render($view);
 
         $results['html'] = $html;
@@ -785,9 +790,11 @@ class ToolCreatorController extends AbstractActionController
         // Describe query to get the details of the Database table
         $tableName = $this->params()->fromPost('tableName', $this->params()->fromRoute('tableName'));
         if ($tableName){
-            $sql = 'DESCRIBE '.$tableName;
-            $adapter = $this->getServiceLocator()->get('Zend\Db\Adapter\Adapter');
-            $tables = $adapter->query($sql, [5])->toArray();
+            /**
+             * @var MelisToolCreatorService $toolCreatorSrv
+             */
+            $toolCreatorSrv = $this->getServiceManager()->get('MelisToolCreatorService');
+            $tables = $toolCreatorSrv->describeTable($tableName);
 
             $hasPrimaryKey = false;
             $hasBlobType = false;
@@ -806,7 +813,7 @@ class ToolCreatorController extends AbstractActionController
 
 
         // Rendering the ViewModel to return html string
-        $viewRenderer = $this->getServiceLocator()->get('ViewRenderer');
+        $viewRenderer = $this->getServiceManager()->get('ViewRenderer');
         $html = $viewRenderer->render($view);
 
         return new JsonModel(['html' => $html]);
@@ -828,17 +835,21 @@ class ToolCreatorController extends AbstractActionController
         $tcfDbTbl = $container['melis-toolcreator']['step3']['tcf-db-table'];
 
         // Describe query to get the details of the Database table
-        $sql = 'DESCRIBE '.$tcfDbTbl;
-        $adapter = $this->getServiceLocator()->get('Zend\Db\Adapter\Adapter');
-        $table = $adapter->query($sql, [5]);
-        $viewStp->priTblCols = $table->toArray();
+        /**
+         * @var MelisToolCreatorService $toolCreatorSrv
+         */
+        $toolCreatorSrv = $this->getServiceManager()->get('MelisToolCreatorService');
+        $viewStp->priTblCols = $toolCreatorSrv->describeTable($tcfDbTbl);
 
         if (!empty($container['melis-toolcreator']['step3']['tcf-db-table-has-language'])){
 
-            // Describe query to get the details of the Database table
-            $sql = 'DESCRIBE '.$container['melis-toolcreator']['step3']['tcf-db-table-language-tbl'];
-            $table = $adapter->query($sql, [5]);
-            $viewStp->langTblCols = $table->toArray();
+            /**
+             * Describe query to get the details of the Database table
+             *
+             * @var MelisToolCreatorService $toolCreatorSrv
+             */
+            $toolCreatorSrv = $this->getServiceManager()->get('MelisToolCreatorService');
+            $viewStp->langTblCols = $toolCreatorSrv->describeTable($container['melis-toolcreator']['step3']['tcf-db-table-language-tbl']);
 
             // Adding prefix "lang_" for language columns
             $viewStp->fkCols = [
@@ -849,17 +860,18 @@ class ToolCreatorController extends AbstractActionController
         }
 
         // Step form fields
-        $melisMelisCoreConfig = $this->getServiceLocator()->get('MelisCoreConfig');
+        $melisMelisCoreConfig = $this->getServiceManager()->get('MelisCoreConfig');
         $appConfigForm = $melisMelisCoreConfig->getFormMergedAndOrdered('melistoolcreator/forms/melistoolcreator_step4_form', 'melistoolcreator_step4_form');
-        $factory = new \Zend\Form\Factory();
-        $formElements = $this->getServiceLocator()->get('FormElementManager');
+        $factory = new \Laminas\Form\Factory();
+        $formElements = $this->getServiceManager()->get('FormElementManager');
         $factory->setFormElementManager($formElements);
         $step4Form = $factory->createForm($appConfigForm);
 
         /**
          * Triggering an event for the Select input option values dynamic values
+         * @var MelisGeneralService $coreSrv
          */
-        $coreSrv = $this->getServiceLocator()->get('MelisCoreGeneralService');
+        $coreSrv = $this->getServiceManager()->get('MelisGeneralService');
         $colDisplayOptions = $step4Form->get('tcf-db-table-col-display')->getValueOptions();
         $result = $coreSrv->sendEvent('melis_toolcreator_col_display_options', ['valueOptions' => $colDisplayOptions]);
         $step4Form->get('tcf-db-table-col-display')->setValueOptions($result['valueOptions']);
@@ -906,17 +918,17 @@ class ToolCreatorController extends AbstractActionController
         $tcfDbTbl = $container['melis-toolcreator']['step3']['tcf-db-table'];
 
         // Step form fields
-        $melisCoreConfig = $this->getServiceLocator()->get('MelisCoreConfig');
+        $melisCoreConfig = $this->getServiceManager()->get('MelisCoreConfig');
         $appConfigForm = $melisCoreConfig->getFormMergedAndOrdered('melistoolcreator/forms/melistoolcreator_step5_form', 'melistoolcreator_step5_form');
-        $factory = new \Zend\Form\Factory();
-        $formElements = $this->getServiceLocator()->get('FormElementManager');
+        $factory = new \Laminas\Form\Factory();
+        $formElements = $this->getServiceManager()->get('FormElementManager');
         $factory->setFormElementManager($formElements);
         $step5Form = $factory->createForm($appConfigForm);
 
         /**
          * Triggering an event for the Select input option values dynamic values
          */
-        $coreSrv = $this->getServiceLocator()->get('MelisCoreGeneralService');
+        $coreSrv = $this->getServiceManager()->get('MelisGeneralService');
         $editTypeOptions = $step5Form->get('tcf-db-table-col-type')->getValueOptions();
         $result = $coreSrv->sendEvent('melis_toolcreator_input_edition_type_options', ['valueOptions' => $editTypeOptions]);
         $step5Form->get('tcf-db-table-col-type')->setValueOptions($result['valueOptions']);
@@ -944,25 +956,31 @@ class ToolCreatorController extends AbstractActionController
             }
         }
 
-        // Describe query to get the details of the Database table
-        $sql = 'DESCRIBE '.$tcfDbTbl;
-        $adapter = $this->getServiceLocator()->get('Zend\Db\Adapter\Adapter');
-        $table = $adapter->query($sql, [5]);
-        $tableCols = $table->toArray();
+        /**
+         * Describe query to get the details of the Database table
+         *
+         * @var MelisToolCreatorService $toolCreatorSrv
+         */
+        $toolCreatorSrv = $this->getServiceManager()->get('MelisToolCreatorService');
+        $tableCols = $toolCreatorSrv->describeTable($tcfDbTbl);
 
         $viewStp->tableCols = $this->tblColsFields($tableCols);
 
         if (!empty($container['melis-toolcreator']['step3']['tcf-db-table-has-language'])){
 
-            // Describe query to get the details of the Database table
-            $sql = 'DESCRIBE '.$container['melis-toolcreator']['step3']['tcf-db-table-language-tbl'];
-            $table = $adapter->query($sql, [5]);
-            $angTblCols = $table->toArray();
+            /**
+             * Describe query to get the details of the Database table
+             *
+             * @var MelisToolCreatorService $toolCreatorSrv
+             */
+            $toolCreatorSrv = $this->getServiceManager()->get('MelisToolCreatorService');
+            $angTblCols = $toolCreatorSrv->describeTable($container['melis-toolcreator']['step3']['tcf-db-table-language-tbl']);
+
             $viewStp->langTblCols = $this->tblColsFields($angTblCols, true);
         }
 
         // Input Types
-        $config = $this->getServiceLocator()->get('config');
+        $config = $this->getServiceManager()->get('config');
         $viewStp->inputTypes = $config['plugins']['melistoolcreator']['datas']['input_types'];
 
         return $viewStp;
@@ -1078,13 +1096,13 @@ class ToolCreatorController extends AbstractActionController
      */
     public function renderStep6($viewStp, $validate = false)
     {
-        $translator = $this->getServiceLocator()->get('translator');
+        $translator = $this->getServiceManager()->get('translator');
 
         // Tool creator session container
         $container = new Container('melistoolcreator');
         $tcfDbTbl = $container['melis-toolcreator'];
 
-        $coreLang = $this->getServiceLocator()->get('MelisCoreTableLang');
+        $coreLang = $this->getServiceManager()->get('MelisCoreTableLang');
         $languages = $coreLang->fetchAll()->toArray();
 
         /**
@@ -1098,10 +1116,13 @@ class ToolCreatorController extends AbstractActionController
         );
 
         // Making sure the column order is the same with the database table structure
-        $sql = 'DESCRIBE '.$tcfDbTbl['step3']['tcf-db-table'];
-        $adapter = $this->getServiceLocator()->get('Zend\Db\Adapter\Adapter');
-        $table = $adapter->query($sql, [5]);
-        $tableCols = $table->toArray();
+        /**
+         * Describe query to get the details of the Database table
+         *
+         * @var MelisToolCreatorService $toolCreatorSrv
+         */
+        $toolCreatorSrv = $this->getServiceManager()->get('MelisToolCreatorService');
+        $tableCols = $toolCreatorSrv->describeTable($tcfDbTbl['step3']['tcf-db-table']);
 
         // Preparing the column the will be added to the Form dynamically
         $selectedColumns = [];
@@ -1125,11 +1146,16 @@ class ToolCreatorController extends AbstractActionController
                 $skipFkCols[] = $tcfDbTbl['step3']['tcf-db-table-language-lang-fk'];
             }
 
-            // Describe query to get the details of the Database table
-            $sql = 'DESCRIBE '.$tcfDbTbl['step3']['tcf-db-table-language-tbl'];
-            $table = $adapter->query($sql, [5]);
+            /**
+             * Describe query to get the details of the Database table
+             *
+             * @var MelisToolCreatorService $toolCreatorSrv
+             */
+            $toolCreatorSrv = $this->getServiceManager()->get('MelisToolCreatorService');
+            $table = $toolCreatorSrv->describeTable($tcfDbTbl['step3']['tcf-db-table-language-tbl']);
+
             $langTblCols = [];
-            foreach($table->toArray() As $val){
+            foreach($table As $val){
                 // Adding prefix "tclangtblcol_" for language columns
                 $tblCol = 'tclangtblcol_'.$val['Field'];
                 if (in_array($tblCol, $stepsColumns) && !in_array($val['Field'], $skipFkCols)){
@@ -1144,10 +1170,10 @@ class ToolCreatorController extends AbstractActionController
         }
 
         // Step form fields
-        $melisMelisCoreConfig = $this->getServiceLocator()->get('MelisCoreConfig');
+        $melisMelisCoreConfig = $this->getServiceManager()->get('MelisCoreConfig');
         $appConfigForm = $melisMelisCoreConfig->getFormMergedAndOrdered('melistoolcreator/forms/melistoolcreator_step6_form', 'melistoolcreator_step6_form');
-        $factory = new \Zend\Form\Factory();
-        $formElements = $this->getServiceLocator()->get('FormElementManager');
+        $factory = new \Laminas\Form\Factory();
+        $formElements = $this->getServiceManager()->get('FormElementManager');
         $factory->setFormElementManager($formElements);
 
         $hasErrorForm = [];
@@ -1195,7 +1221,7 @@ class ToolCreatorController extends AbstractActionController
                             'NotEmpty',
                             [
                                 'messages' => [
-                                    \Zend\Validator\NotEmpty::IS_EMPTY => 'tr_melistoolcreator_err_empty',
+                                    \Laminas\Validator\NotEmpty::IS_EMPTY => 'tr_melistoolcreator_err_empty',
                                 ]
                             ]
                         );
@@ -1320,7 +1346,7 @@ class ToolCreatorController extends AbstractActionController
     public function renderStep7($viewStp, $validate = false)
     {
         // Config
-        $config = $this->getServiceLocator()->get('config');
+        $config = $this->getServiceManager()->get('config');
         $viewStp->steps = $config['plugins']['melistoolcreator']['datas']['steps'];
 
         // Tool creator session container
@@ -1331,11 +1357,11 @@ class ToolCreatorController extends AbstractActionController
         $viewStp->toolType = $tcfDbTbl['step1']['tcf-tool-type'];
 
         // Languages
-        $coreLang = $this->getServiceLocator()->get('MelisCoreTableLang');
+        $coreLang = $this->getServiceManager()->get('MelisCoreTableLang');
         $viewStp->languages = $coreLang->fetchAll()->toArray();
 
         if ($tcfDbTbl['step1']['tcf-tool-type'] == 'db'){
-            $toolCreatorSrv = $this->getServiceLocator()->get('MelisToolCreatorService');
+            $toolCreatorSrv = $this->getServiceManager()->get('MelisToolCreatorService');
             $priCol = $toolCreatorSrv->hasPrimaryKey();
 
             if (!empty($priCol)){
@@ -1357,10 +1383,10 @@ class ToolCreatorController extends AbstractActionController
     public function renderStep8($viewStp, $validate = false)
     {
         // Step form fields
-        $melisCoreConfig = $this->getServiceLocator()->get('MelisCoreConfig');
+        $melisCoreConfig = $this->getServiceManager()->get('MelisCoreConfig');
         $appConfigForm = $melisCoreConfig->getFormMergedAndOrdered('melistoolcreator/forms/melistoolcreator_step8_form', 'melistoolcreator_step8_form');
-        $factory = new \Zend\Form\Factory();
-        $formElements = $this->getServiceLocator()->get('FormElementManager');
+        $factory = new \Laminas\Form\Factory();
+        $formElements = $this->getServiceManager()->get('FormElementManager');
         $factory->setFormElementManager($formElements);
 
         $request = $this->getRequest();
@@ -1372,13 +1398,13 @@ class ToolCreatorController extends AbstractActionController
             $validateModule = $request->getPost()->toArray();
             $activateModule = (!empty($validateModule['step-form']['tcf-activate-tool'])) ? true : false;
 
-            $toolCreatorSrv = $this->getServiceLocator()->get('MelisToolCreatorService');
+            $toolCreatorSrv = $this->getServiceManager()->get('MelisToolCreatorService');
             $toolCreatorSrv->createTool();
 
             if ($activateModule){
 
                 // Activating module
-                $moduleSvc = $this->getServiceLocator()->get('ModulesService');
+                $moduleSvc = $this->getServiceManager()->get('ModulesService');
                 $moduleSvc->activateModule($toolCreatorSrv->moduleName());
 
                 // Reloading module paths
@@ -1421,7 +1447,7 @@ class ToolCreatorController extends AbstractActionController
         $lang = explode('_', $locale);
         if (!empty($lang[0])) {
 
-            $moduleSvc = $this->getServiceLocator()->get('ModulesService');
+            $moduleSvc = $this->getServiceManager()->get('ModulesService');
             $imgPath = $moduleSvc->getModulePath('MelisCore').'/public/assets/images/lang/'.$lang[0].'.png';
 
             if (file_exists($imgPath)) 
@@ -1437,7 +1463,7 @@ class ToolCreatorController extends AbstractActionController
      * This method setting and retrieving database table cached file
      *
      * @param $reloadCached
-     * @return \Zend\Db\Metadata\Object\TableObject[]
+     * @return \Laminas\Db\Metadata\Object\TableObject[]
      */
     private function getDBTablesCached($reloadCached = false)
     {
@@ -1445,13 +1471,13 @@ class ToolCreatorController extends AbstractActionController
          * Caching Database tables to file cache
          * to avoid slow request for step 2
          */
-        $melisEngineCacheSystem = $this->serviceLocator->get('MelisEngineCacheSystem');
+        $melisEngineCacheSystem = $this->getServiceManager()->get('MelisEngineCacheSystem');
         $results = $melisEngineCacheSystem->getCacheByKey($this->cacheKey, $this->cacheConfig, true);
         if (!$results || $reloadCached){
 
-            $toolCreatorSrv = $this->getServiceLocator()->get('MelisToolCreatorService');
+            $toolCreatorSrv = $this->getServiceManager()->get('MelisToolCreatorService');
 
-            $adapter = $this->getServiceLocator()->get('Zend\Db\Adapter\Adapter');
+            $adapter = $this->getServiceManager()->get(\Laminas\Db\Adapter\Adapter::class);
             $metadata = new Metadata($adapter);
             $tables = $metadata->getTables();
 
@@ -1492,7 +1518,7 @@ class ToolCreatorController extends AbstractActionController
 
     public function strAction()
     {
-//        $toolCreatorSrv = $this->getServiceLocator()->get('MelisToolCreatorService');
+//        $toolCreatorSrv = $this->$this->getServiceManager()->get('MelisToolCreatorService');
 //        echo 'meLisModuLe: '.$toolCreatorSrv->generateModuleNameCase('MelisModuleJeJejE');
 
         $text = 'ignore everything except this ("1", "2")';
@@ -1504,15 +1530,14 @@ class ToolCreatorController extends AbstractActionController
 
     public function testAction()
     {
-        $toolCreatorSrv = $this->getServiceLocator()->get('MelisToolCreatorService');
+        $toolCreatorSrv = $this->getServiceManager()->get('MelisToolCreatorService');
         $res = $toolCreatorSrv->createTool();
-        print_r($res->getVariables());
-        die();
+        dd($res->getVariables());
     }
 
     public function desAction()
     {
-        $toolCreatorSrv = $this->getServiceLocator()->get('MelisToolCreatorService');
+        $toolCreatorSrv = $this->getServiceManager()->get('MelisToolCreatorService');
         $res = $toolCreatorSrv->describeTable('aaa');
         print_r($res);
         die();
@@ -1520,7 +1545,7 @@ class ToolCreatorController extends AbstractActionController
 
     public function formAction()
     {
-        $srv = $this->getServiceLocator()->get('FormElementManager');
+        $srv = $this->getServiceManager()->get('FormElementManager');
         $element = $srv->get('MelisCmsTemplateSelect');
 
         print_r($element);
@@ -1528,7 +1553,7 @@ class ToolCreatorController extends AbstractActionController
         $element->setName('test_test');
 
 
-        $viewHelper = $this->getServiceLocator()->get('ViewHelperManager');
+        $viewHelper = $this->getServiceManager()->get('ViewHelperManager');
         $fielRow = $viewHelper->get('MelisFieldRow');
 
         echo $fielRow->render($element);

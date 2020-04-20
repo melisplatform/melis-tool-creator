@@ -10,32 +10,38 @@
 namespace ModuleTpl\Model\Tables;
 
 use MelisCore\Model\Tables\MelisGenericTable;
-use Zend\Db\TableGateway\TableGateway;
+use Laminas\Db\TableGateway\TableGateway;
 
 class ModuleTplLangTable extends MelisGenericTable
 {
-    protected $tableGateway;
-    protected $idField;
-    
-    public function __construct(TableGateway $tableGateway)
+    /**
+     * Model table
+     */
+    const TABLE = '#TCLANGTABLE';
+
+    /**
+     * Table primary key
+     */
+    const PRIMARY_KEY = '#TCLANGPRIMARYKEY';
+
+    public function __construct()
     {
-        parent::__construct($tableGateway);
-        #TCPRIMARYKEYCOLUMN
+        $this->idField = self::PRIMARY_KEY;
     }
 
     public function getLangByFKID($fkId, $langId)
     {
-        $select = $this->tableGateway->getSql()->select();
+        $select = $this->getTableGateway()->getSql()->select();
 
         $select->where('#TCPFKEY ="'. $fkId .'"');
         $select->where('#TCPLANGFKEY  ='. $langId);
 
-        $resultSet = $this->tableGateway->selectWith($select);
+        $resultSet = $this->getTableGateway()->selectWith($select);
         return $resultSet;
     }
 
     public function deleteByFkId($fkId)
     {
-        return $this->tableGateway->delete(array('#TCPFKEY' => $fkId));
+        return $this->getTableGateway()->delete(array('#TCPFKEY' => $fkId));
     }
 }

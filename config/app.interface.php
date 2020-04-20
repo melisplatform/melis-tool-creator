@@ -81,10 +81,10 @@ return [
                         'mediumtext',
                         'longtext',
                     ],
-                    'Datepicker' => [
+                    'DatePicker' => [
                         'date'
                     ],
-                    'Datetimepicker' => [
+                    'DateTimePicker' => [
                         'datetime',
                         'timestamp'
                     ],
