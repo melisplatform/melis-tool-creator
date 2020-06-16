@@ -12,9 +12,9 @@ namespace ModuleTpl\Controller;
 use Laminas\Stdlib\ArrayUtils;
 use Laminas\View\Model\JsonModel;
 use Laminas\View\Model\ViewModel;
-use MelisCore\Controller\AbstractActionController;
+use MelisCore\Controller\MelisAbstractActionController;
 
-class LanguageController extends AbstractActionController
+class LanguageController extends MelisAbstractActionController
 {
     public function renderLanguageFormAction()
     {

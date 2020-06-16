@@ -10,9 +10,9 @@
 namespace ModuleTpl\Controller;
 
 use Laminas\View\Model\ViewModel;
-use MelisCore\Controller\AbstractActionController;
+use MelisCore\Controller\MelisAbstractActionController;
 
-class IndexController extends AbstractActionController
+class IndexController extends MelisAbstractActionController
 {
     /**
      * Render the view of the tool

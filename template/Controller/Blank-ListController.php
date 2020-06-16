@@ -12,9 +12,9 @@ namespace ModuleTpl\Controller;
 use Laminas\Session\Container;
 use Laminas\View\Model\JsonModel;
 use Laminas\View\Model\ViewModel;
-use MelisCore\Controller\AbstractActionController;
+use MelisCore\Controller\MelisAbstractActionController;
 
-class ListController extends AbstractActionController
+class ListController extends MelisAbstractActionController
 {
     public function renderToolAction()
     {

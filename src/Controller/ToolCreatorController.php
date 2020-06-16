@@ -16,11 +16,11 @@ use Laminas\Stdlib\ArrayUtils;
 use Laminas\View\Model\JsonModel;
 use Laminas\View\Model\ViewModel;
 use Laminas\Db\Metadata\Metadata;
-use MelisCore\Controller\AbstractActionController;
+use MelisCore\Controller\MelisAbstractActionController;
 use MelisCore\Service\MelisGeneralService;
 use MelisToolCreator\Service\MelisToolCreatorService;
 
-class ToolCreatorController extends AbstractActionController
+class ToolCreatorController extends MelisAbstractActionController
 {
 
     private $cacheKey = 'toolcreator_database_tables';
