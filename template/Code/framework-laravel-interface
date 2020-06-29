@@ -16,7 +16,9 @@ return [
                 'rightsDisplay' => 'none',
             ],
             'ressources' => [
-                'js' => [],
+                'js' => [
+                    '/ModuleTpl/js/tool.js'
+                ],
                 'css' => [],
                 /**
                  * the "build" configuration compiles all assets into one file to make
