@@ -172,11 +172,11 @@ class MelisToolCreatorService  extends MelisGeneralService
     public function skipDir($dir)
     {
         if ($this->isIframeTool())
-            if (in_array($dir, ['public', 'Listener', 'Model']))
+            if (in_array($dir, ['Listener', 'Model']))
                 return true;
 
         if ($this->isBlankTool())
-            if (in_array($dir, ['public', 'Listener', 'Model', 'Service']))
+            if (in_array($dir, ['Listener', 'Model', 'Service']))
                 return true;
 
         if ($this->isFrameworkTool())
@@ -212,15 +212,13 @@ class MelisToolCreatorService  extends MelisGeneralService
                 } elseif ($file == 'app.interface.php' && ($this->isDbTool() || $this->isBlankTool())) {
 
                     $fileName = 'app.interface.php';
-                    if ($this->isBlankTool())
-                        $fileName = 'blank-'.$fileName;
 
                     if ($this->isFrameworkTool())
                         $interfaceContent = $this->fgc('/Code/framework-'.strtolower($this->isFrameworkTool()).'-interface');
                     else
                         $interfaceContent = $this->fgc('/Config/'.$fileName);
 
-                    $this->generateFile(str_replace('blank-', '', $fileName), $targetDir, $interfaceContent);
+                    $this->generateFile($fileName, $targetDir, $interfaceContent);
 
                 } elseif ($file == 'app.microservice.php') {
 
@@ -937,10 +935,15 @@ class MelisToolCreatorService  extends MelisGeneralService
      */
     private function generateModuleJs($targetDir)
     {
+        if ($this->isBlankTool()) {
+            $fileContent = $this->fgc('/Asset/blank-tool.js');
+            $this->generateFile('tool.js', $targetDir, $fileContent);
+        }
+
         if (!$this->isDbTool())
             return;
 
-        if (!$this->isFrameworkTool()){
+        if (!$this->isFrameworkTool() && !$this->isBlankTool()) {
             $addBtnScript = $this->fgc('/Asset/'.$this->getToolEditType().'-add-btn');
             $saveScript = $this->fgc('/Asset/'.$this->getToolEditType().'-save');
             $ediBtnScript = $this->fgc('/Asset/'.$this->getToolEditType().'-edit-btn');
