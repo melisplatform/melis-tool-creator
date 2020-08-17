@@ -7,7 +7,7 @@
         $view->id = $id;
 
         if ($id != 'add'){
-            $moduleTplTable = $this->getServiceLocator()->get('ModuleTplTable');
+            $moduleTplTable = $this->getServiceManager()->get('ModuleTplTable');
             $data = $moduleTplTable->getEntryById($id)->current();
             $form->bind($data);
         }

@@ -198,3 +198,8 @@
 .melis-toolcreator-steps .bwizard-steps li:before{
     left: -1px;
 }
+
+.melis-toolcreator-steps-primary-db-table-columns .table-responsive,
+.melis-toolcreator-steps-language-db-table-columns .table-responsive {
+    display: block !important;
+}

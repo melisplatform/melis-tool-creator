@@ -1,8 +1,6 @@
         'aliases' => [
-            'translator' => 'MvcTranslator',
-            'ModuleTplTable' => 'ModuleTpl\Model\Tables\ModuleTplTable'
-        ],
-        'factories' => [
-            'ModuleTpl\Model\Tables\ModuleTplTable' => 'ModuleTpl\Model\Tables\Factory\ModuleTplTableFactory',
-            'ModuleTplService' => 'ModuleTpl\Service\Factory\ModuleTplServiceFactory',
-        ],
+            // Service
+            'ModuleTplService' => \ModuleTpl\Service\ModuleTplService::class,
+            // Table
+            'ModuleTplTable' => \ModuleTpl\Model\Tables\ModuleTplTable::class
+        ]

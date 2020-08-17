@@ -1,2 +1,2 @@
-            'ModuleTpl\Controller\List' => 'ModuleTpl\Controller\ListController',
-            'ModuleTpl\Controller\Properties' => 'ModuleTpl\Controller\PropertiesController',
+            'ModuleTpl\Controller\List'         => \ModuleTpl\Controller\ListController::class,
+            'ModuleTpl\Controller\Properties'   => \ModuleTpl\Controller\PropertiesController::class,

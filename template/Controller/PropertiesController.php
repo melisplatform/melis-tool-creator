@@ -9,19 +9,19 @@
 
 namespace ModuleTpl\Controller;
 
-use Zend\Mvc\Controller\AbstractActionController;
-use Zend\View\Model\ViewModel;
-use Zend\View\Model\JsonModel;
-use Zend\Session\Container;
+use Laminas\View\Model\ViewModel;
+use Laminas\View\Model\JsonModel;
+use Laminas\Session\Container;
+use MelisCore\Controller\MelisAbstractActionController;
 
-class PropertiesController extends AbstractActionController
+class PropertiesController extends MelisAbstractActionController
 {
 
 #TCPROPACTIONS
 
     public function saveAction()
     {
-        $translator = $this->getServiceLocator()->get('translator');
+        $translator = $this->getServiceManager()->get('translator');
 
         $success = 0;
         $textTitle = $translator->translate('tr_moduletpl_title');
@@ -83,7 +83,7 @@ class PropertiesController extends AbstractActionController
         $success = 0;
         $errors = [];
 
-        $translator = $this->getServiceLocator()->get('translator');
+        $translator = $this->getServiceManager()->get('translator');
 
         $request = $this->getRequest();
         $formData = $request->getPost()->toArray();
@@ -111,7 +111,7 @@ class PropertiesController extends AbstractActionController
             else
                 unset($formData['#TCKEY']);
 
-            $moduleTplService = $this->getServiceLocator()->get('ModuleTplService');
+            $moduleTplService = $this->getServiceManager()->get('ModuleTplService');
             $res = $moduleTplService->saveItem($formData, $id);
 
             if (!is_null($res)){
@@ -142,19 +142,19 @@ class PropertiesController extends AbstractActionController
         $queryData = $request->getQuery()->toArray();
 
         if (!empty($queryData['id'])){
-            $moduleTplService = $this->getServiceLocator()->get('ModuleTplService');
+            $moduleTplService = $this->getServiceManager()->get('ModuleTplService');
             $moduleTplService->deleteItem($queryData['id']);
         }
     }
 
     private function getForm()
     {
-        $melisCoreConfig = $this->serviceLocator->get('MelisCoreConfig');
+        $melisCoreConfig = $this->getServiceManager()->get('MelisCoreConfig');
         $appConfigForm = $melisCoreConfig->getFormMergedAndOrdered('moduletpl/tools/moduletpl_tools/forms/moduletpl_property_form', 'moduletpl_property_form');
 
         // Factoring ModuleTpl event and pass to view
-        $factory = new \Zend\Form\Factory();
-        $formElements = $this->serviceLocator->get('FormElementManager');
+        $factory = new \Laminas\Form\Factory();
+        $formElements = $this->getServiceManager()->get('FormElementManager');
         $factory->setFormElementManager($formElements);
         $form = $factory->createForm($appConfigForm);
 

@@ -1,1 +1,1 @@
-            'ModuleTpl\Controller\List' => 'ModuleTpl\Controller\ListController',
+            'ModuleTpl\Controller\List' => \ModuleTpl\Controller\ListController::class,

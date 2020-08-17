@@ -9,12 +9,12 @@
 
 namespace ModuleTpl\Controller;
 
-use Zend\Mvc\Controller\AbstractActionController;
-use Zend\Session\Container;
-use Zend\View\Model\JsonModel;
-use Zend\View\Model\ViewModel;
+use Laminas\Session\Container;
+use Laminas\View\Model\JsonModel;
+use Laminas\View\Model\ViewModel;
+use MelisCore\Controller\MelisAbstractActionController;
 
-class ListController extends AbstractActionController
+class ListController extends MelisAbstractActionController
 {
     public function renderToolAction()
     {

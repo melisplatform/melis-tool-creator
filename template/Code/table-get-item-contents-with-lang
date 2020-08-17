@@ -1,11 +1,11 @@
     public function getItemById($id)
-        {
-            $select = $this->tableGateway->getSql()->select();
-            $select->columns(['*', new Expression('#TCPPRIMARYTABLE.'.$this->idField.' As DT_RowId')]);
+    {
+        $select = $this->getTableGateway()->getSql()->select();
+        $select->columns(['*', new Expression('#TCPPRIMARYTABLE.'.$this->idField.' As DT_RowId')]);
 
 #TCPJOINSYNTX
 
-            $select->where->equalTo('#TCPPRIMARYTABLE.'.$this->idField, $id);
-            $resultSet = $this->tableGateway->selectWith($select);
-            return $resultSet;
-        }
+        $select->where->equalTo('#TCPPRIMARYTABLE.'.$this->idField, $id);
+        $resultSet = $this->getTableGateway()->selectWith($select);
+        return $resultSet;
+    }

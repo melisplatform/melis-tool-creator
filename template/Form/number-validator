@@ -3,7 +3,7 @@
                                             'options' => [
                                                 'pattern' => '/^[-0-9]+(.[0-9]{1,2})?$/',
                                                 'messages' => [
-                                                    \Zend\Validator\Regex::NOT_MATCH => 'tr_moduletpl_value_must_numeric'
+                                                    \Laminas\Validator\Regex::NOT_MATCH => 'tr_moduletpl_value_must_numeric'
                                                 ],
                                                 'encoding' => 'UTF-8',
                                             ],

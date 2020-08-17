@@ -9,15 +9,19 @@
 
 namespace MelisToolCreator\Service;
 
-use MelisCore\Service\MelisCoreGeneralService;
-use Zend\Session\Container;
-use Zend\View\Model\JsonModel;
+use Laminas\Db\Adapter\Adapter;
+use Laminas\Db\Metadata\Metadata;
+use Laminas\Db\Metadata\Object\ColumnObject;
+use Laminas\Db\Metadata\Object\ConstraintObject;
+use Laminas\Session\Container;
+use Laminas\View\Model\JsonModel;
+use MelisCore\Service\MelisGeneralService;
 use Symfony\Component;
 
 /**
  * This service manage the creation of the new tool
  */
-class MelisToolCreatorService  extends MelisCoreGeneralService
+class MelisToolCreatorService  extends MelisGeneralService
 {
     private $moduleTplDir;
     private $tcSteps;
@@ -59,9 +63,7 @@ class MelisToolCreatorService  extends MelisCoreGeneralService
                     'Controller' => null,
                     'Listener' => null,
                     'Model' => [
-                        'Tables' => [
-                            'Factory' => null
-                        ]
+                        'Tables' => null
                     ],
                     'Service' => null
                 ]
@@ -152,14 +154,8 @@ class MelisToolCreatorService  extends MelisCoreGeneralService
                     case 'language':
                         $this->generateModuleLanguages($tempTargetDir);
                         break;
-                    case 'Model':
-                        $this->generateModuleModel($tempTargetDir);
-                        break;
                     case 'Tables':
                         $this->generateModuleModelTables($tempTargetDir);
-                        break;
-                    case 'Factory':
-                        $this->generateModuleModelTablesFactory($tempTargetDir);
                         break;
                     case 'Service':
                         $this->generateModuleService($tempTargetDir);
@@ -176,11 +172,11 @@ class MelisToolCreatorService  extends MelisCoreGeneralService
     public function skipDir($dir)
     {
         if ($this->isIframeTool())
-            if (in_array($dir, ['public', 'Listener', 'Model']))
+            if (in_array($dir, ['Listener', 'Model']))
                 return true;
 
         if ($this->isBlankTool())
-            if (in_array($dir, ['public', 'Listener', 'Model', 'Service']))
+            if (in_array($dir, ['Listener', 'Model', 'Service']))
                 return true;
 
         if ($this->isFrameworkTool())
@@ -216,15 +212,13 @@ class MelisToolCreatorService  extends MelisCoreGeneralService
                 } elseif ($file == 'app.interface.php' && ($this->isDbTool() || $this->isBlankTool())) {
 
                     $fileName = 'app.interface.php';
-                    if ($this->isBlankTool())
-                        $fileName = 'blank-'.$fileName;
 
                     if ($this->isFrameworkTool())
                         $interfaceContent = $this->fgc('/Code/framework-'.strtolower($this->isFrameworkTool()).'-interface');
                     else
                         $interfaceContent = $this->fgc('/Config/'.$fileName);
 
-                    $this->generateFile(str_replace('blank-', '', $fileName), $targetDir, $interfaceContent);
+                    $this->generateFile($fileName, $targetDir, $interfaceContent);
 
                 } elseif ($file == 'app.microservice.php') {
 
@@ -564,10 +558,10 @@ class MelisToolCreatorService  extends MelisCoreGeneralService
                 $blankCtrl = '/Code/blank-controller';
 
             $controllers = $this->fgc($blankCtrl);
-            $services = $this->fgc('/Code/blank-service');
+            $services = '';
         }else{
             $controllers = $this->fgc('/Code/iframe-controller');
-            $services = $this->fgc('/Code/iframe-service');
+            $services = '';
         }
 
         $fileContent = $this->sp('#TCSERVICES', $services, $fileContent);
@@ -773,7 +767,7 @@ class MelisToolCreatorService  extends MelisCoreGeneralService
         // Melis core event service
         $coreEventSrv = '';
         if ($hasColDisplayFilter)
-            $coreEventSrv = '$coreSrv = $this->getServiceLocator()->get(\'MelisCoreGeneralService\');';
+            $coreEventSrv = '$coreSrv = $this->getServiceManager()->get(\'MelisGeneralService\');';
 
         $listCtrlFile = $this->sp('#TCCOREEVENTSERVICE', $coreEventSrv, $listCtrlFile);
         $listCtrlFile = $this->sp('#TCTABLECOLDISPLAYFILTER', $tblColDisplay, $listCtrlFile);
@@ -941,10 +935,15 @@ class MelisToolCreatorService  extends MelisCoreGeneralService
      */
     private function generateModuleJs($targetDir)
     {
+        if ($this->isBlankTool()) {
+            $fileContent = $this->fgc('/Asset/blank-tool.js');
+            $this->generateFile('tool.js', $targetDir, $fileContent);
+        }
+
         if (!$this->isDbTool())
             return;
 
-        if (!$this->isFrameworkTool()){
+        if (!$this->isFrameworkTool() && !$this->isBlankTool()) {
             $addBtnScript = $this->fgc('/Asset/'.$this->getToolEditType().'-add-btn');
             $saveScript = $this->fgc('/Asset/'.$this->getToolEditType().'-save');
             $ediBtnScript = $this->fgc('/Asset/'.$this->getToolEditType().'-edit-btn');
@@ -977,12 +976,12 @@ class MelisToolCreatorService  extends MelisCoreGeneralService
      */
     private function generateModuleLanguages($targetDir)
     {
-        $coreLang = $this->getServiceLocator()->get('MelisCoreTableLang');
+        $coreLang = $this->getServiceManager()->get('MelisCoreTableLang');
         $languages = $coreLang->fetchAll()->toArray();
 
         if ($this->isDbTool() && !$this->isFrameworkTool()){
 
-            $translationsSrv = $this->getServiceLocator()->get('MelisCoreTranslation');
+            $translationsSrv = $this->getServiceManager()->get('MelisCoreTranslation');
             $commonTransTpl = require $this->moduleTplDir.'/Language/languages.php';
 
             // Common translation
@@ -1096,43 +1095,34 @@ class MelisToolCreatorService  extends MelisCoreGeneralService
     }
 
     /**
-     * This method generate the Module Model
-     * @param $targetDir
-     */
-    private function generateModuleModel($targetDir)
-    {
-        if ($this->isFrameworkTool())
-            return;
-
-        $fileContent = $this->fgc('/Model/ModuleTpl');
-
-        $this->generateFile($this->moduleName().'.php', $targetDir, $fileContent);
-    }
-
-    /**
      * This method generate the Module Module tables
      * @param $targetDir
      */
     private function generateModuleModelTables($targetDir)
     {
-        $adapter = $this->getServiceLocator()->get('Zend\Db\Adapter\Adapter');
+        $adapter = $this->getServiceManager()->get('Laminas\Db\Adapter\Adapter');
 
         $moduleName = $this->moduleName();
 
         $fileContent = $this->fgc('/Model/Tables/ModuleTplTable');
 
         $tcfDbTbl = $this->tcSteps['step3']['tcf-db-table'];
-        $sql = 'DESCRIBE '.$tcfDbTbl;
-        $table = $adapter->query($sql, [5]);
-        $selectedTbl = $table->toArray();
+        /**
+         * @var MelisToolCreatorService $toolCreatorSrv
+         */
+        $toolCreatorSrv = $this->getServiceManager()->get('MelisToolCreatorService');
+        $selectedTbl = $toolCreatorSrv->describeTable($tcfDbTbl);
+
+        // Table
+        $fileContent = $this->sp('#TCPRIMARYTABLE', $tcfDbTbl, $fileContent);
 
         $primayTblPK = null;
         foreach ($selectedTbl As $key => $cols){
-            // Checking if Selected table has a primary
-            // else the target module will not have a update feature
+            // Getting the first primary ky of the table as module primary key
             if ($cols['Key'] == 'PRI'){
                 $primayTblPK = $cols['Field'];
-                $fileContent = $this->sp('#TCPRIMARYKEYCOLUMN', '$this->idField = \''.$cols['Field'].'\';', $fileContent);
+                // Primary Key
+                $fileContent = $this->sp('#TCPRIMARYKEY', $primayTblPK, $fileContent);
                 break;
             }
         }
@@ -1174,15 +1164,22 @@ class MelisToolCreatorService  extends MelisCoreGeneralService
             $fileContent = $this->fgc('/Model/Tables/ModuleTplLangTable');
 
             $tcfDbTbl = $this->tcSteps['step3']['tcf-db-table-language-tbl'];
-            $sql = 'DESCRIBE '.$tcfDbTbl;
-            $table = $adapter->query($sql, [5]);
-            $selectedTbl = $table->toArray();
+
+            /**
+             * @var MelisToolCreatorService $toolCreatorSrv
+             */
+            $toolCreatorSrv = $this->getServiceManager()->get('MelisToolCreatorService');
+            $selectedTbl = $toolCreatorSrv->describeTable($tcfDbTbl);
+
+            // Table
+            $fileContent = $this->sp('#TCLANGTABLE', $tcfDbTbl, $fileContent);
 
             foreach ($selectedTbl As $key => $cols){
                 // Checking if Selected table has a primary
                 // else the target module will not have a update feature
                 if ($cols['Key'] == 'PRI'){
-                    $fileContent = $this->sp('#TCPRIMARYKEYCOLUMN', '$this->idField = \''.$cols['Field'].'\';', $fileContent);
+                    // Primary Key
+                    $fileContent = $this->sp('#TCLANGPRIMARYKEY', $primayTblPK, $fileContent);
                     break;
                 }
             }
@@ -1195,28 +1192,6 @@ class MelisToolCreatorService  extends MelisCoreGeneralService
     }
 
     /**
-     * This method generate the Module Model table factory
-     * @param $targetDir
-     */
-    private function generateModuleModelTablesFactory($targetDir)
-    {
-        // Tool creator session container
-        $moduleName = $this->moduleName();
-        $tcfDbTbl = $this->tcSteps['step3']['tcf-db-table'];
-
-        $fileContent = $this->fgc('/Model/Tables/Factory/ModuleTplTableFactory');
-        $fileContent = str_replace('#TCDATABASETABLE', $tcfDbTbl, $fileContent);
-
-        $this->generateFile($moduleName.'TableFactory.php', $targetDir, $fileContent);
-
-        if ($this->hasLanguage()){
-            $fileContent = $this->fgc('/Model/Tables/Factory/ModuleTplLangTableFactory');
-            $fileContent = str_replace('#TCDATABASETABLE', $this->tcSteps['step3']['tcf-db-table-language-tbl'], $fileContent);
-            $this->generateFile($moduleName.'LangTableFactory.php', $targetDir, $fileContent);
-        }
-    }
-
-    /**
      * Generates service + service factory files
      * @param $targetDir
      */
@@ -1224,12 +1199,6 @@ class MelisToolCreatorService  extends MelisCoreGeneralService
     {
         if ($this->isFrameworkTool())
             return;
-
-        // Service Factory
-        $serviceFactoryPath = $targetDir . '/Factory';
-        mkdir($serviceFactoryPath, 0777);
-        $fileContent = $this->fgc('/Service/Factory/servicefactory');
-        $this->generateFile($this->moduleName().'ServiceFactory.php', $serviceFactoryPath, $fileContent);
 
         // Service
         $servicePath = $targetDir;
@@ -1367,9 +1336,9 @@ class MelisToolCreatorService  extends MelisCoreGeneralService
 
     public function describeTable($table)
     {
-        $sql = 'DESCRIBE '.$table;
-        $adapter = $this->getServiceLocator()->get('Zend\Db\Adapter\Adapter');
-        $tableAdapter = $adapter->query($sql, [5]);
+        $adapter = $this->getServiceManager()->get('Laminas\Db\Adapter\Adapter');
+        $tableAdapter = $adapter->query('DESCRIBE '.$table, Adapter::QUERY_MODE_EXECUTE);
+
         return $tableAdapter->toArray();
     }
 

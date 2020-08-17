@@ -1,1 +1,1 @@
-            'ModuleTpl\Controller\Index' => 'ModuleTpl\Controller\IndexController',
+            'ModuleTpl\Controller\Index' => \ModuleTpl\Controller\IndexController::class,

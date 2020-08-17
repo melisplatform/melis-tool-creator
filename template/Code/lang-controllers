@@ -1,3 +1,3 @@
-            'ModuleTpl\Controller\List' => 'ModuleTpl\Controller\ListController',
-            'ModuleTpl\Controller\Properties' => 'ModuleTpl\Controller\PropertiesController',
-            'ModuleTpl\Controller\Language' => 'ModuleTpl\Controller\LanguageController'
+            'ModuleTpl\Controller\List'         => \ModuleTpl\Controller\ListController::class,
+            'ModuleTpl\Controller\Properties'   => \ModuleTpl\Controller\PropertiesController::class,
+            'ModuleTpl\Controller\Language'     => \ModuleTpl\Controller\LanguageController::class

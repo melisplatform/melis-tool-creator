@@ -9,10 +9,10 @@
 
 namespace ModuleTpl\Controller;
 
-use Zend\Mvc\Controller\AbstractActionController;
-use Zend\View\Model\ViewModel;
+use Laminas\View\Model\ViewModel;
+use MelisCore\Controller\MelisAbstractActionController;
 
-class IndexController extends AbstractActionController
+class IndexController extends MelisAbstractActionController
 {
     public function renderIframeAction()
     {

@@ -11,7 +11,7 @@
         $view = new ViewModel();
         $id = $this->params()->fromQuery('id', 'add');
 
-        $translator = $this->getServiceLocator()->get('translator');
+        $translator = $this->getServiceManager()->get('translator');
         $title = $translator->translate('tr_moduletpl_common_button_add');
 
         if (is_numeric($id)){
@@ -42,7 +42,7 @@
         $moduleTplForm->setAttribute('id', $id. '_' . $moduleTplForm->getAttribute('id'));
 
         if ($id != 'add'){
-            $moduleTplTable = $this->getServiceLocator()->get('ModuleTplTable');
+            $moduleTplTable = $this->getServiceManager()->get('ModuleTplTable');
             $data = $moduleTplTable->getEntryById($id)->current();
             $moduleTplForm->bind($data);
         }

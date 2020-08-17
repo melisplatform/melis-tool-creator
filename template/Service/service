@@ -9,12 +9,12 @@
 
 namespace ModuleTpl\Service;
 
-use MelisEngine\Service\MelisEngineGeneralService;
-use Zend\Session\Container;
-use Zend\Stdlib\ArrayUtils;
-use Zend\View\Model\JsonModel;
+use MelisCore\Service\MelisGeneralService;
+use Laminas\Session\Container;
+use Laminas\Stdlib\ArrayUtils;
+use Laminas\View\Model\JsonModel;
 
-class ModuleTplService extends MelisEngineGeneralService
+class ModuleTplService extends MelisGeneralService
 {
     public function getItemById($id)
     {
@@ -26,7 +26,7 @@ class ModuleTplService extends MelisEngineGeneralService
         $arrayParameters = $this->makeArrayFromParameters(__METHOD__, func_get_args());
         $arrayParameters = $this->sendEvent('moduletpl_service_get_list_start', $arrayParameters);
 
-        $moduleTplTable = $this->getServiceLocator()->get('ModuleTplTable');
+        $moduleTplTable = $this->getServiceManager()->get('ModuleTplTable');
         $list = $moduleTplTable->getList(
             $arrayParameters['start'],
             $arrayParameters['limit'],
@@ -49,7 +49,7 @@ class ModuleTplService extends MelisEngineGeneralService
         $arrayParameters = $this->sendEvent('moduletpl_service_save_item_start', $arrayParameters);
 
         if ($data) {
-            $moduleTplTable = $this->getServiceLocator()->get('ModuleTplTable');
+            $moduleTplTable = $this->getServiceManager()->get('ModuleTplTable');
             $res = $moduleTplTable->save($arrayParameters['data'], $arrayParameters['id']);
         }
 
@@ -63,7 +63,7 @@ class ModuleTplService extends MelisEngineGeneralService
         $arrayParameters = $this->makeArrayFromParameters(__METHOD__, func_get_args());
         $arrayParameters = $this->sendEvent('moduletpl_service_delete_item_start', $arrayParameters);
 
-        $moduleTplTable = $this->getServiceLocator()->get('ModuleTplTable');
+        $moduleTplTable = $this->getServiceManager()->get('ModuleTplTable');
         $res = $moduleTplTable->deleteById($arrayParameters['id']);
 
         $arrayParameters['result'] = $res;

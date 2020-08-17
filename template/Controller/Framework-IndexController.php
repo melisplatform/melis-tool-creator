@@ -9,10 +9,10 @@
 
 namespace ModuleTpl\Controller;
 
-use Zend\Mvc\Controller\AbstractActionController;
-use Zend\View\Model\ViewModel;
+use Laminas\View\Model\ViewModel;
+use MelisCore\Controller\MelisAbstractActionController;
 
-class IndexController extends AbstractActionController
+class IndexController extends MelisAbstractActionController
 {
     /**
      * Render the view of the tool
@@ -28,7 +28,7 @@ class IndexController extends AbstractActionController
          * by providing the Route of the request "/list" for example
          * and getting the response by calling the the getContent() method after
          */
-        $thirdPartySrv = $this->getServiceLocator()->get('MelisPlatformService');
+        $thirdPartySrv = $this->getServiceManager()->get('MelisPlatformService');
         $thirdPartySrv->setRoute('/melis/moduletpl/tool');
         $response = $thirdPartySrv->getContent();
 
