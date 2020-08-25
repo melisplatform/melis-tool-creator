@@ -32,4 +32,12 @@
 
         'properties' => 'tr_melistoolcreator_properties',
         'language' => 'tr_melistoolcreator_language',
+
+        'properties_title' => 'tr_melistoolcreator_properties',
+        'properties_header' => 'tr_melistoolcreator_common_header',
+        'properties_content' => 'tr_melistoolcreator_common_content',
+
+        'header' => 'tr_melistoolcreator_common_header',
+        'content' => 'tr_melistoolcreator_common_content',
+        'modal' => 'tr_melistoolcreator_common_modal',
     ];
