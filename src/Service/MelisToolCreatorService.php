@@ -978,10 +978,10 @@ class MelisToolCreatorService  extends MelisGeneralService
     {
         $coreLang = $this->getServiceManager()->get('MelisCoreTableLang');
         $languages = $coreLang->fetchAll()->toArray();
+        $translationsSrv = $this->getServiceManager()->get('MelisCoreTranslation');
 
-        if ($this->isDbTool() && !$this->isFrameworkTool()){
+        if ($this->isDbTool() && !$this->isFrameworkTool()) {
 
-            $translationsSrv = $this->getServiceManager()->get('MelisCoreTranslation');
             $commonTransTpl = require $this->moduleTplDir.'/Language/languages.php';
 
             // Common translation
@@ -1072,8 +1072,13 @@ class MelisToolCreatorService  extends MelisGeneralService
 
                 $translations[$lang['lang_locale']] = [
                     'title' => $title,
-                    'desc' => $desc
+                    'desc' => $desc,
                 ];
+
+                if ($this->isBlankTool() && !$this->isFrameworkTool()) {
+                    $translations[$lang['lang_locale']]['header'] = $translationsSrv->getMessage('tr_melistoolcreator_common_header', $lang['lang_locale']);
+                    $translations[$lang['lang_locale']]['content'] = $translationsSrv->getMessage('tr_melistoolcreator_common_content', $lang['lang_locale']);
+                }
             }
         }
 
