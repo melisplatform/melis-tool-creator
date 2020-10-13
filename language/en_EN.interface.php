@@ -190,4 +190,8 @@ return [
     // Addition step1
     'tr_melistoolcreator_tcf_microservices_title' => 'Create microservices access',
     'tr_melistoolcreator_tcf_microservices_tooltip' => 'Create config to add the service generated in the list of services for the platform',
+
+    'tr_melistoolcreator_common_header' => 'Header',
+    'tr_melistoolcreator_common_content' => 'Content',
+    'tr_melistoolcreator_common_modal' => 'Modal'
 ];
