@@ -70,14 +70,20 @@ class ToolCreatorController extends MelisAbstractActionController
 
         if (!is_writable($_SERVER['DOCUMENT_ROOT'] . '/../module'))
             $filePermissionErr[] = 'tr_melistoolcreator_fp_module';
+        
+        // Database table caching
+        $this->getDBTablesCached();
+
+        $melisEngineCacheSystem = $this->getServiceManager()->get('MelisEngineCacheSystem');
+        $dbCached = $melisEngineCacheSystem->getCacheByKey($this->cacheKey, $this->cacheConfig, true);
+
+        if (!$dbCached || is_null($dbCached))
+            $filePermissionErr[] = 'tr_melistoolcreator_fp_db_cached_empty';
 
         if (!empty($filePermissionErr)){
             $view->fPErr = $filePermissionErr;
             return $view;
         }
-
-        // Database table caching
-        $this->getDBTablesCached();
 
         $config = $this->getServiceManager()->get('config');
 

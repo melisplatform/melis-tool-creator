@@ -31,6 +31,7 @@ return [
     'tr_melistoolcreator_fp_config' => '<b>/config/melis.module.load.php</b> - Ce fichier est requis pour activer un outil après sa création',
     'tr_melistoolcreator_fp_cache' => '<b>/cache</b> - Le répertoire où le fichier cache de la liste des tables est enregistré, celà accélère le processus d\'installation de l\'outil ',
     'tr_melistoolcreator_fp_module' => '<b>/module</b> - Le répertoire dans lequel les outils créés sont enregistrés',
+    'tr_melistoolcreator_fp_db_cached_empty' => 'Le fichier de cache généré pour la liste des tables de la base de données est vide, veuillez vérifier que les droits d\'écriture du répertoire du cache sont bien corrects',
 
     // Steps
     'tr_melistoolcreator_module' => 'Outil',
@@ -125,6 +126,7 @@ return [
     'tr_melistoolcreator_select_lang_name' => 'Langue',
     'tr_melistoolcreator_select_tpl_name' => 'Template',
     'tr_melistoolcreator_select_admin_name' => 'Utilisateur BO',
+    'tr_melistoolcreator_table_list_only_with_pk' => 'Le créateur d\'outils ne peut afficher que des tables avec une clef primaire et en incrémentation automatique',
 
     // Forms
     'tr_melistoolcreator_tcf-name' => 'Nom de l\'outil',

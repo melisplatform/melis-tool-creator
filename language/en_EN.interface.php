@@ -31,6 +31,7 @@ return [
     'tr_melistoolcreator_fp_config' => '<b>/config/melis.module.load.php</b> - this file is required to activate a tool after its creation',
     'tr_melistoolcreator_fp_cache' => '<b>/cache</b> - the directory where the table list cache file are saved, this accelerates the setup process of the tool',
     'tr_melistoolcreator_fp_module' => '<b>/module</b> - The directory where the created tools are saved',
+    'tr_melistoolcreator_fp_db_cached_empty' => 'The cache file generated for the database table list is empty, please check that the writing rights of the cache directory are correct',
 
     // Steps
     'tr_melistoolcreator_module' => 'Tool',
@@ -125,6 +126,7 @@ return [
     'tr_melistoolcreator_select_lang_name' => 'Language',
     'tr_melistoolcreator_select_tpl_name' => 'Template',
     'tr_melistoolcreator_select_admin_name' => 'BO User',
+    'tr_melistoolcreator_table_list_only_with_pk' => 'The tool creator can only display tables with a Primary Key and in Auto increment',
 
     // Forms
     'tr_melistoolcreator_tcf-name' => 'Tool name',
