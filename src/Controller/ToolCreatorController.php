@@ -229,7 +229,7 @@ class ToolCreatorController extends MelisAbstractActionController
         // Form validation
         $request = $this->getRequest();
         if ($validate){
-            $formData = get_object_vars($request->getPost());
+            $formData = $request->getPost()->toArray();
 
             $step1Form->setData($formData['step-form']);
 
@@ -888,7 +888,7 @@ class ToolCreatorController extends MelisAbstractActionController
         if ($validate){
             unset($container['melis-toolcreator']['step4']);
 
-            $formData = get_object_vars($request->getPost());
+            $formData = $request->getPost()->toArray();
 
             if(empty($formData['step-form'])){
                 // adding a variable to ViewModel to flag an error
