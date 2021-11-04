@@ -203,3 +203,7 @@
 .melis-toolcreator-steps-language-db-table-columns .table-responsive {
     display: block !important;
 }
+
+.text-primary-custom {  
+    color: #28a745 !important; 
+}
