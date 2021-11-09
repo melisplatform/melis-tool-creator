@@ -17,8 +17,8 @@ return [
                             'interface' => [
                                 'moduletpl_conf' => [
                                     'conf' => [
-                                        'id' => 'id_moduletpl_leftnemu',
-                                        'melisKey' => 'moduletpl_leftnemu',
+                                        'id' => 'id_moduletpl_leftmenu',
+                                        'melisKey' => 'moduletpl_leftmenu',
                                         'name' => 'tr_moduletpl_title',
                                         'icon' => 'fa fa-puzzle-piece',
                                     ],
