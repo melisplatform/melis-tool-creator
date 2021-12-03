@@ -37,6 +37,7 @@ return [
                                                         'melisKey' => 'melistoolcreator_tool',
                                                         'name' => 'tr_melistoolcreator',
                                                         'icon' => 'fa fa-magic',
+                                                        'follow_regular_rendering' => false,
                                                     ],
                                                     'forward' => [
                                                         'module' => 'MelisToolCreator',
