@@ -55,7 +55,7 @@ class ToolCreatorController extends MelisAbstractActionController
      * @return ViewModel
      */
     public function renderToolCreatorContentAction()
-    {
+    {    
         $view = new ViewModel();
 
         /**
@@ -1473,6 +1473,11 @@ class ToolCreatorController extends MelisAbstractActionController
      */
     private function getDBTablesCached($reloadCached = false)
     {
+        //added to fix timeout issue when Tool Creator is opened for the first time
+        session_write_close();
+        ini_set('max_execution_time', 0);
+        set_time_limit(0);
+       
         /**
          * Caching Database tables to file cache
          * to avoid slow request for step 2

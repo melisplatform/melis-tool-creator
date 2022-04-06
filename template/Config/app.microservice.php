@@ -11,7 +11,7 @@ return [
                             'method'=> 'POST',
                             'action'=> $_SERVER['REQUEST_URI'],
                         ],
-                        'hydrator' => 'Laminas\Hydrator\ArraySerializable',
+                        'hydrator' => 'Laminas\Hydrator\ArraySerializableHydrator',
                         'elements' => [
                             array(
                                 'spec' => array(
@@ -38,7 +38,7 @@ return [
                             'method'=> 'POST',
                             'action'=> $_SERVER['REQUEST_URI'],
                         ],
-                        'hydrator' => 'Laminas\Hydrator\ArraySerializable',
+                        'hydrator' => 'Laminas\Hydrator\ArraySerializableHydrator',
                         'elements' => [
                             array(
                                 'spec' => array(
