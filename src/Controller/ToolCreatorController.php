@@ -1031,7 +1031,7 @@ class ToolCreatorController extends MelisAbstractActionController
                 $tableCols[$key]['isAutoIncrement'] = true;
                 $tableCols[$key]['editableIsChecked'] = true;
                 $tableCols[$key]['requiredIsChecked'] = true;
-            }elseif ($val['Key'] == 'PRI' || $val['Null'] == 'NO'){
+            }elseif ($val['Key'] == 'PRI' || ($val['Null'] == 'NO' && $val['Default'] == null)){
                 $tableCols[$key]['editable'] = sprintf($iconTag, implode(' ', [$editableIcon, $checkedIcon]));
                 $tableCols[$key]['required'] = sprintf($iconTag, implode(' ', [$requiredIcon, $checkedIcon]));
                 $tableCols[$key]['editableIsChecked'] = true;
