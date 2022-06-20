@@ -55,7 +55,7 @@ class ToolCreatorController extends MelisAbstractActionController
      * @return ViewModel
      */
     public function renderToolCreatorContentAction()
-    {
+    {    
         $view = new ViewModel();
 
         /**
@@ -1031,7 +1031,7 @@ class ToolCreatorController extends MelisAbstractActionController
                 $tableCols[$key]['isAutoIncrement'] = true;
                 $tableCols[$key]['editableIsChecked'] = true;
                 $tableCols[$key]['requiredIsChecked'] = true;
-            }elseif ($val['Key'] == 'PRI' || $val['Null'] == 'NO'){
+            }elseif ($val['Key'] == 'PRI' || ($val['Null'] == 'NO' && $val['Default'] == null)){
                 $tableCols[$key]['editable'] = sprintf($iconTag, implode(' ', [$editableIcon, $checkedIcon]));
                 $tableCols[$key]['required'] = sprintf($iconTag, implode(' ', [$requiredIcon, $checkedIcon]));
                 $tableCols[$key]['editableIsChecked'] = true;
@@ -1473,6 +1473,10 @@ class ToolCreatorController extends MelisAbstractActionController
      */
     private function getDBTablesCached($reloadCached = false)
     {
+        //added to fix timeout issue when Tool Creator is opened for the first time
+        ini_set('max_execution_time', 0);
+        set_time_limit(0);
+       
         /**
          * Caching Database tables to file cache
          * to avoid slow request for step 2

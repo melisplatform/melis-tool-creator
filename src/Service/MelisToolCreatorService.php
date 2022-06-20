@@ -1183,6 +1183,7 @@ class MelisToolCreatorService  extends MelisGeneralService
                 // Checking if Selected table has a primary
                 // else the target module will not have a update feature
                 if ($cols['Key'] == 'PRI'){
+                    $primayTblPK = $cols['Field'];
                     // Primary Key
                     $fileContent = $this->sp('#TCLANGPRIMARYKEY', $primayTblPK, $fileContent);
                     break;
