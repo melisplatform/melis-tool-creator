@@ -98,7 +98,13 @@ class LanguageController extends MelisAbstractActionController
 
                 $success = 1;
             }else{
-                $errors = ArrayUtils::merge($errors, $langForm->getMessages());
+
+                $errLang = $langForm->getMessages();
+                $translator = $this->getServiceManager()->get('translator');
+                foreach ($errLang as $keyError => $valueError)
+                    $errLang[$keyError]['label'] = $translator->translate("tr_moduletpl_input_".$keyError);
+
+                $errors = ArrayUtils::merge($errors, $errLang);
             }
         }
 

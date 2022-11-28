@@ -991,10 +991,19 @@ class MelisToolCreatorService  extends MelisGeneralService
                     $commonTranslations[$lang['lang_locale']][$cKey] = $translationsSrv->getMessage($cText, $lang['lang_locale']);
 
                 if (!empty($this->tcSteps['step6'][$lang['lang_locale']])){
-                    $commonTranslations[$lang['lang_locale']] = array_merge($commonTranslations[$lang['lang_locale']], $this->tcSteps['step6'][$lang['lang_locale']]['pri_tbl']);
+                    $inputTrans = [];
+                    foreach ($this->tcSteps['step6'][$lang['lang_locale']]['pri_tbl'] As $key => $trans)
+                        $inputTrans['input_'.$key] = $trans;
 
-                    if (!empty($this->tcSteps['step6'][$lang['lang_locale']]['lang_tbl']))
-                        $commonTranslations[$lang['lang_locale']] = array_merge($commonTranslations[$lang['lang_locale']], $this->tcSteps['step6'][$lang['lang_locale']]['lang_tbl']);
+                    $commonTranslations[$lang['lang_locale']] = array_merge($commonTranslations[$lang['lang_locale']], $inputTrans);
+
+                    if (!empty($this->tcSteps['step6'][$lang['lang_locale']]['lang_tbl'])) {
+                        $inputTrans = [];
+                        foreach ($this->tcSteps['step6'][$lang['lang_locale']]['lang_tbl'] As $key => $trans)
+                            $inputTrans['input_'.$key] = $trans;
+
+                        $commonTranslations[$lang['lang_locale']] = array_merge($commonTranslations[$lang['lang_locale']], $inputTrans);
+                    }
                 }
             }
 

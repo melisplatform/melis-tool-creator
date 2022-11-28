@@ -3,8 +3,8 @@
                                         'name' => '#TCKEY',
                                         'type' => '#TCINPUTTYPE',
                                         'options' => [
-                                            'label' => 'tr_moduletpl_#TCKEY',
-                                            'tooltip' => 'tr_moduletpl_#TCKEY_tooltip',
+                                            'label' => 'tr_moduletpl_input_#TCKEY',
+                                            'tooltip' => 'tr_moduletpl_input_#TCKEY_tooltip',
                                             'filestyle_options' => [
                                                 'buttonBefore' => true,
                                                 'buttonText' => 'tr_moduletpl_common_choose_file',

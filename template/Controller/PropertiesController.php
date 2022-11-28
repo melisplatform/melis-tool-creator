@@ -121,7 +121,7 @@ class PropertiesController extends MelisAbstractActionController
         }else{
             $errors = $moduleTplForm->getMessages();
             foreach ($errors as $keyError => $valueError){
-                $errors[$keyError]['label'] = $translator->translate("tr_moduletpl_".$keyError);
+                $errors[$keyError]['label'] = $translator->translate("tr_moduletpl_input_".$keyError);
             }
         }
 

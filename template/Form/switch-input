@@ -3,8 +3,8 @@
                                         'name' => '#TCKEY',
                                         'type' => 'Checkbox',
                                         'options' => [
-                                            'label' => 'tr_moduletpl_#TCKEY',
-                                            'tooltip' => 'tr_moduletpl_#TCKEY_tooltip',
+                                            'label' => 'tr_moduletpl_input_#TCKEY',
+                                            'tooltip' => 'tr_moduletpl_input_#TCKEY_tooltip',
                                             'switch_options' => [
                                                 'label-on' => 'tr_moduletpl_common_activate',
                                                 'label-off' => 'tr_moduletpl_common_deactivate',

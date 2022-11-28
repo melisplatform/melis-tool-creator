@@ -1,5 +1,5 @@
                             '#TCKEYCOL' => [
-								'text' => 'tr_moduletpl_#TCKEY',
+								'text' => 'tr_moduletpl_input_#TCKEY',
 								'css' => ['width' => '#TCTBLKEY%'],
 								'sortable' => true
 							]
