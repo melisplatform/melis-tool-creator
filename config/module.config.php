@@ -93,19 +93,22 @@ return [
     'caches' => [
         'toolcreator_database' => [
             'active' => true, // activate or deactivate Melis Cache for this conf
-            'adapter' => [
-                'name'    => 'Filesystem',
-                'options' => [
-                    'ttl' => 0, // 24hrs
-                    'namespace' => 'melistoolcreator',
-                    'cache_dir' => $_SERVER['DOCUMENT_ROOT'] . '/../cache'
-                ],
+            'adapter' => \Laminas\Cache\Storage\Adapter\Filesystem::class,
+            'options' => [
+                'ttl' => 0, // 24hrs
+                'namespace' => 'melistoolcreator',
+                'cache_dir' => $_SERVER['DOCUMENT_ROOT'] . '/../cache'
             ],
             'plugins' => [
-                'exception_handler' => [
-                    'throw_exceptions' => false
+                [
+                    'name' => 'exception_handler',
+                    'options' => [
+                        'throw_exceptions' => false
+                    ]
                 ],
-                'Serializer'
+                [
+                    'name' => 'Serializer'
+                ]
             ],
         ],
     ]
