@@ -23,7 +23,7 @@
                                 $tabIcon = ($this->id != 'add') ? 'pencil' : 'plus';
                             }
 
-                            echo '<li class="'.$active.'"><a href="#'.$tabId.'" class="glyphicons '.$tabIcon.'" data-toggle="tab" aria-expanded="true"><i></i> '.$this->translate($tabName) .'</a></li>';
+                            echo '<li class="'.$active.'"><a href="#'.$tabId.'" class="glyphicons '.$tabIcon.'" data-bs-toggle="tab" aria-expanded="true"><i></i> '.$this->translate($tabName) .'</a></li>';
                         }
                         ?>
                     </ul>
@@ -47,7 +47,7 @@
                         }
                         ?>
                         <div align="right">
-                            <a data-dismiss="modal" class="btn btn-danger pull-left"><i class="fa fa-times"></i> <?php echo $this->translate('tr_moduletpl_common_button_close')?></a>
+                            <a data-bs-dismiss="modal" class="btn btn-danger pull-left"><i class="fa fa-times"></i> <?php echo $this->translate('tr_moduletpl_common_button_close')?></a>
                             <a class="btn btn-success btnSaveModuleTpl" data-id="<?php echo $this->id ?>"><i class="fa fa-save"></i>  <?php echo $this->translate('tr_moduletpl_common_button_save'); ?></a>
                         </div>
                     </div>

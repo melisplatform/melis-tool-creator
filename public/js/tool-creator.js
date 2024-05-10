@@ -177,7 +177,7 @@ $(function(){
             $("#melistoolcreator_step3 .alert").hide("slow");
 
             $(".melis-toolcreator-steps-table-list.melis-toolcreator-steps-language-db-table-list").append(loader);
-            if ($.trim($(".melis-toolcreator-steps-language-db-table-columns").html()) !== ""){
+            if (String.prototype.trim($(".melis-toolcreator-steps-language-db-table-columns").html()) !== ""){
                 $(".melis-toolcreator-steps-language-db-table-columns").append(loader);
             }
         }else{
