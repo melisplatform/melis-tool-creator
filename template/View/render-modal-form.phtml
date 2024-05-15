@@ -23,7 +23,7 @@
                                 $tabIcon = ($this->id != 'add') ? 'pencil' : 'plus';
                             }
 
-                            echo '<li class="'.$active.'"><a href="#'.$tabId.'" class="glyphicons '.$tabIcon.'" data-bs-toggle="tab" aria-expanded="true"><i></i> '.$this->translate($tabName) .'</a></li>';
+                            echo '<li class="nav-item '.$active.'"><a data-bs-target="#'.$tabId.'" href="#'.$tabId.'" class="nav-link glyphicons '.$tabIcon.'" data-bs-toggle="tab" aria-expanded="true"><i></i> '.$this->translate($tabName) .'</a></li>';
                         }
                         ?>
                     </ul>
