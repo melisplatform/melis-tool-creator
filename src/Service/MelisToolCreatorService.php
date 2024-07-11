@@ -690,9 +690,16 @@ class MelisToolCreatorService  extends MelisGeneralService
         if ($this->hasLanguage()){
             $requiredLangFields = [];
 
-            foreach ($this->tcSteps['step5']['tcf-db-table-col-required'] As $val)
+            foreach ($this->tcSteps['step4']['tcf-db-table-cols'] As $val)
                 if (!is_bool(strpos($val, 'tclangtblcol_')))
                     array_push($requiredLangFields, '\''. $this->sp('tclangtblcol_', '', $val .'\''));
+
+            foreach ($this->tcSteps['step5']['tcf-db-table-col-required'] As $val)
+                if (!is_bool(strpos($val, 'tclangtblcol_'))) {
+                    $col = '\''.$this->sp('tclangtblcol_', '', $val .'\'');
+                    if (!in_array($col, $requiredLangFields))
+                        array_push($requiredLangFields,  $col);
+                }
 
             $emptyDataFilter = $this->sp('#TCREQUIRETBLFIELDS', implode(', ', $requiredLangFields), $this->fgc('/Code/empty-columns'));
             $emptyDataFilter = $this->sp('#TCPFKEY', $this->tcSteps['step3']['tcf-db-table-language-pri-fk'], $emptyDataFilter);
