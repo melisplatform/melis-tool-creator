@@ -63,6 +63,7 @@ return [
     'service_manager' => [
         'aliases' => [
             'MelisToolCreatorService' => \MelisToolCreator\Service\MelisToolCreatorService::class,
+            'MelisToolCreatorCacheSystemService' => \MelisToolCreator\Service\MelisToolCreatorCacheSystemService::class
         ],
     ],
     'controllers' => [
