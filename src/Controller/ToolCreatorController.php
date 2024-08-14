@@ -1416,6 +1416,10 @@ class ToolCreatorController extends MelisAbstractActionController
                 // Reloading module paths
                 unlink($_SERVER['DOCUMENT_ROOT'].'/../config/melis.modules.path.php');
 
+                // remove all BO zone cached
+                $coreCacheService = $this->getServiceManager()->get('MelisCoreCacheSystemService');
+                $coreCacheService->deleteCacheByPrefix('*', \MelisCore\Controller\PluginViewController::cacheConfig);
+
                 // Flag to reload the page in-order to run the new created tool
                 $viewStp->restartRequired = true;
             }
