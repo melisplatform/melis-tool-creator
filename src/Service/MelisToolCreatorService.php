@@ -1363,9 +1363,29 @@ class MelisToolCreatorService  extends MelisGeneralService
      * @return string
      */
     public function generateModuleNameCase($str) {
-        $str = preg_replace('/([a-z])([A-Z])/', "$1$2", $str);
-        $str = str_replace(['-', '_'], '', ucwords(strtolower($str)));
-        $str = ucfirst($str);
+        // $str = preg_replace('/([a-z])([A-Z])/', "$1$2", $str);
+        // $str = str_replace(['-', '_'], '', ucwords(strtolower($str)));
+        // $str = ucfirst($str);
+
+        // Remove any special characters except letters, numbers, and spaces
+        // $str = preg_replace('/[^a-zA-Z0-9\s]/', '', $str);
+
+        // // Convert the string to lowercase
+        // $str = strtolower($str);
+
+        // // Capitalize the first letter of each word and remove spaces
+        // $str = ucwords($str);
+        // $str = str_replace(' ', '', $str);
+
+        // Remove any special characters except letters, numbers, and spaces
+        $str = preg_replace('/[^a-zA-Z0-9\s]/', '', $str);
+
+        // Convert the first letter of each word to uppercase
+        $str = ucwords($str);
+
+        // Remove spaces to form PascalCase
+        $str = str_replace(' ', '', $str);
+        
         $str = $this->cleanString($str);
         return $str;
     }
