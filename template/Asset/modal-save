@@ -6,7 +6,7 @@
 
     var submitForm  = function(form, id, btn){
 
-        form.unbind("submit");
+        form.off("submit");
 
         form.on("submit", function(e) {
 
@@ -32,7 +32,9 @@
                     // Notifications
                     melisHelper.melisOkNotification(data.textTitle, data.textMessage);
 
-                    $("#id_moduletpl_modal_container").modal("hide");
+                    // $("#id_moduletpl_modal_container").modal("hide");
+                    melisCoreTool.hideModal("id_moduletpl_modal_container");
+
                     melisHelper.zoneReload("id_moduletpl_content", "moduletpl_content");
                 }else{
                     melisHelper.melisKoNotification(data.textTitle, data.textMessage, data.errors);
@@ -45,5 +47,5 @@
             });
         });
 
-        form.submit();
+        form.trigger("submit");
     };

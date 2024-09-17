@@ -124,7 +124,7 @@ $(function(){
         });
     });
 
-    $body.on("click", ".melis-toolcreator-steps-table-tabs .widget-head a[data-toggle='tab']", function(){
+    $body.on("click", ".melis-toolcreator-steps-table-tabs .widget-head a[data-bs-toggle='tab']", function(){
        var type =$(this).data("type");
     });
 
@@ -177,7 +177,7 @@ $(function(){
             $("#melistoolcreator_step3 .alert").hide("slow");
 
             $(".melis-toolcreator-steps-table-list.melis-toolcreator-steps-language-db-table-list").append(loader);
-            if (String.prototype.trim($(".melis-toolcreator-steps-language-db-table-columns").html()) !== ""){
+            if ($(".melis-toolcreator-steps-language-db-table-columns").html().trim() !== ""){
                 $(".melis-toolcreator-steps-language-db-table-columns").append(loader);
             }
         }else{
@@ -423,7 +423,7 @@ $(function(){
             $(".melis-tc-final-content").hide();
             $(".melis-tc-final-content").hide();
         }).fail(function(){
-
+            alert(translations.tr_meliscore_error_message);
         });
     });
 });

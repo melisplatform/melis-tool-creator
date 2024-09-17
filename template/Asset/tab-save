@@ -6,7 +6,7 @@
 
     var submitForm  = function(form, id, btn){
 
-        form.unbind("submit");
+        form.off("submit");
 
         form.on("submit", function(e) {
 
@@ -52,5 +52,5 @@
             });
         });
 
-        form.submit();
+        form.trigger("submit");
     };
