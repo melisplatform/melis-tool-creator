@@ -216,11 +216,11 @@ $(function(){
                 $(".tcf-fa-checkbox.tcf-fa-checkitem[data-col-type='"+$(this).data("col-type")+"'").addClass("fa-square-o")
                                                                                                 .removeClass("text-success")
                                                                                                 .removeClass("fa-check-square-o")
-                                                                                                .next("input").attr("checked", false);
+                                                                                                .next("input").prop("checked", false);
 
                 if ($(this).hasClass("tfc-table-list")) {
                     // Disabling field type select input
-                    $("select[name='tcf-db-table-col-display'][data-col-type='"+$(this).data("col-type")+"']").attr("disabled", true);
+                    $("select[name='tcf-db-table-col-display'][data-col-type='"+$(this).data("col-type")+"']").prop("disabled", true);
                 }
             }else{
                 // Unchecking select all checkbox
@@ -249,13 +249,13 @@ $(function(){
                 }
 
                 // Disabling field type select input
-                $(this).parents("tr").find("select[name='tcf-db-table-col-type']").attr("disabled", true);
+                $(this).parents("tr").find("select[name='tcf-db-table-col-type']").prop("disabled", true);
             }
 
 
             if ($(this).hasClass("tfc-table-list")) {
                 // Disabling field type select input
-                $(this).parents("tr").find("select[name='tcf-db-table-col-display']").attr("disabled", true);
+                $(this).parents("tr").find("select[name='tcf-db-table-col-display']").prop("disabled", true);
             }
 
         }else{
@@ -264,10 +264,10 @@ $(function(){
                 $(".tcf-fa-checkbox.tcf-fa-checkitem[data-col-type='"+$(this).data("col-type")+"']").removeClass("fa-square-o")
                                                                                                 .addClass("fa-check-square-o")
                                                                                                 .addClass("text-success")
-                                                                                                .next("input").attr("checked", true);
+                                                                                                .next("input").prop("checked", true);
                 if ($(this).hasClass("tfc-table-list")) {
                     // Disabling field type select input
-                    $("select[name='tcf-db-table-col-display'][data-col-type='"+$(this).data("col-type")+"']").attr("disabled", false);
+                    $("select[name='tcf-db-table-col-display'][data-col-type='"+$(this).data("col-type")+"']").prop("disabled", false);
                 }
             }
 
@@ -296,19 +296,19 @@ $(function(){
                     editableInput.attr("checked", true);
 
                     // Enabling field type select input
-                    $(this).parents("tr").find("select[name='tcf-db-table-col-type']").attr("disabled", false);
+                    $(this).parents("tr").find("select[name='tcf-db-table-col-type']").prop("disabled", false);
                 }
             }
 
             // Checking required if the editable is unchecked
             if ($(this).hasClass("tcf-fa-checkbox-editable")) {
                 // Enabling field type select input
-                $(this).parents("tr").find("select[name='tcf-db-table-col-type']").attr("disabled", false);
+                $(this).parents("tr").find("select[name='tcf-db-table-col-type']").prop("disabled", false);
             }
 
             if ($(this).hasClass("tfc-table-list")) {
                 // Disabling field type select input
-                $(this).parents("tr").find("select[name='tcf-db-table-col-display']").attr("disabled", false);
+                $(this).parents("tr").find("select[name='tcf-db-table-col-display']").prop("disabled", false);
             }
         }
     });
@@ -401,13 +401,13 @@ $(function(){
             $(this).addClass("fa-square-o");
             $(this).removeClass("text-success");
             $(this).removeClass("fa-check-square-o");
-            $(this).next("input").attr("checked", false);
+            $(this).next("input").prop("checked", false);
         }else{
             // Checking
             $(this).removeClass("fa-square-o");
             $(this).addClass("fa-check-square-o");
             $(this).addClass("text-success");
-            $(this).next("input").attr("checked", true);
+            $(this).next("input").prop("checked", true);
         }
     });
 
@@ -421,7 +421,7 @@ $(function(){
 
         $.get("/melis/MelisToolCreator/ToolCreator/finalize", {activateModule : activateModule}).done(function(res){
             $(".melis-tc-final-content").hide();
-            $(".melis-tc-final-content").hide();
+            // $(".melis-tc-final-content").hide();
         }).fail(function(){
             alert(translations.tr_meliscore_error_message);
         });

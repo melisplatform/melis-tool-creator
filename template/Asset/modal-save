@@ -12,7 +12,7 @@
 
             e.preventDefault();
 
-            btn.attr('disabled', true);
+            btn.prop('disabled', true);
 
             var formData = new FormData(this);
 
@@ -41,7 +41,7 @@
                     melisHelper.highlightMultiErrors(data.success, data.errors, "#id_moduletpl_modal");
                 }
 
-                btn.attr('disabled', false);
+                btn.prop('disabled', false);
             }).fail(function () {
                 alert(translations.tr_meliscore_error_message);
             });
