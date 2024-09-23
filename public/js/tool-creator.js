@@ -326,7 +326,7 @@ $(function () {
 					.removeClass("fa-check-square-o")
 					.next("input")
 					.attr("checked", false)
-					.prop("checked", true);
+					.prop("checked", false);
 
 				// Unchecking required if the editable is unchecked
 				if ($(this).hasClass("tcf-fa-checkbox-editable")) {
@@ -390,7 +390,8 @@ $(function () {
 					.addClass("fa-check-square-o")
 					.addClass("text-success")
 					.next("input")
-					.attr("checked", true);
+					.attr("checked", true)
+					.prop("checked", true);
 
 				// Set check "select all checkbox"
 				if (
