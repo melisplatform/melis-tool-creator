@@ -16,12 +16,13 @@ use Laminas\Db\Metadata\Object\ConstraintObject;
 use Laminas\Session\Container;
 use Laminas\View\Model\JsonModel;
 use MelisCore\Service\MelisGeneralService;
+use MelisCore\Service\MelisServiceManager;
 use Symfony\Component;
 
 /**
  * This service manage the creation of the new tool
  */
-class MelisToolCreatorService  extends MelisGeneralService
+class MelisToolCreatorService  extends MelisServiceManager
 {
     private $moduleTplDir;
     private $tcSteps;
