@@ -16,7 +16,6 @@ use Laminas\Db\Metadata\Object\ConstraintObject;
 use Laminas\Session\Container;
 use Laminas\View\Model\JsonModel;
 use MelisCore\Service\MelisGeneralService;
-use MelisCore\Service\MelisServiceManager;
 use Symfony\Component;
 
 /**

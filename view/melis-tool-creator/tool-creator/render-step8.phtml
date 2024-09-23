@@ -58,6 +58,9 @@
                 if (tcResCd < 1){
                     $("#tc-restart-msg").text("<?php echo $this->translate('tr_melistoolcreator_refreshing') ?>");
                     clearInterval(countDown);
+                    // regenerate bundle
+                    $.get("/melis/MelisCore/Modules/bundle");
+                    // reload page
                     location.reload();
                 }else{
                     $("#tc-restart-cd").text(tcResCd);
