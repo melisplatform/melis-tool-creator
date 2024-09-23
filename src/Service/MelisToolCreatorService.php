@@ -22,7 +22,7 @@ use Symfony\Component;
 /**
  * This service manage the creation of the new tool
  */
-class MelisToolCreatorService  extends MelisServiceManager
+class MelisToolCreatorService  extends MelisGeneralService
 {
     private $moduleTplDir;
     private $tcSteps;
