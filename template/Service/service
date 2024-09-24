@@ -47,6 +47,7 @@ class ModuleTplService extends MelisGeneralService
     {
         $arrayParameters = $this->makeArrayFromParameters(__METHOD__, func_get_args());
         $arrayParameters = $this->sendEvent('moduletpl_service_save_item_start', $arrayParameters);
+        $res = null;
 
         if ($data) {
             $moduleTplTable = $this->getServiceManager()->get('ModuleTplTable');
