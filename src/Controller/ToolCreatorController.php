@@ -17,6 +17,7 @@ use Laminas\View\Model\JsonModel;
 use Laminas\View\Model\ViewModel;
 use Laminas\Db\Metadata\Metadata;
 use MelisCore\Controller\MelisAbstractActionController;
+use MelisCore\Controller\ModulesController;
 use MelisCore\Service\MelisGeneralService;
 use MelisToolCreator\Service\MelisToolCreatorService;
 
@@ -1412,6 +1413,12 @@ class ToolCreatorController extends MelisAbstractActionController
                 // Activating module
                 $moduleSvc = $this->getServiceManager()->get('ModulesService');
                 $moduleSvc->activateModule($toolCreatorSrv->moduleName());
+
+                // deletion of the current bundles
+                $allCss = $_SERVER['DOCUMENT_ROOT'] . '/'.ModulesController::BUNDLE_FOLDER_NAME.'/css/bundle-all.css';
+                if (file_exists($allCss)) unlink($allCss);
+                $allJs = $_SERVER['DOCUMENT_ROOT'] . '/'.ModulesController::BUNDLE_FOLDER_NAME.'/js/bundle-all.js';
+                if (file_exists($allJs)) unlink($allJs);
 
                 // Reloading module paths
                 unlink($_SERVER['DOCUMENT_ROOT'].'/../config/melis.modules.path.php');
