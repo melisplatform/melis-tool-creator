@@ -22,17 +22,18 @@ $(function(){
                     type        : 'GET',
                     url         : '/melis/ModuleTpl/List/deleteItem?id='+id,
                     dataType    : 'json',
-                    encode		: true,
-                    success		: function(data){
-                        // refresh the table after deleting an item
-                        melisHelper.zoneReload("id_moduletpl_content", "moduletpl_content");
+                    encode		: true
+                })
+                .done(function(data){
+                    // refresh the table after deleting an item
+                    melisHelper.zoneReload("id_moduletpl_content", "moduletpl_content");
 
-                        // Notifications
-                        melisHelper.melisOkNotification(data.textTitle, data.textMessage);
+                    // Notifications
+                    melisHelper.melisOkNotification(data.textTitle, data.textMessage);
 
-                        #TCCLOSETABDELETE
-                    }
+                    #TCCLOSETABDELETE
                 });
-            });
+
+        });
     });
 });

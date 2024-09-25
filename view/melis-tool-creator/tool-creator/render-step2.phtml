@@ -6,10 +6,10 @@
         </div>
         <div class="col-xs-12 col-md-3">
             <div class="product-text-tab-container">
-                <ul class="nav-tabs product-text-tab">
+                <ul class="nav nav-tabs product-text-tab">
                     <?php $ctr = 0; foreach ($this->languages As $key => $val):?>
-                        <li class="<?php echo ($ctr++) ?: 'active'?>">
-                            <a class="clearfix" data-toggle="tab" href="#toolcreator-text-transaltions-<?php echo $val['lang_locale']?>" aria-expanded="false">
+                        <li class="nav-item <?php echo ($ctr++) ?: 'active'?>">
+                            <a class="nav-link clearfix" data-bs-toggle="tab" data-bs-target="#toolcreator-text-transaltions-<?php echo $val['lang_locale']?>" href="#toolcreator-text-transaltions-<?php echo $val['lang_locale']?>" aria-expanded="false">
                                 <?php echo $val['lang_label']?>
                             </a>
                         </li>
@@ -37,7 +37,7 @@
 
                                         $val->setLabelOptions(array('disable_html_escape' => true));
                                         $required = $val->getAttribute('required') ? ' *' : '';
-                                        $label = $val->getLabel().$required.'<i class="fa fa-info-circle fa-lg tip-info" data-toggle="tooltip" data-placement="left" title="" data-original-title="'.$val->getOption('tooltip').'"></i>';
+                                        $label = $val->getLabel().$required.'<i class="fa fa-info-circle fa-lg tip-info" data-bs-toggle="tooltip" data-bs-placement="left" title="" data-bs-title="'.$val->getOption('tooltip').'"></i>';
 
                                         $val->setLabelAttributes(['class' => 'd-flex flex-row justify-content-between']);
                                         $val->setLabel($label);
