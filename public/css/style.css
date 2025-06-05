@@ -207,3 +207,9 @@
 .text-primary-custom {  
     color: #28a745 !important; 
 }
+
+@media (min-width: 980px) {
+    .melis-tc-summary-item-content .table-responsive {
+        display: block;
+    }
+}
