@@ -1101,7 +1101,10 @@ class MelisToolCreatorService  extends MelisGeneralService
         foreach ($translations As $locale => $texts){
             $strTranslations = '';
             foreach ($texts As $key => $text){
-                $text = $this->sp("'", "\'", $text);
+                // Escape BOTH backslash and single-quote so the value cannot break out of the
+                // generated single-quoted PHP literal (was `'`->`\'` only, which left `\` unescaped
+                // → `\\'` breakout → PHP code injection / RCE when the language file is included).
+                $text = addcslashes((string) $text, "\\'");
                 $key = $this->sp('-', '_', $key);
                 $key = $this->sp('tcf_', '', $key);
 
