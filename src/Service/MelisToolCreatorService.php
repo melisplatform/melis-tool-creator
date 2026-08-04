@@ -91,7 +91,7 @@ class MelisToolCreatorService  extends MelisGeneralService
     private function generateModuleFile($moduleDir)
     {
         // Create module
-        mkdir($moduleDir, 0777);
+        mkdir($moduleDir, 0755);
         $moduleFile = $this->fgc('/Module/Module.php');
 
         $code = '';
@@ -133,7 +133,7 @@ class MelisToolCreatorService  extends MelisGeneralService
             if (!$this->skipDir($dir)){
 
                 // Generating directory
-                mkdir($tempTargetDir, 0777);
+                mkdir($tempTargetDir, 0755);
 
                 switch ($dir){
                     case 'config':
@@ -578,7 +578,11 @@ class MelisToolCreatorService  extends MelisGeneralService
     {
         if ($this->isIframeTool()) {
             $iframeCtrl = $this->fgc('/Controller/IndexController.php');
-            $iframeCtrl = $this->sp('#TCIFRAMEURL', $this->tcSteps['step1']['tcf-tool-iframe-url'], $iframeCtrl);
+            // Sécurité : l'URL est injectée dans un littéral PHP entre apostrophes du fichier généré
+            // ($view->url = '#TCIFRAMEURL';). Sans échappement, une valeur contenant « ' » permet une
+            // INJECTION DE CODE PHP dans le contrôleur généré (RCE). addcslashes neutralise \ et '.
+            $safeIframeUrl = addcslashes((string) $this->tcSteps['step1']['tcf-tool-iframe-url'], "\\'");
+            $iframeCtrl = $this->sp('#TCIFRAMEURL', $safeIframeUrl, $iframeCtrl);
             $this->generateFile('IndexController.php', $targetDir, $iframeCtrl);
             return;
         }
@@ -909,7 +913,7 @@ class MelisToolCreatorService  extends MelisGeneralService
         foreach ($toolViews As $ctrl => $files){
 
             $viewDir = $targetDir.'/'.$this->moduleViewName().'/'.$ctrl;
-            mkdir($viewDir, 0777);
+            mkdir($viewDir, 0755);
 
             foreach ($files As $file){
                 if (!is_bool(strpos($file, 'blank'))){
