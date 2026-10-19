@@ -119,6 +119,11 @@ return [
     'tr_melistoolcreator_select_text' => 'Text / Classic input',
     'tr_melistoolcreator_select_textarea_tinymce' => 'HTML Rich (TinyMCE)',
     'tr_melistoolcreator_select_switch' => 'Switch ON/OFF green/red',
+    'tr_melistoolcreator_select_file' => 'File upload',
+    'tr_melistoolcreator_select_textarea' => 'Textarea',
+    'tr_melistoolcreator_select_date' => 'Date picker',
+    'tr_melistoolcreator_select_datetime' => 'Date and time picker',
+    'tr_melistoolcreator_select_bo_users' => 'Back-office users',
     'tr_melistoolcreator_select_raw_view' => 'Raw value',
     'tr_melistoolcreator_select_char_len_50' => 'Raw value truncated at 50 char',
     'tr_melistoolcreator_select_dot_color' => 'Color dot green/red',
@@ -130,7 +135,7 @@ return [
 
     // Forms
     'tr_melistoolcreator_tcf-name' => 'Tool name',
-    'tr_melistoolcreator_tcf-tool-iframe-url' => 'Iframe Url',
+    'tr_melistoolcreator_tcf-tool-iframe-url' => 'Iframe URL',
     'tr_melistoolcreator_tcf-module-toolstree' => 'Toolstree',
     'tr_melistoolcreator_tcf-module-toolstree tooltip' => 'Toolstree',
     'tr_melistoolcreator_tcf-title' => 'Tool title',
@@ -185,6 +190,7 @@ return [
     'tr_melistoolcreator_choose_file' => 'Choose file',
     'tr_melistoolcreator_delete_item' => 'Delete item',
     'tr_melistoolcreator_delete_success' => 'Item deleted successfully',
+    'tr_melistoolcreator_delete_error' => 'The item could not be deleted',
     'tr_melistoolcreator_must_numeric' => 'The input must be numeric',
 
     // Addition step1

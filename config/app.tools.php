@@ -107,9 +107,20 @@ return [
                             'required' => true,
                             'validators' => [
                                 [
+                                    // First, and stops the chain: an empty name also got the "alphabetic characters" message
+                                    'name' => 'NotEmpty',
+                                    'break_chain_on_failure' => true,
+                                    'options' => [
+                                        'messages' => [
+                                            \Laminas\Validator\NotEmpty::IS_EMPTY => 'tr_melistoolcreator_err_empty',
+                                        ],
+                                    ],
+                                ],
+                                [
                                     'name' => 'regex',
                                     'options' => [
-                                        'pattern' => '/^[a-zA-Z\x7f-\xff][a-zA-Z\x7f-\xff]*$/',
+                                        // ASCII letters only: accented letters were accepted, then removed from the module name (Mantis #0011230)
+                                        'pattern' => '/^[a-zA-Z]+$/',
                                         'messages' => [\Laminas\Validator\Regex::NOT_MATCH => 'tr_melistoolcreator_err_invalid_module'],
                                         'encoding' => 'UTF-8',
                                     ],
@@ -121,14 +132,6 @@ return [
                                         'max'      => 50,
                                         'messages' => [
                                             \Laminas\Validator\StringLength::TOO_LONG => 'tr_melistoolcreator_err_long_50',
-                                        ],
-                                    ],
-                                ],
-                                [
-                                    'name' => 'NotEmpty',
-                                    'options' => [
-                                        'messages' => [
-                                            \Laminas\Validator\NotEmpty::IS_EMPTY => 'tr_melistoolcreator_err_empty',
                                         ],
                                     ],
                                 ],
@@ -530,12 +533,12 @@ return [
                                     'value_options' => [
                                         'MelisText' => 'tr_melistoolcreator_select_text',
                                         'Switch' => 'tr_melistoolcreator_select_switch',
-                                        'File' => 'File upload',
-                                        'Textarea' => 'Textarea',
+                                        'File' => 'tr_melistoolcreator_select_file',
+                                        'Textarea' => 'tr_melistoolcreator_select_textarea',
                                         'MelisCoreTinyMCE' => 'tr_melistoolcreator_select_textarea_tinymce',
-                                        'DatePicker' => 'Date Picker',
-                                        'DateTimePicker' => 'Datetime Picker',
-                                        'MelisCoreUserSelect' => 'Melis BO Users'
+                                        'DatePicker' => 'tr_melistoolcreator_select_date',
+                                        'DateTimePicker' => 'tr_melistoolcreator_select_datetime',
+                                        'MelisCoreUserSelect' => 'tr_melistoolcreator_select_bo_users'
                                     ],
                                 ],
                                 'attributes' => [

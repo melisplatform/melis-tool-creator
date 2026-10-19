@@ -1,0 +1,10 @@
+                // Languages checked before the item is saved: when a language was refused after the item had been
+                // saved, the next save created the item again (Mantis #0011233). Without an id, it only validates.
+                $langCheck = $this->dispatchPlugin(
+                    $e,
+                    'ModuleTpl\Controller\Language',
+                    ['action' => 'saveLanguage']
+                );
+
+                if (empty($langCheck['success']))
+                    $result = ['success' => 0, 'errors' => $langCheck['errors'], 'data' => []];

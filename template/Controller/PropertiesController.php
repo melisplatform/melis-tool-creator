@@ -139,12 +139,18 @@ class PropertiesController extends MelisAbstractActionController
     public function deleteAction()
     {
         $request = $this->getRequest();
-        $queryData = $request->getQuery()->toArray();
-
-        if (!empty($queryData['id'])){
-            $moduleTplService = $this->getServiceManager()->get('ModuleTplService');
-            $moduleTplService->deleteItem($queryData['id']);
+        // POST only, so the request goes through the back-office CSRF check
+        if (!$request->isPost()) {
+            return new JsonModel(['success' => false]);
         }
+
+        $id = $request->getPost('id');
+        if (!empty($id)){
+            $moduleTplService = $this->getServiceManager()->get('ModuleTplService');
+            $moduleTplService->deleteItem($id);
+        }
+
+        return new JsonModel(['success' => true]);
     }
 
     private function getForm()
@@ -157,6 +163,12 @@ class PropertiesController extends MelisAbstractActionController
         $formElements = $this->getServiceManager()->get('FormElementManager');
         $factory->setFormElementManager($formElements);
         $form = $factory->createForm($appConfigForm);
+
+        // Date pickers in the back-office language: they were always in English (Mantis #0011235)
+        $locale = substr((string) (new Container('meliscore'))['melis-lang-locale'], 0, 2) ?: 'en';
+        foreach ($form->getElements() As $element)
+            if ($element->hasAttribute('melis-datepicker') || $element->hasAttribute('meliscore-datetimepicker'))
+                $element->setOption('locale', $locale);
 
         return $form;
     }

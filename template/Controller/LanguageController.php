@@ -104,12 +104,24 @@ class LanguageController extends MelisAbstractActionController
                 foreach ($errLang as $keyError => $valueError)
                     $errLang[$keyError]['label'] = $translator->translate("tr_moduletpl_input_".$keyError);
 
-                $errors = ArrayUtils::merge($errors, $errLang);
+                // A language left blank is just not filled in. One already saved, or partly filled in,
+                // must report its errors: it was skipped silently and the save said success (Mantis #0011233)
+                $isBlank = empty($formData['#TCFKEYID']);
+                foreach ($formData As $input => $val)
+                    if (!in_array($input, ['#TCFKEYID', '#TCKEYLANGID', '#TCKEYPRIID']) && !(empty($val) && !is_numeric($val)))
+                        $isBlank = false;
+
+                if ($isBlank)
+                    $blankErrors = ArrayUtils::merge($blankErrors ?? [], $errLang);
+                else
+                    $errors = ArrayUtils::merge($errors, $errLang);
             }
         }
 
-        if ($success)
-            $errors = [];
+        if (!empty($errors))
+            $success = 0;
+        elseif (!$success)
+            $errors = $blankErrors ?? [];
 
         $result = [
             'success' => $success,
@@ -124,12 +136,18 @@ class LanguageController extends MelisAbstractActionController
     public function deleteAction()
     {
         $request = $this->getRequest();
-        $queryData = $request->getQuery()->toArray();
-
-        if (!empty($queryData['id'])){
-            $myToolTabLangTable = $this->getServiceManager()->get('ModuleTplService');
-            $myToolTabLangTable->deleteLang($queryData['id']);
+        // POST only, so the request goes through the back-office CSRF check
+        if (!$request->isPost()) {
+            return new JsonModel(['success' => false]);
         }
+
+        $id = $request->getPost('id');
+        if (!empty($id)){
+            $myToolTabLangTable = $this->getServiceManager()->get('ModuleTplService');
+            $myToolTabLangTable->deleteLang($id);
+        }
+
+        return new JsonModel(['success' => true]);
     }
 
     private function getForm()
@@ -142,6 +160,12 @@ class LanguageController extends MelisAbstractActionController
         $formElements = $this->getServiceManager()->get('FormElementManager');
         $factory->setFormElementManager($formElements);
         $form = $factory->createForm($appConfigForm);
+
+        // Date pickers in the back-office language: they were always in English (Mantis #0011235)
+        $locale = substr((string) (new \Laminas\Session\Container('meliscore'))['melis-lang-locale'], 0, 2) ?: 'en';
+        foreach ($form->getElements() As $element)
+            if ($element->hasAttribute('melis-datepicker') || $element->hasAttribute('meliscore-datetimepicker'))
+                $element->setOption('locale', $locale);
 
         return $form;
     }

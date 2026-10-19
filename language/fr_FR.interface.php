@@ -35,7 +35,7 @@ return [
 
     // Steps
     'tr_melistoolcreator_module' => 'Outil',
-    'tr_melistoolcreator_tcf-name tooltip' => 'Nom de l\'outil /module. Seul les caractères alphabétiques sont autorisés',
+    'tr_melistoolcreator_tcf-name tooltip' => 'Nom de l\'outil /module. Seuls les caractères alphabétiques sont autorisés',
 
     'tr_melistoolcreator_tcf_tool_type' => 'Type d\'outil',
     'tr_melistoolcreator_tcf_tool_type tooltip' => 'Outil BDD permet de créer et éditer un outil basé sur une table de la base de données. iFrame permet de charger une URL dans un outil depuis Melis Platform. Blank permet de concevoir uniquement la structure d\'un module.',
@@ -108,7 +108,7 @@ return [
     'tr_melistoolcreator_select_lang_tbl_lst' => 'Sélectionnez la table langage correspondant à votre outil',
     'tr_melistoolcreator_pk_fk_pri_tbl_lbl' => 'FK1 - Clef étrangère vers la table principale',
     'tr_melistoolcreator_pk_fk_lang_tbl_lbl' => 'FK2 - Clef étrangère vers la table secondaire (contenus par langage)',
-    'tr_melistoolcreator_lang_txt' => 'Languge',
+    'tr_melistoolcreator_lang_txt' => 'Langue',
     'tr_melistoolcreator_col_txt' => 'Colonnes',
     'tr_melistoolcreator_name_txt' => 'Nom',
     'tr_melistoolcreator_desc_txt' => 'Description',
@@ -119,6 +119,11 @@ return [
     'tr_melistoolcreator_select_text' => 'Texte / Champs normal',
     'tr_melistoolcreator_select_textarea_tinymce' => 'Rich HTML (TinyMCE)',
     'tr_melistoolcreator_select_switch' => 'Switch ON/OFF vert/rouge',
+    'tr_melistoolcreator_select_file' => 'Envoi de fichier',
+    'tr_melistoolcreator_select_textarea' => 'Zone de texte',
+    'tr_melistoolcreator_select_date' => 'Sélecteur de date',
+    'tr_melistoolcreator_select_datetime' => 'Sélecteur de date et heure',
+    'tr_melistoolcreator_select_bo_users' => 'Utilisateurs du back-office',
     'tr_melistoolcreator_select_raw_view' => 'Valeur en base',
     'tr_melistoolcreator_select_char_len_50' => 'Valeur coupée à 50 char',
     'tr_melistoolcreator_select_dot_color' => 'Point vert/rouge',
@@ -130,7 +135,7 @@ return [
 
     // Forms
     'tr_melistoolcreator_tcf-name' => 'Nom de l\'outil',
-    'tr_melistoolcreator_tcf-tool-iframe-url' => 'Iframe Url',
+    'tr_melistoolcreator_tcf-tool-iframe-url' => 'URL de l\'iframe',
     'tr_melistoolcreator_tcf-module-toolstree' => 'Arbre des outils',
     'tr_melistoolcreator_tcf-module-toolstree tooltip' => 'Arbre des outils',
     'tr_melistoolcreator_tcf-title' => 'Titre de l\'outil',
@@ -142,7 +147,7 @@ return [
 
     // Error messages
     'tr_melistoolcreator_err_message' => 'Impossible de passer à l\'étape suivante, veuillez réessayer',
-    'tr_melistoolcreator_err_invalid_module' => 'Seul les caractères alphabétiques sont autorisés',
+    'tr_melistoolcreator_err_invalid_module' => 'Seuls les caractères alphabétiques sont autorisés',
     'tr_melistoolcreator_invalid_url' => 'URL invalide',
     'tr_melistoolcreator_err_empty' => 'Champ requis, ne peut être vide',
     'tr_melistoolcreator_err_long_50' => 'Valeur trop longue, elle doit être de moins de 50 caractères',
@@ -174,17 +179,18 @@ return [
     'tr_melistoolcreator_common_button_save' => 'Enregistrer',
     'tr_melistoolcreator_common_button_yes' => 'Oui',
     'tr_melistoolcreator_common_button_no' => 'Non',
-    'tr_melistoolcreator_created_success' => 'Elément créé avec succès',
+    'tr_melistoolcreator_created_success' => 'Élément créé avec succès',
     'tr_melistoolcreator_unable_to_save' => 'Impossible d\'enregistrer',
-    'tr_melistoolcreator_save_success' => 'Elément enregistré avec succès',
+    'tr_melistoolcreator_save_success' => 'Élément enregistré avec succès',
     'tr_melistoolcreator_value_must_not_is_empty' => 'Champ requis, ne peut être vide',
     'tr_melistoolcreator_delete_title' => 'Supprimer l\'élément',
-    'tr_melistoolcreator_delete_confirm_msg' => 'Etes-vous sûr de vouloir supprimer cet élément ?',
+    'tr_melistoolcreator_delete_confirm_msg' => 'Êtes-vous sûr de vouloir supprimer cet élément ?',
     'tr_melistoolcreator_properties' => 'Propriétés',
     'tr_melistoolcreator_language' => 'Textes',
     'tr_melistoolcreator_choose_file' => 'Choisir un fichier',
     'tr_melistoolcreator_delete_item' => 'Supprimer l\'élément',
-    'tr_melistoolcreator_delete_success' => 'Elément supprimé avec succès',
+    'tr_melistoolcreator_delete_success' => 'Élément supprimé avec succès',
+    'tr_melistoolcreator_delete_error' => 'L\'élément n\'a pas pu être supprimé',
     'tr_melistoolcreator_must_numeric' => 'Champ requis doit être un nombre',
 
     // Addition step1

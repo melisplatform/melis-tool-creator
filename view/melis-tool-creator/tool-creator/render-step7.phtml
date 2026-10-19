@@ -4,7 +4,7 @@
             <i class="fa <?php echo $this->steps['melistoolcreator_step1']['icon'] ?>"></i>
             <?php echo $this->translate($this->steps['melistoolcreator_step1']['name']) ?>
         </h4>
-        <h2 style="margin-left: 32px"><?php echo $this->datas['step1']['tcf-name'] ?></h2>
+        <h2 style="margin-left: 32px"><?php echo $this->escapeHtml($this->moduleName) ?></h2>
         <br>
         <h4>
             <i class="fa fa-location-arrow"></i>
@@ -26,12 +26,12 @@
                 </h4>
                 <div class="melis-tc-summary-item-content">
                     <?php if ($key == 'step1'){ ?>
-                        <h2><?php echo $step['tcf-name'] ?></h2>
+                        <h2><?php echo $this->escapeHtml($this->moduleName) ?></h2>
                     <?php } elseif ($key == 'step2') { ?>
                         <table class="table table-striped table-primary">
                             <thead>
                                 <tr>
-                                    <th><?php $this->translate('tr_melistoolcreator_texts_title') ?></th>
+                                    <th><?php echo $this->translate('tr_melistoolcreator_texts_title') ?></th>
                                     <?php
                                     foreach ($this->languages As $lang){
                                         if (!empty($step[$lang['lang_locale']])) {
@@ -107,8 +107,14 @@
                                 </thead>
                                 <tr>
                                     <?php
-                                        foreach ($step['tcf-db-table-cols'] As $col){
-                                            echo '<td> - </td>';
+                                        // The display type chosen for each column ("-" was always shown, Mantis #0011231)
+                                        foreach ($step['tcf-db-table-cols'] As $colIdx => $col){
+                                            $display = $step['tcf-db-table-col-display'][$colIdx] ?? null;
+                                            $option = $this->colDisplayOptions[$display] ?? null;
+                                            if (is_array($option))
+                                                $option = $option['label'] ?? $display;
+                                            $label = is_string($option) ? $this->translate($option) : '-';
+                                            echo '<td>' . $this->escapeHtml($label) . '</td>';
                                         }
                                     ?>
                                 </tr>

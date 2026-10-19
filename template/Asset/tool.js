@@ -1,4 +1,8 @@
 $(function(){
+    // Bind once: when this file is loaded twice, every click ran its handler twice (2 delete requests per confirmation)
+    if (window.moduletplToolJsBound) return;
+    window.moduletplToolJsBound = true;
+
     $("body").on("click", ".btnAddModuleTpl", function(){
 #TCADDBTN
     });
@@ -18,13 +22,20 @@ $(function(){
             translations.tr_moduletpl_delete_title,
             translations.tr_moduletpl_delete_confirm_msg,
             function(data) {
+                // POST: the back-office CSRF token is only sent (and checked) on non-GET requests
                 $.ajax({
-                    type        : 'GET',
-                    url         : '/melis/ModuleTpl/List/deleteItem?id='+id,
+                    type        : 'POST',
+                    url         : '/melis/ModuleTpl/List/deleteItem',
+                    data        : {id: id},
                     dataType    : 'json',
                     encode		: true
                 })
                 .done(function(data){
+                    if (!data.success) {
+                        melisHelper.melisKoNotification(data.textTitle, data.textMessage);
+                        return;
+                    }
+
                     // refresh the table after deleting an item
                     melisHelper.zoneReload("id_moduletpl_content", "moduletpl_content");
 

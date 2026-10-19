@@ -23,6 +23,16 @@ use MelisToolCreator\Service\MelisToolCreatorService;
 
 class ToolCreatorController extends MelisAbstractActionController
 {
+    /**
+     * Outil auquel ce contrôleur appartient (audit DEKRA 7.0).
+     *
+     * Lu par MelisCoreAuthorizationListener : le garde-fou global résout la route jusqu'à
+     * cette classe et vérifie `canAccess()` sur cette clé AVANT le dispatch. Sans elle, le
+     * contrôleur restait joignable par tout compte connecté (route seulement authentifiée).
+     * Clé accordable par l'arbre des droits — Tool Creator.
+     */
+    const MELIS_KEY = 'melistoolcreator_tool';
+
 
     private $cacheKey = 'toolcreator_database_tables';
     private $cacheConfig = 'toolcreator_database';
@@ -246,12 +256,24 @@ class ToolCreatorController extends MelisAbstractActionController
                  * Validating the module entered if its already existing on the platform
                  */
                 $modulesSvc = $this->getServiceManager()->get('ModulesService');
-                $existingModules = array_merge($modulesSvc->getModulePlugins(), \MelisCore\MelisModuleManager::getModules());
+                // Site modules and core modules included, compared without case like PHP namespaces (Mantis #0011230)
+                $existingModules = array_map('strtolower', array_merge(
+                    $modulesSvc->getAllModules(),
+                    $modulesSvc->getCoreModules(),
+                    $modulesSvc->getSitesModules(),
+                    \MelisCore\MelisModuleManager::getModules()
+                ));
 
                 $toolCreatorSrv = $this->getServiceManager()->get('MelisToolCreatorService');
                 $targetModuleName = $toolCreatorSrv->generateModuleNameCase($formData['step-form']['tcf-name']);
 
-                if (in_array($targetModuleName, $existingModules)){
+                if ($targetModuleName === '') {
+                    $translator = $this->getServiceManager()->get('translator');
+                    $step1Form->get('tcf-name')->setMessages([
+                        'InvalidModule' => $translator->translate('tr_melistoolcreator_err_invalid_module')
+                    ]);
+                    $viewStp->hasError = $step1Form->getMessages();
+                }elseif (in_array(strtolower($targetModuleName), $existingModules)){
 
                     // Adding error message to module input
                     $translator = $this->getServiceManager()->get('translator');
@@ -1362,6 +1384,20 @@ class ToolCreatorController extends MelisAbstractActionController
         $viewStp->datas = $tcfDbTbl;
 
         $viewStp->toolType = $tcfDbTbl['step1']['tcf-tool-type'];
+
+        // The summary showed the name as typed, not the module name that will be generated (Mantis #0011231)
+        $toolCreatorSrv = $this->getServiceManager()->get('MelisToolCreatorService');
+        $viewStp->moduleName = $toolCreatorSrv->generateModuleNameCase($tcfDbTbl['step1']['tcf-name']);
+
+        // Labels of the list display types, including the ones added by modules, for the "List & columns" summary
+        $config = $this->getServiceManager()->get('MelisCoreConfig');
+        $step4Form = $config->getFormMergedAndOrdered('melistoolcreator/forms/melistoolcreator_step4_form', 'melistoolcreator_step4_form');
+        $displayOptions = [];
+        foreach ($step4Form['elements'] As $element)
+            if ($element['spec']['name'] == 'tcf-db-table-col-display')
+                $displayOptions = $element['spec']['options']['value_options'];
+        $result = $this->getServiceManager()->get('MelisGeneralService')->sendEvent('melis_toolcreator_col_display_options', ['valueOptions' => $displayOptions]);
+        $viewStp->colDisplayOptions = $result['valueOptions'];
 
         // Languages
         $coreLang = $this->getServiceManager()->get('MelisCoreTableLang');

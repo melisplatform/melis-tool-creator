@@ -29,6 +29,7 @@
         'delete_confirm_msg' => 'tr_melistoolcreator_delete_confirm_msg',
         'delete_item' => 'tr_melistoolcreator_delete_item',
         'delete_success' => 'tr_melistoolcreator_delete_success',
+        'delete_error' => 'tr_melistoolcreator_delete_error',
 
         'properties' => 'tr_melistoolcreator_properties',
         'language' => 'tr_melistoolcreator_language',
