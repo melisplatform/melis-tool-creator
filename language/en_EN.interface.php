@@ -185,6 +185,7 @@ return [
     'tr_melistoolcreator_choose_file' => 'Choose file',
     'tr_melistoolcreator_delete_item' => 'Delete item',
     'tr_melistoolcreator_delete_success' => 'Item deleted successfully',
+    'tr_melistoolcreator_delete_error' => 'The item could not be deleted',
     'tr_melistoolcreator_must_numeric' => 'The input must be numeric',
 
     // Addition step1

@@ -128,6 +128,15 @@ class ListController extends MelisAbstractActionController
 
     public function deleteItemAction()
     {
+        // POST only, so the request goes through the back-office CSRF check
+        if (!$this->getRequest()->isPost() || empty($this->getRequest()->getPost('id'))) {
+            return new JsonModel([
+                'success' => false,
+                'textTitle' => 'tr_moduletpl_delete_item',
+                'textMessage' => 'tr_moduletpl_delete_error',
+            ]);
+        }
+
         $this->getEventManager()->trigger('moduletpl_delete_end', $this, $this->getRequest());
 
         return new JsonModel([

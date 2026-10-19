@@ -796,9 +796,13 @@ class MelisToolCreatorService  extends MelisGeneralService
         // Save listener
         $saveListener = $this->fgc('/Listener/SavePropertiesListener');
         $saveLangDispatch = '';
-        if ($this->hasLanguage())
+        $saveLangCheck = '';
+        if ($this->hasLanguage()) {
             $saveLangDispatch = $this->fgc('/Code/save-lang-dispatch');
+            $saveLangCheck = $this->fgc('/Code/save-lang-check');
+        }
         $saveListener = $this->sp('#TCSAVELISTENER', $saveLangDispatch, $saveListener);
+        $saveListener = $this->sp('#TCSAVELANGCHECK', $saveLangCheck, $saveListener);
         $this->generateFile('SavePropertiesListener.php', $targetDir, $saveListener);
 
         // Delete Listener

@@ -185,6 +185,7 @@ return [
     'tr_melistoolcreator_choose_file' => 'Choisir un fichier',
     'tr_melistoolcreator_delete_item' => 'Supprimer l\'élément',
     'tr_melistoolcreator_delete_success' => 'Elément supprimé avec succès',
+    'tr_melistoolcreator_delete_error' => 'L\'élément n\'a pas pu être supprimé',
     'tr_melistoolcreator_must_numeric' => 'Champ requis doit être un nombre',
 
     // Addition step1

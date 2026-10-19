@@ -139,12 +139,18 @@ class PropertiesController extends MelisAbstractActionController
     public function deleteAction()
     {
         $request = $this->getRequest();
-        $queryData = $request->getQuery()->toArray();
-
-        if (!empty($queryData['id'])){
-            $moduleTplService = $this->getServiceManager()->get('ModuleTplService');
-            $moduleTplService->deleteItem($queryData['id']);
+        // POST only, so the request goes through the back-office CSRF check
+        if (!$request->isPost()) {
+            return new JsonModel(['success' => false]);
         }
+
+        $id = $request->getPost('id');
+        if (!empty($id)){
+            $moduleTplService = $this->getServiceManager()->get('ModuleTplService');
+            $moduleTplService->deleteItem($id);
+        }
+
+        return new JsonModel(['success' => true]);
     }
 
     private function getForm()

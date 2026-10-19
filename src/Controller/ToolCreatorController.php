@@ -256,12 +256,24 @@ class ToolCreatorController extends MelisAbstractActionController
                  * Validating the module entered if its already existing on the platform
                  */
                 $modulesSvc = $this->getServiceManager()->get('ModulesService');
-                $existingModules = array_merge($modulesSvc->getModulePlugins(), \MelisCore\MelisModuleManager::getModules());
+                // Site modules and core modules included, compared without case like PHP namespaces (Mantis #0011230)
+                $existingModules = array_map('strtolower', array_merge(
+                    $modulesSvc->getAllModules(),
+                    $modulesSvc->getCoreModules(),
+                    $modulesSvc->getSitesModules(),
+                    \MelisCore\MelisModuleManager::getModules()
+                ));
 
                 $toolCreatorSrv = $this->getServiceManager()->get('MelisToolCreatorService');
                 $targetModuleName = $toolCreatorSrv->generateModuleNameCase($formData['step-form']['tcf-name']);
 
-                if (in_array($targetModuleName, $existingModules)){
+                if ($targetModuleName === '') {
+                    $translator = $this->getServiceManager()->get('translator');
+                    $step1Form->get('tcf-name')->setMessages([
+                        'InvalidModule' => $translator->translate('tr_melistoolcreator_err_invalid_module')
+                    ]);
+                    $viewStp->hasError = $step1Form->getMessages();
+                }elseif (in_array(strtolower($targetModuleName), $existingModules)){
 
                     // Adding error message to module input
                     $translator = $this->getServiceManager()->get('translator');

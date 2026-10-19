@@ -109,7 +109,8 @@ return [
                                 [
                                     'name' => 'regex',
                                     'options' => [
-                                        'pattern' => '/^[a-zA-Z\x7f-\xff][a-zA-Z\x7f-\xff]*$/',
+                                        // ASCII letters only: accented letters were accepted, then removed from the module name (Mantis #0011230)
+                                        'pattern' => '/^[a-zA-Z]+$/',
                                         'messages' => [\Laminas\Validator\Regex::NOT_MATCH => 'tr_melistoolcreator_err_invalid_module'],
                                         'encoding' => 'UTF-8',
                                     ],
