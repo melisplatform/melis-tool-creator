@@ -4,7 +4,7 @@
                                         'type' => '#TCINPUTTYPE',
                                         'options' => [
                                             'label' => 'tr_moduletpl_input_#TCKEY',
-                                            'tooltip' => 'tr_moduletpl_input_#TCKEY_tooltip',
+                                            'tooltip' => 'tr_moduletpl_input_#TCKEY_tooltip',#TCEMPTYOPTION
                                         ],
                                         'attributes' => [
                                             'id' => '#TCKEY',

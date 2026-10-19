@@ -54,7 +54,8 @@ class ListController extends MelisAbstractActionController
         $moduleTplService = $this->getServiceManager()->get('ModuleTplService');
 
         $draw = 0;
-        $dataCount = 0;
+        $recordsTotal = 0;
+        $recordsFiltered = 0;
         $tableData = [];
 
         if($this->getRequest()->isPost()){
@@ -79,7 +80,9 @@ class ListController extends MelisAbstractActionController
             $sortOrder = $sortOrder[0]['dir'];
 
             $tableData = $moduleTplService->getList($start, $length, $melisTool->getSearchableColumns(), $search, $selCol, $sortOrder, $langId)->toArray();
-            $dataCount = $moduleTplService->getList(null, null, $melisTool->getSearchableColumns(), $search, null, 'ASC', $langId, true)->current();
+            $recordsFiltered = (int) $moduleTplService->getList(null, null, $melisTool->getSearchableColumns(), $search, null, 'ASC', $langId, true)->current()->totalRecords;
+            // Total without the search: it was the number of rows of the current page (Mantis #0011234)
+            $recordsTotal = (int) $moduleTplService->getList(null, null, [], null, null, 'ASC', $langId, true)->current()->totalRecords;
 
             #TCCOREEVENTSERVICE
 
@@ -93,8 +96,8 @@ class ListController extends MelisAbstractActionController
 
         return new JsonModel([
             'draw' => (int) $draw,
-            'recordsTotal' => count($tableData),
-            'recordsFiltered' =>  $dataCount->totalRecords,
+            'recordsTotal' => $recordsTotal,
+            'recordsFiltered' => $recordsFiltered,
             'data' => $tableData,
         ]);
     }

@@ -58,8 +58,14 @@
                 if (tcResCd < 1){
                     $("#tc-restart-msg").text("<?php echo $this->translate('tr_melistoolcreator_refreshing') ?>");
                     clearInterval(countDown);
-                    // reload page
-                    location.reload();
+                    // reload page: the whole back office, not only the iframe of the React back office,
+                    // otherwise the new tool was missing from its menu until a manual reload (Mantis #0011237)
+                    var tcHost = window.__melisRealParent;
+                    if (tcHost && tcHost !== window) {
+                        try { tcHost.location.reload(); } catch (e) { location.reload(); }
+                    } else {
+                        location.reload();
+                    }
                 }else{
                     $("#tc-restart-cd").text(tcResCd);
                     tcResCd--;

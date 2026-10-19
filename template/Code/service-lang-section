@@ -19,6 +19,7 @@
         $arrayParameters = $this->sendEvent('moduletpl_service_delete_lang_start', $arrayParameters);
 
         $langTable = $this->getServiceManager()->get('ModuleTplLangTable');
+        $this->deleteUploadedFiles($langTable->getByFkId($arrayParameters['id'])->toArray());
         $res = $langTable->deleteByFkId($arrayParameters['id']);
 
         $arrayParameters['result'] = $res;

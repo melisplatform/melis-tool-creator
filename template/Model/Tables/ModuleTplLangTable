@@ -40,6 +40,11 @@ class ModuleTplLangTable extends MelisGenericTable
         return $resultSet;
     }
 
+    public function getByFkId($fkId)
+    {
+        return $this->getTableGateway()->select(array('#TCPFKEY' => $fkId));
+    }
+
     public function deleteByFkId($fkId)
     {
         return $this->getTableGateway()->delete(array('#TCPFKEY' => $fkId));

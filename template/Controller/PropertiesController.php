@@ -164,6 +164,12 @@ class PropertiesController extends MelisAbstractActionController
         $factory->setFormElementManager($formElements);
         $form = $factory->createForm($appConfigForm);
 
+        // Date pickers in the back-office language: they were always in English (Mantis #0011235)
+        $locale = substr((string) (new Container('meliscore'))['melis-lang-locale'], 0, 2) ?: 'en';
+        foreach ($form->getElements() As $element)
+            if ($element->hasAttribute('melis-datepicker') || $element->hasAttribute('meliscore-datetimepicker'))
+                $element->setOption('locale', $locale);
+
         return $form;
     }
 }

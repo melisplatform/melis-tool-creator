@@ -1385,6 +1385,20 @@ class ToolCreatorController extends MelisAbstractActionController
 
         $viewStp->toolType = $tcfDbTbl['step1']['tcf-tool-type'];
 
+        // The summary showed the name as typed, not the module name that will be generated (Mantis #0011231)
+        $toolCreatorSrv = $this->getServiceManager()->get('MelisToolCreatorService');
+        $viewStp->moduleName = $toolCreatorSrv->generateModuleNameCase($tcfDbTbl['step1']['tcf-name']);
+
+        // Labels of the list display types, including the ones added by modules, for the "List & columns" summary
+        $config = $this->getServiceManager()->get('MelisCoreConfig');
+        $step4Form = $config->getFormMergedAndOrdered('melistoolcreator/forms/melistoolcreator_step4_form', 'melistoolcreator_step4_form');
+        $displayOptions = [];
+        foreach ($step4Form['elements'] As $element)
+            if ($element['spec']['name'] == 'tcf-db-table-col-display')
+                $displayOptions = $element['spec']['options']['value_options'];
+        $result = $this->getServiceManager()->get('MelisGeneralService')->sendEvent('melis_toolcreator_col_display_options', ['valueOptions' => $displayOptions]);
+        $viewStp->colDisplayOptions = $result['valueOptions'];
+
         // Languages
         $coreLang = $this->getServiceManager()->get('MelisCoreTableLang');
         $viewStp->languages = $coreLang->fetchAll()->toArray();

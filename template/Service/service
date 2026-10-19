@@ -65,11 +65,25 @@ class ModuleTplService extends MelisGeneralService
         $arrayParameters = $this->sendEvent('moduletpl_service_delete_item_start', $arrayParameters);
 
         $moduleTplTable = $this->getServiceManager()->get('ModuleTplTable');
+        $this->deleteUploadedFiles($moduleTplTable->getEntryById($arrayParameters['id'])->toArray());
         $res = $moduleTplTable->deleteById($arrayParameters['id']);
 
         $arrayParameters['result'] = $res;
         $arrayParameters = $this->sendEvent('moduletpl_service_delete_item_end', $arrayParameters);
         return $arrayParameters['result'];
+    }
+
+    /**
+     * Removes the files this tool uploaded (saved as /media/ModuleTpl/<file>) that the rows refer to:
+     * they stayed on the server after the row was deleted (Mantis #0011236)
+     */
+    private function deleteUploadedFiles($rows)
+    {
+        $dir = $_SERVER['DOCUMENT_ROOT'] . '/media/ModuleTpl/';
+        foreach ($rows As $row)
+            foreach ((array) $row As $val)
+                if (is_string($val) && strpos($val, '/media/ModuleTpl/') === 0 && is_file($dir . basename($val)))
+                    unlink($dir . basename($val));
     }
 
 #SERVICESECTIONLANG

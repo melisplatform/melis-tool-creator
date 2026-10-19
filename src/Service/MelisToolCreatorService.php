@@ -412,6 +412,14 @@ class MelisToolCreatorService  extends MelisGeneralService
                         break;
                     default:
                         $formInputsTplContent = $this->fgc('/Form/input');
+
+                        // A select provided by a module (e.g. CmsSliderSelect) had no empty choice: its first
+                        // option was selected and saved without the user choosing it (Mantis #0011236)
+                        $emptyOption = '';
+                        if ($this->isSelectElement($inptType))
+                            $emptyOption = "\n                                            'empty_option' => 'tr_moduletpl_common_choose',"
+                                . "\n                                            'disable_inarray_validator' => true,";
+                        $formInputsTplContent = $this->sp('#TCEMPTYOPTION', $emptyOption, $formInputsTplContent);
                         break;
                 }
 
@@ -1380,6 +1388,20 @@ class MelisToolCreatorService  extends MelisGeneralService
      * @param string $str
      * @return string
      */
+    /**
+     * Whether a form element type (e.g. CmsSliderSelect, given by a module) is a select
+     * @param string $type - form element name
+     * @return bool
+     */
+    private function isSelectElement($type)
+    {
+        try {
+            return $this->getServiceManager()->get('FormElementManager')->get($type) instanceof \Laminas\Form\Element\Select;
+        } catch (\Throwable $e) {
+            return false;
+        }
+    }
+
     public function generateModuleNameCase($str) {
         // $str = preg_replace('/([a-z])([A-Z])/', "$1$2", $str);
         // $str = str_replace(['-', '_'], '', ucwords(strtolower($str)));
