@@ -52,14 +52,34 @@
 
     <?php if ($this->restartRequired){ ?>
 
+        /**
+         * In the React back-office the tool runs inside an iframe, so reloading
+         * `location` would only refresh the wizard itself: the new tool would be
+         * missing from the menu (and its React brick unknown) until the user
+         * reloads by hand. Reload the top window instead, falling back to this
+         * one when the tool is opened standalone or the frames are cross-origin.
+         */
+        var tcReloadPlatform = function(){
+            try {
+                var top = window.top || window.parent;
+                if (top && top !== window && top.location) {
+                    top.location.reload();
+                    return;
+                }
+            } catch (e) {
+                // cross-origin parent: only this document can be reloaded
+            }
+            location.reload();
+        };
+
         var countdown = function(){
             var tcResCd = parseInt($("#tc-restart-cd").text());
             var countDown = setInterval(function() {
                 if (tcResCd < 1){
                     $("#tc-restart-msg").text("<?php echo $this->translate('tr_melistoolcreator_refreshing') ?>");
                     clearInterval(countDown);
-                    // reload page
-                    location.reload();
+                    // reload the whole platform, not just this iframe
+                    tcReloadPlatform();
                 }else{
                     $("#tc-restart-cd").text(tcResCd);
                     tcResCd--;

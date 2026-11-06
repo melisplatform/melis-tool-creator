@@ -72,6 +72,17 @@
                                     $requiredIcon = '';
                                 }
 
+                                // System-filled column: no checkbox, the value is never typed by the user
+                                if ($editableIcon === 'AUTO'){
+                                    $fieldType->setAttribute('class', 'hidden');
+                                    $editableIcon = '';
+                                    $requiredIcon = '';
+                                    $extraCol = '<span class="label label-info" title="'
+                                        . $this->translate('tr_melistoolcreator_create_tbl_col_auto_tooltip') . '">'
+                                        . $this->translate('tr_melistoolcreator_create_tbl_auto_' . $col['autoValue'])
+                                        . '</span>';
+                                }
+
                                 if (!is_bool(strpos($col['Type'], 'enum'))){
                                     $form->add([
                                         'name' => 'tcf-db-table-col-type',

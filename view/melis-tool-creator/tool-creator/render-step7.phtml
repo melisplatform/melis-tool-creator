@@ -27,6 +27,13 @@
                 <div class="melis-tc-summary-item-content">
                     <?php if ($key == 'step1'){ ?>
                         <h2><?php echo $step['tcf-name'] ?></h2>
+                        <?php if (!empty($step['tcf-ui-mode'])) { ?>
+                            <p>
+                                <i class="fa fa-desktop"></i>
+                                <?php echo $this->translate('tr_melistoolcreator_tcf_ui_mode') ?>:
+                                <b><?php echo $this->translate('tr_melistoolcreator_tcf_ui_mode_' . $step['tcf-ui-mode']) ?></b>
+                            </p>
+                        <?php } ?>
                     <?php } elseif ($key == 'step2') { ?>
                         <table class="table table-striped table-primary">
                             <thead>

@@ -50,6 +50,7 @@ class ModuleTplService extends MelisGeneralService
         $res = null;
 
         if ($data) {
+#TCAUTOVALUES
             $moduleTplTable = $this->getServiceManager()->get('ModuleTplTable');
             $res = $moduleTplTable->save($arrayParameters['data'], $arrayParameters['id']);
         }

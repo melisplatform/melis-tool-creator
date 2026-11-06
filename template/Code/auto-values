@@ -1,0 +1,8 @@
+            /**
+             * Columns filled by the system, never by the form: the logged-in user is
+             * stamped on the row. The matching date columns are handled by the database
+             * itself (DEFAULT / ON UPDATE CURRENT_TIMESTAMP).
+             */
+            $melisAuth = $this->getServiceManager()->get('MelisCoreAuth');
+            $tcUserId = $melisAuth->hasIdentity() ? (int) ($melisAuth->getIdentity()->usr_id ?? 0) : null;
+#TCAUTOVALUESFIELDS

@@ -92,6 +92,49 @@ return [
                         'tinyint',
                         'boolean',
                     ],
+                ],
+                /**
+                 * Column types offered by the "Create table" modal of the Database step.
+                 * Whitelist: the DDL fragment is taken from here, never from user input.
+                 * %d is replaced by the user-supplied length (varchar only).
+                 */
+                'create_table_types' => [
+                    'varchar' => 'VARCHAR(%d)',
+                    'int' => 'INT',
+                    'decimal' => 'DECIMAL(10,2)',
+                    'text' => 'TEXT',
+                    'date' => 'DATE',
+                    'datetime' => 'DATETIME',
+                    'tinyint' => 'TINYINT(1)',
+                ],
+                /**
+                 * Columns whose value is set by the system, never typed by the user.
+                 * The DDL is fixed per kind; the kind is persisted in the column COMMENT
+                 * (melis:auto=<kind>) so later steps and the generator can recognize it
+                 * even in another session. The two dates are handled by MySQL itself,
+                 * the two user columns are filled by the generated service on save.
+                 */
+                'create_table_auto_values' => [
+                    'created_on' => [
+                        'ddl' => 'DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP',
+                        'label' => 'tr_melistoolcreator_create_tbl_auto_created_on',
+                        'filled_by' => 'db',
+                    ],
+                    'edited_on' => [
+                        'ddl' => 'DATETIME NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP',
+                        'label' => 'tr_melistoolcreator_create_tbl_auto_edited_on',
+                        'filled_by' => 'db',
+                    ],
+                    'created_by' => [
+                        'ddl' => 'INT UNSIGNED NULL',
+                        'label' => 'tr_melistoolcreator_create_tbl_auto_created_by',
+                        'filled_by' => 'app',
+                    ],
+                    'edited_by' => [
+                        'ddl' => 'INT UNSIGNED NULL',
+                        'label' => 'tr_melistoolcreator_create_tbl_auto_edited_by',
+                        'filled_by' => 'app',
+                    ],
                 ]
             ],
             'interface' => [

@@ -80,6 +80,29 @@ return [
                         [
                             'spec' => [
                                 'type' => 'Radio',
+                                'name' => 'tcf-ui-mode',
+                                'options' => [
+                                    'label' => 'tr_melistoolcreator_tcf_ui_mode',
+                                    'tooltip' => 'tr_melistoolcreator_tcf_ui_mode tooltip',
+                                    'radio-button' => true,
+                                    'label_options' => [
+                                        'disable_html_escape' => true,
+                                    ],
+                                    'value_options' => [
+                                        'react' => 'tr_melistoolcreator_tcf_ui_mode_react',
+                                        'legacy' => 'tr_melistoolcreator_tcf_ui_mode_legacy',
+                                    ],
+                                ],
+                                'attributes' => [
+                                    'value' => 'react',
+                                    'required' => 'required',
+                                    'class' => 'tcf-tool-type tcf-tool-type-db'
+                                ],
+                            ]
+                        ],
+                        [
+                            'spec' => [
+                                'type' => 'Radio',
                                 'name' => 'tcf-tool-edit-type',
                                 'options' => [
                                     'label' => 'tr_melistoolcreator_tcf_tool_edit_type',
@@ -158,6 +181,22 @@ return [
                                         'encoding' => 'UTF-8',
                                     ],
                                 ]
+                            ],
+                            'filters'  => [
+                                ['name' => 'StripTags'],
+                                ['name' => 'StringTrim'],
+                            ],
+                        ],
+                        'tcf-ui-mode' => [
+                            'name'     => 'tcf-ui-mode',
+                            'required' => false,
+                            'validators' => [
+                                [
+                                    'name' => 'InArray',
+                                    'options' => [
+                                        'haystack' => ['legacy', 'react'],
+                                    ],
+                                ],
                             ],
                             'filters'  => [
                                 ['name' => 'StripTags'],

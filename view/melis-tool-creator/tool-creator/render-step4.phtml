@@ -76,19 +76,30 @@
                                 $checkBoxIcon = "fa-check-square-o text-success";
                                 $checkBox->setChecked(true);
 
+                                /**
+                                 * A creation/update user column holds a user id, so "Melis BO users"
+                                 * is preselected for it — the user stays free to change it.
+                                 * NOTE: the same form element is reused for every row, so the value
+                                 * must be set on each one, otherwise it leaks to the next row.
+                                 */
+                                $autoKind = $this->autoCols[$col['Field']] ?? null;
+                                $defaultDisplay = in_array($autoKind, ['created_by', 'edited_by']) ? 'admin_name' : 'raw_view';
+
                                 if (!empty($this->tblColumns)){
                                     if (!in_array($col['Field'], $this->tblColumns)){
                                         $checkBox->setChecked(false);
                                         $checkBoxIcon = "fa-square-o";
 
                                         $colDsplay->setAttribute('disabled', 'disabled');
-                                        $colDsplay->setValue('rawView');
+                                        $colDsplay->setValue($defaultDisplay);
 
                                     }else{
                                         $colDsplay->removeAttribute('disabled');
                                         $key = array_search($col['Field'], $this->tblColumns);
                                         $colDsplay->setValue($this->tblColumnsDisplay[$key]);
                                     }
+                                }else{
+                                    $colDsplay->setValue($defaultDisplay);
                                 }
 
                                 echo '<tr>
@@ -175,12 +186,15 @@
                                             $checkBoxIcon = "fa-square-o";
 
                                             $colDsplay->setAttribute('disabled', 'disabled');
-                                            $colDsplay->setValue('rawView');
+                                            $colDsplay->setValue('raw_view');
                                         }else{
                                             $colDsplay->removeAttribute('disabled');
                                             $key = array_search($langCOls, $this->tblColumns);
                                             $colDsplay->setValue($this->tblColumnsDisplay[$key]);
                                         }
+                                    }else{
+                                        // The element is shared with the rows above: reset it explicitly
+                                        $colDsplay->setValue('raw_view');
                                     }
 
                                     $fk = null;

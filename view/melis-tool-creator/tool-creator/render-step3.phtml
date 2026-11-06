@@ -9,8 +9,105 @@
         <div class="col-sm-6">
             <p align="right">
                 <i class="fa fa-info-circle tip-info" data-bs-toggle="tooltip" data-bs-placement="left" title="<?php echo $this->translate('tr_melistoolcreator_refresh_db_tooltip') ?>"></i><br>
+                <button class="btn btn-primary tc-create-dbtbl" title="<?php echo $this->translate('tr_melistoolcreator_create_tbl_tooltip') ?>"><?php echo $this->translate('tr_melistoolcreator_create_tbl') ?> <i class="fa fa-plus"></i></button>
                 <button class="btn btn-success tc-reload-dbtbl-cached"><?php echo $this->translate('tr_melistoolcreator_database_reload_cached') ?> <i class="fa fa-refresh"></i></button>
             </p>
+        </div>
+
+        <!-- Create table modal (custom overlay: independent of the Bootstrap modal JS API) -->
+        <div class="tc-create-tbl-overlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:10050;">
+            <div style="background:#fff; color:#333; width:95%; max-width:1150px; margin:40px auto; padding:20px; border-radius:4px; max-height:88vh; overflow-y:auto;">
+                <h4 style="margin-top:0;">
+                    <i class="fa fa-table"></i> <?php echo $this->translate('tr_melistoolcreator_create_tbl') ?>
+                    <button type="button" class="btn btn-default btn-sm tc-create-tbl-close float-right">&times;</button>
+                </h4>
+                <div class="tc-create-tbl-errors alert alert-danger" style="display:none;"></div>
+                <div class="form-group">
+                    <label><?php echo $this->translate('tr_melistoolcreator_create_tbl_name') ?></label>
+                    <input type="text" class="form-control" name="tcf-create-tbl-name" placeholder="my_table">
+                </div>
+                <style>
+                    .tc-create-tbl-preset {
+                        display: inline-flex;
+                        align-items: center;
+                        gap: 8px;
+                        padding: 10px 18px;
+                        border: 2px solid #ddd;
+                        border-radius: 6px;
+                        background: #fff;
+                        color: #555;
+                        font-size: 13px;
+                        cursor: pointer;
+                        transition: border-color .15s, background .15s;
+                    }
+                    .tc-create-tbl-preset .fa { font-size: 16px; }
+                    .tc-create-tbl-preset:hover { border-color: #aaa; }
+                    .tc-create-tbl-preset.active {
+                        border-color: #e8151b;
+                        color: #e8151b;
+                        background: #fdeeee;
+                        font-weight: 600;
+                    }
+                </style>
+                <div class="form-group">
+                    <label><?php echo $this->translate('tr_melistoolcreator_create_tbl_template') ?></label><br>
+                    <div style="display:flex; gap:12px; margin-top:4px;">
+                        <button type="button" class="tc-create-tbl-preset active" data-preset="blank"><i class="fa fa-table"></i> <?php echo $this->translate('tr_melistoolcreator_create_tbl_template_blank') ?></button>
+                        <button type="button" class="tc-create-tbl-preset" data-preset="ref"><i class="fa fa-list-alt"></i> <?php echo $this->translate('tr_melistoolcreator_create_tbl_ref_preset') ?></button>
+                    </div>
+                    <p class="text-muted" style="margin:8px 0 0; font-size:12px;"><?php echo $this->translate('tr_melistoolcreator_create_tbl_template_desc') ?></p>
+                </div>
+                <p><b><?php echo $this->translate('tr_melistoolcreator_create_tbl_columns') ?></b></p>
+                <div style="overflow-x:auto;">
+                <table class="table tc-create-tbl-cols" style="min-width:900px;">
+                    <thead>
+                        <tr>
+                            <th><?php echo $this->translate('tr_melistoolcreator_create_tbl_col_name') ?></th>
+                            <th>
+                                <?php echo $this->translate('tr_melistoolcreator_create_tbl_col_auto') ?>
+                                <i class="fa fa-info-circle tip-info" data-bs-toggle="tooltip" data-bs-placement="top" title="<?php echo $this->translate('tr_melistoolcreator_create_tbl_col_auto_tooltip') ?>"></i>
+                            </th>
+                            <th><?php echo $this->translate('tr_melistoolcreator_create_tbl_col_type') ?></th>
+                            <th><?php echo $this->translate('tr_melistoolcreator_create_tbl_col_length') ?></th>
+                            <th><?php echo $this->translate('tr_melistoolcreator_create_tbl_col_notnull') ?></th>
+                            <th><?php echo $this->translate('tr_melistoolcreator_create_tbl_col_default') ?></th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+                </div>
+                <template class="tc-create-tbl-col-row-tpl">
+                    <tr>
+                        <td><input type="text" class="form-control" name="tcf-create-tbl-col-name" style="min-width:160px;"></td>
+                        <td>
+                            <select class="form-control tc-create-tbl-col-auto" name="tcf-create-tbl-col-auto" style="min-width:150px;">
+                                <option value=""><?php echo $this->translate('tr_melistoolcreator_create_tbl_col_auto_none') ?></option>
+                                <?php foreach (($this->createTableAutoValues ?? []) as $kind => $def) { ?>
+                                    <option value="<?php echo $kind ?>"><?php echo $this->translate($def['label']) ?></option>
+                                <?php } ?>
+                            </select>
+                        </td>
+                        <td>
+                            <select class="form-control" name="tcf-create-tbl-col-type" style="min-width:120px;">
+                                <?php foreach (array_keys($this->createTableTypes ?? []) as $type) { ?>
+                                    <option value="<?php echo $type ?>"><?php echo $type ?></option>
+                                <?php } ?>
+                            </select>
+                        </td>
+                        <td><input type="number" class="form-control" name="tcf-create-tbl-col-length" min="1" max="5000" style="width:90px;"></td>
+                        <td style="text-align:center; vertical-align:middle;"><input type="checkbox" name="tcf-create-tbl-col-notnull"></td>
+                        <td><input type="text" class="form-control" name="tcf-create-tbl-col-default"></td>
+                        <td style="vertical-align:middle;"><button type="button" class="btn btn-danger btn-sm tc-create-tbl-del-col"><i class="fa fa-trash"></i></button></td>
+                    </tr>
+                </template>
+                <p><button type="button" class="btn btn-default btn-sm tc-create-tbl-add-col"><i class="fa fa-plus"></i> <?php echo $this->translate('tr_melistoolcreator_create_tbl_add_col') ?></button></p>
+                <p class="text-muted"><i class="fa fa-key fa-rotate-90"></i> <?php echo $this->translate('tr_melistoolcreator_create_tbl_pk_note') ?></p>
+                <div style="text-align:right;">
+                    <button type="button" class="btn btn-default tc-create-tbl-close"><?php echo $this->translate('tr_melistoolcreator_create_tbl_cancel') ?></button>
+                    <button type="button" class="btn btn-success tc-create-tbl-submit"><?php echo $this->translate('tr_melistoolcreator_create_tbl_btn') ?> <i class="fa fa-check"></i></button>
+                </div>
+            </div>
         </div>
         <?php if ($this->hasError){ ?>
             <div class="col-sm-12">

@@ -1,0 +1,260 @@
+<?php
+
+/**
+ * Melis Technology (http://www.melistechnology.com)
+ *
+ * @copyright Copyright (c) 2015 Melis Technology (http://www.melistechnology.com)
+ *
+ * JSON CRUD API backing the ModuleTpl React brick (Tool Creator, UI mode = react).
+ * Thin layer over the generated ModuleTplTable / ModuleTplService; the legacy
+ * tool (ListController & co) is left untouched and keeps working in the classic BO.
+ */
+
+namespace ModuleTpl\Controller;
+
+use Laminas\Http\Response as HttpResponse;
+use MelisCore\Controller\MelisAbstractActionController;
+use MelisReactApi\Controller\CapabilityGuardTrait;
+
+class ModuleTplReactApiController extends MelisAbstractActionController
+{
+    /**
+     * Advanced rights: the capabilities declared in config/react.capabilities.php are
+     * a deny-list, and only this guard makes them real. The brick hides the buttons it
+     * is not allowed to use, but that is cosmetic — the check has to happen here too.
+     */
+    use CapabilityGuardTrait;
+
+    private const MELIS_KEY = 'moduletpl_tool';
+    private const PRIMARY_KEY = '#TCPK';
+    private const SEARCH_FIELDS = #TCREACTSEARCHABLES;
+    private const ALL_FIELDS = #TCREACTFIELDNAMES;
+    /** Fields the wizard declared editable: the ONLY ones saveAction accepts */
+    private const EDITABLE_FIELDS = #TCREACTEDITABLEFIELDS;
+    /** Boolean-ish column used for the second KPI tile (null when the table has none). */
+    private const STAT_FIELD = #TCREACTSTATFIELD;
+    /** Columns displayed as a Melis back-office user name (step 4 "display" option) */
+    private const ADMIN_NAME_FIELDS = #TCREACTADMINCOLS;
+
+    // ─── /melis/react-api/moduletpl[/] ───────────────────────────────────────
+    public function listAction(): HttpResponse
+    {
+        if ($deny = $this->denyUnlessAccess()) {
+            return $deny;
+        }
+        if ($denyCap = $this->denyUnlessCan('list')) {
+            return $denyCap;
+        }
+
+        $search = trim((string) $this->params()->fromQuery('search', ''));
+
+        $sort = (string) $this->params()->fromQuery('sort', self::PRIMARY_KEY);
+        $sortWhitelist = array_merge([self::PRIMARY_KEY], self::ALL_FIELDS);
+        if (!in_array($sort, $sortWhitelist, true)) {
+            $sort = self::PRIMARY_KEY;
+        }
+
+        $order = strtoupper((string) $this->params()->fromQuery('order', 'DESC')) === 'ASC' ? 'ASC' : 'DESC';
+        $start = max(0, (int) $this->params()->fromQuery('start', 0));
+        $limit = (int) $this->params()->fromQuery('limit', 50);
+        $limit = $limit > 0 ? min($limit, 200) : 50;
+
+        $table = $this->getServiceManager()->get('ModuleTplTable');
+        $rows  = $table->getList($start, $limit, self::SEARCH_FIELDS, $search ?: null, $sort, $order)->toArray();
+
+        $countRows = $table->getList(null, null, self::SEARCH_FIELDS, $search ?: null, null, $order, 1, true)->toArray();
+        $total = (int) ($countRows[0]['totalRecords'] ?? count($rows));
+
+        return $this->jsonResponse(['success' => true, 'data' => [
+            'items' => array_map(fn ($r) => $this->formatRow((array) $r), $rows),
+            'total' => $total,
+            'stats' => $this->stats($table, $search, $total),
+        ]]);
+    }
+
+    // ─── /melis/react-api/moduletpl/:id ──────────────────────────────────────
+    public function getAction(): HttpResponse
+    {
+        if ($deny = $this->denyUnlessAccess()) {
+            return $deny;
+        }
+        if ($denyCap = $this->denyUnlessCan('edit')) {
+            return $denyCap;
+        }
+
+        $id = (int) $this->params()->fromRoute('id', 0);
+        if (!$id) {
+            return $this->errorResponse('Missing id', 400);
+        }
+
+        $table = $this->getServiceManager()->get('ModuleTplTable');
+        $row   = $table->getEntryById($id)->current();
+        if (!$row) {
+            return $this->errorResponse('Not found', 404);
+        }
+
+        return $this->jsonResponse(['success' => true, 'data' => $this->formatRow((array) $row)]);
+    }
+
+    // ─── /melis/react-api/moduletpl/save[/] ──────────────────────────────────
+    public function saveAction(): HttpResponse
+    {
+        if ($deny = $this->denyUnlessAccess()) {
+            return $deny;
+        }
+
+        $body = json_decode((string) $this->getRequest()->getContent(), true);
+        if (!is_array($body)) {
+            return $this->errorResponse('Invalid payload', 400);
+        }
+
+        $id = isset($body['id']) && $body['id'] ? (int) $body['id'] : null;
+
+        if ($denyCap = $this->denyUnlessCan($id ? 'edit' : 'create')) {
+            return $denyCap;
+        }
+
+        /**
+         * Only the fields the wizard declared editable are writable, and never the
+         * columns whose value the system owns (creation/update user and date).
+         * Accepting every column of the table would let a client rewrite the recorded
+         * creator of a row, or fields the tool deliberately does not show.
+         */
+        $data = [];
+        foreach (self::EDITABLE_FIELDS as $name) {
+            if ($name === '' || $name === self::PRIMARY_KEY || !array_key_exists($name, $body)) {
+                continue;
+            }
+            $data[$name] = $body[$name];
+        }
+        if (!$data) {
+            return $this->errorResponse('No fields to save', 400);
+        }
+
+        $service = $this->getServiceManager()->get('ModuleTplService');
+        $savedId = $service->saveItem($data, $id);
+
+        return $this->jsonResponse(['success' => true, 'data' => ['id' => $savedId]]);
+    }
+
+    // ─── /melis/react-api/moduletpl/delete/:id ───────────────────────────────
+    public function deleteAction(): HttpResponse
+    {
+        if ($deny = $this->denyUnlessAccess()) {
+            return $deny;
+        }
+        if ($denyCap = $this->denyUnlessCan('delete')) {
+            return $denyCap;
+        }
+
+        $id = (int) $this->params()->fromRoute('id', 0);
+        if (!$id) {
+            return $this->errorResponse('Missing id', 400);
+        }
+
+        $service = $this->getServiceManager()->get('ModuleTplService');
+        $service->deleteItem($id);
+
+        return $this->jsonResponse(['success' => true, 'data' => null]);
+    }
+
+    // ─── Helpers ─────────────────────────────────────────────────────────────
+
+    /**
+     * KPI tiles data: overall record count, how many match the current search,
+     * and - when the table has a boolean-ish column - how many rows are "on".
+     */
+    private function stats($table, string $search, int $filtered): array
+    {
+        if ($search === '') {
+            $grandTotal = $filtered;
+        } else {
+            $allRows = $table->getList(null, null, self::SEARCH_FIELDS, null, null, 'DESC', 1, true)->toArray();
+            $grandTotal = (int) ($allRows[0]['totalRecords'] ?? $filtered);
+        }
+
+        $stats = [
+            'total'    => $grandTotal,
+            'filtered' => $filtered,
+            'active'   => null,
+        ];
+
+        if (self::STAT_FIELD !== null) {
+            $stats['active'] = (int) $table->getTotalData(self::STAT_FIELD, 1);
+        }
+
+        return $stats;
+    }
+
+    private function formatRow(array $row): array
+    {
+        $row['id'] = (int) ($row[self::PRIMARY_KEY] ?? $row['DT_RowId'] ?? 0);
+        unset($row['DT_RowId']);
+
+        /**
+         * Columns shown as a user name: the raw value is a melis_core_user id, so the
+         * name is resolved here and added ALONGSIDE it as <column>_display. The raw
+         * value is left untouched, because the edit form binds to it.
+         */
+        foreach (self::ADMIN_NAME_FIELDS as $field) {
+            if (!array_key_exists($field, $row) || $row[$field] === null || $row[$field] === '') {
+                continue;
+            }
+            $name = $this->adminName((int) $row[$field]);
+            if ($name !== null && $name !== '') {
+                $row[$field . '_display'] = $name;
+            }
+        }
+
+        return $row;
+    }
+
+    /**
+     * "Firstname Lastname" of a back-office user, or null when unknown.
+     * Resolved names are kept for the duration of the request (one list = one query
+     * per distinct user instead of one per row).
+     */
+    private function adminName(int $userId): ?string
+    {
+        static $cache = [];
+
+        if (array_key_exists($userId, $cache)) {
+            return $cache[$userId];
+        }
+
+        $user = $this->getServiceManager()->get('MelisCoreTableUser')->getEntryById($userId)->current();
+        $cache[$userId] = $user ? trim($user->usr_firstname . ' ' . $user->usr_lastname) : null;
+
+        return $cache[$userId];
+    }
+
+    private function denyUnlessAccess(): ?HttpResponse
+    {
+        if (!$this->getServiceManager()->get('MelisCoreAuth')->hasIdentity()) {
+            return $this->jsonResponse(['success' => false, 'error' => 'Unauthenticated'], 401);
+        }
+        if (!$this->getServiceManager()->get('MelisCoreRights')->canAccess(self::MELIS_KEY)) {
+            return $this->jsonResponse(['success' => false, 'error' => 'Forbidden'], 403);
+        }
+        return null;
+    }
+
+    private function jsonResponse(array $data, int $status = 200): HttpResponse
+    {
+        /** @var HttpResponse $response */
+        $response = $this->getResponse();
+        $response->setStatusCode($status);
+        $response->getHeaders()->addHeaders([
+            'Content-Type'           => 'application/json; charset=utf-8',
+            'X-Content-Type-Options' => 'nosniff',
+        ]);
+        $response->setContent(json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+
+        return $response;
+    }
+
+    private function errorResponse(string $message, int $status): HttpResponse
+    {
+        return $this->jsonResponse(['success' => false, 'error' => $message], $status);
+    }
+}

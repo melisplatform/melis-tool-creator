@@ -103,11 +103,51 @@ $(function () {
 		$(divContainer + " .form-group label").css("color", "inherit");
 
 		$(divContainer + " .form-group label").css("color", "#686868");
+		var $first = null;
 		$.each(errors, function (key, error) {
-			$(divContainer + " .form-control[name='" + key + "']")
-				.prev("label")
-				.css("color", "red");
+			var $field = $(divContainer + " .form-control[name='" + key + "']");
+			$field.prev("label").css("color", "red");
+			if (!$first && $field.length) {
+				$first = $field;
+			}
 		});
+		// Bring the first field in error into view: the step can be taller than the
+		// viewport and the notification alone does not say where the problem is.
+		tcScrollToError($first);
+	}
+
+	/**
+	 * Scrolls the closest scrollable ancestor (modal panel, or the page) so that
+	 * $el is visible. Does nothing when $el is empty or already in view.
+	 */
+	function tcScrollToError($el) {
+		if (!$el || !$el.length) {
+			return;
+		}
+		var el = $el.get(0);
+		var $scroller = $el.parents().filter(function () {
+			var ov = $(this).css("overflow-y");
+			return (
+				(ov === "auto" || ov === "scroll") &&
+				this.scrollHeight > this.clientHeight
+			);
+		}).first();
+
+		if ($scroller.length) {
+			var sc = $scroller.get(0);
+			var top =
+				$el.offset().top - $scroller.offset().top + sc.scrollTop - 20;
+			$scroller.animate({ scrollTop: Math.max(top, 0) }, 300);
+			return;
+		}
+
+		var rect = el.getBoundingClientRect();
+		if (rect.top < 0 || rect.bottom > window.innerHeight) {
+			$("html, body").animate(
+				{ scrollTop: Math.max($el.offset().top - 80, 0) },
+				300
+			);
+		}
 	}
 
 	$body.on("change", "input[name='tcf-tool-type']", function () {
@@ -135,6 +175,173 @@ $(function () {
 					.hide();
 			}
 		}
+	});
+
+	/**
+	 * ============= Create table modal (Database step) =============
+	 */
+	/**
+	 * A system-filled column has a fixed definition (its kind decides the SQL type
+	 * and how the value is produced), so the type/length/null/default cells of that
+	 * row are cleared and locked.
+	 */
+	function tcCreateTblSyncAutoRow(row) {
+		var isAuto = row.find("select[name='tcf-create-tbl-col-auto']").val() !== "";
+		var cells = row.find(
+			"select[name='tcf-create-tbl-col-type']," +
+				"input[name='tcf-create-tbl-col-length']," +
+				"input[name='tcf-create-tbl-col-notnull']," +
+				"input[name='tcf-create-tbl-col-default']"
+		);
+
+		cells.prop("disabled", isAuto);
+		row.css("opacity", isAuto ? 0.75 : 1);
+		if (isAuto) {
+			row.find("input[name='tcf-create-tbl-col-length']").val("");
+			row.find("input[name='tcf-create-tbl-col-default']").val("");
+			row.find("input[name='tcf-create-tbl-col-notnull']").prop("checked", false);
+		}
+	}
+
+	function tcCreateTblAddRow(values) {
+		var tpl = $(".tc-create-tbl-col-row-tpl").prop("content");
+		var row = $(tpl).find("tr").clone();
+		if (values) {
+			row.find("input[name='tcf-create-tbl-col-name']").val(values.name || "");
+			row.find("select[name='tcf-create-tbl-col-type']").val(values.type || "varchar");
+			row.find("input[name='tcf-create-tbl-col-length']").val(values.length || "");
+			row
+				.find("input[name='tcf-create-tbl-col-notnull']")
+				.prop("checked", !!values.notnull);
+			row.find("input[name='tcf-create-tbl-col-default']").val(values.def || "");
+			row.find("select[name='tcf-create-tbl-col-auto']").val(values.auto || "");
+		}
+		$(".tc-create-tbl-cols tbody").append(row);
+		tcCreateTblSyncAutoRow(row);
+	}
+
+	$body.on("change", ".tc-create-tbl-col-auto", function () {
+		tcCreateTblSyncAutoRow($(this).closest("tr"));
+	});
+
+	$body.on("click", ".tc-create-dbtbl", function () {
+		$(".tc-create-tbl-errors").hide().empty();
+		$(".tc-create-tbl-cols tbody").empty();
+		$("input[name='tcf-create-tbl-name']").val("");
+		$(".tc-create-tbl-preset").removeClass("active");
+		$(".tc-create-tbl-preset[data-preset='blank']").addClass("active");
+		tcCreateTblAddRow();
+		$(".tc-create-tbl-overlay").show();
+	});
+
+	$body.on("click", ".tc-create-tbl-close", function () {
+		$(".tc-create-tbl-overlay").hide();
+	});
+
+	$body.on("click", ".tc-create-tbl-add-col", function () {
+		tcCreateTblAddRow();
+	});
+
+	$body.on("click", ".tc-create-tbl-del-col", function () {
+		$(this).closest("tr").remove();
+	});
+
+	$body.on("click", ".tc-create-tbl-preset", function () {
+		$(".tc-create-tbl-preset").removeClass("active");
+		$(this).addClass("active");
+
+		$(".tc-create-tbl-cols tbody").empty();
+		if ($(this).data("preset") === "ref") {
+			tcCreateTblAddRow({ name: "code", type: "varchar", length: 20, notnull: true });
+			tcCreateTblAddRow({ name: "label", type: "varchar", length: 255, notnull: true });
+			tcCreateTblAddRow({ name: "display_order", type: "int" });
+			tcCreateTblAddRow({ name: "active", type: "tinyint", notnull: true, def: "1" });
+		} else {
+			tcCreateTblAddRow();
+		}
+	});
+
+	$body.on("click", ".tc-create-tbl-submit", function () {
+		var data = [
+			{
+				name: "tcf-create-tbl-name",
+				value: $("input[name='tcf-create-tbl-name']").val(),
+			},
+		];
+
+		$(".tc-create-tbl-cols tbody tr").each(function () {
+			data.push({
+				name: "tcf-create-tbl-col-name[]",
+				value: $(this).find("input[name='tcf-create-tbl-col-name']").val(),
+			});
+			data.push({
+				name: "tcf-create-tbl-col-type[]",
+				value: $(this).find("select[name='tcf-create-tbl-col-type']").val(),
+			});
+			data.push({
+				name: "tcf-create-tbl-col-length[]",
+				value: $(this).find("input[name='tcf-create-tbl-col-length']").val(),
+			});
+			data.push({
+				name: "tcf-create-tbl-col-notnull[]",
+				value: $(this)
+					.find("input[name='tcf-create-tbl-col-notnull']")
+					.prop("checked")
+					? 1
+					: "",
+			});
+			data.push({
+				name: "tcf-create-tbl-col-default[]",
+				value: $(this).find("input[name='tcf-create-tbl-col-default']").val(),
+			});
+			data.push({
+				name: "tcf-create-tbl-col-auto[]",
+				value: $(this).find("select[name='tcf-create-tbl-col-auto']").val(),
+			});
+		});
+
+		$(".tc-create-tbl-overlay").append(loader);
+
+		$.post("/melis/MelisToolCreator/ToolCreator/createDbTable", data)
+			.done(function (res) {
+				$(".tc-create-tbl-overlay #loader").remove();
+
+				if (!res.success) {
+					// .text() per message: an error can quote back what was typed,
+					// which must never be interpreted as markup
+					var $errors = $(".tc-create-tbl-errors").empty();
+					$.each(res.errors, function (key, msg) {
+						$errors.append($("<p>").text(msg));
+					});
+					$errors.show();
+					tcScrollToError($(".tc-create-tbl-errors"));
+					return;
+				}
+
+				$(".tc-create-tbl-overlay").hide();
+
+				// Re-render the Database step (cache already rebuilt server side),
+				// then preselect the newly created table
+				$("#id_melistoolcreator_steps").append(loader);
+				$.post("/melis/tool-creator-validate-cur-step", {
+					curStep: 2,
+					nxtStep: 3,
+				}).done(function (stepRes) {
+					setTimeout(function () {
+						$("#id_melistoolcreator_steps #loader").remove();
+						$("#id_melistoolcreator_steps").html(stepRes);
+						$(
+							".melis-toolcreator-steps-primary-db-table-list li[data-table-name='" +
+								res.tableName +
+								"']"
+						).trigger("click");
+					}, 500);
+				});
+			})
+			.fail(function () {
+				$(".tc-create-tbl-overlay #loader").remove();
+				alert(translations.tr_meliscore_error_message);
+			});
 	});
 
 	$body.on("click", ".tc-reload-dbtbl-cached", function () {

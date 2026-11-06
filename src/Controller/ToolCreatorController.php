@@ -404,6 +404,11 @@ class ToolCreatorController extends MelisAbstractActionController
         $toolType = $container['melis-toolcreator']['step1']['tcf-tool-edit-type'];
         $viewStp->toolType = $toolType;
 
+        // Column types and system-filled column kinds offered by the "Create table" modal
+        $config = $this->getServiceManager()->get('config');
+        $viewStp->createTableTypes = $config['plugins']['melistoolcreator']['datas']['create_table_types'] ?? [];
+        $viewStp->createTableAutoValues = $config['plugins']['melistoolcreator']['datas']['create_table_auto_values'] ?? [];
+
         /**
          * ========================================================
          * ============= Primary database table ===================
@@ -555,7 +560,10 @@ class ToolCreatorController extends MelisAbstractActionController
                  * @var MelisToolCreatorService $toolCreatorSrv
                  */
                 $toolCreatorSrv = $this->getServiceManager()->get('MelisToolCreatorService');
-                $table = $toolCreatorSrv->describeTable($formData['tcf-db-table']);
+
+                // The form accepts any name the browser posts: only describe a real table
+                $tableIsKnown = $toolCreatorSrv->tableExists($formData['tcf-db-table']);
+                $table = $tableIsKnown ? $toolCreatorSrv->describeTable($formData['tcf-db-table']) : [];
 
                 $hasPrimaryKey = false;
                 $hasPrimaryKeyIdAI = false;
@@ -595,12 +603,17 @@ class ToolCreatorController extends MelisAbstractActionController
                     $translator = $this->getServiceManager()->get('translator');
 
                     // adding a variable to ViewModel to flag an error
-                    if (!$hasPrimaryKey)
+                    if (!$tableIsKnown)
+                        $results['hasError']['tcf-db-table'] = [
+                            'unknownTable' => $translator->translate('tr_melistoolcreator_err_unknown_table')
+                        ];
+                    elseif (!$hasPrimaryKey)
                         $results['hasError']['tcf-db-table'] = [
                             'priTblNoPrimaryKey' => $translator->translate('tr_melistoolcreator_err_no_primary_key')
                         ];
 
-                    if (!$hasPrimaryKeyIdAI)
+                    // Only relevant once the table is known: its columns were never read otherwise
+                    if ($tableIsKnown && !$hasPrimaryKeyIdAI)
                         $results['hasError']['tcf-db-table']['priTblNoPrimaryKeyNotAI'] = $translator->translate('tr_melistoolcreator_err_primary_key_not_ai');
 
                     if (!empty($notNullableBlobType)){
@@ -714,7 +727,11 @@ class ToolCreatorController extends MelisAbstractActionController
                  * @var MelisToolCreatorService $toolCreatorSrv
                  */
                 $toolCreatorSrv = $this->getServiceManager()->get('MelisToolCreatorService');
-                $table = $toolCreatorSrv->describeTable($formData['tcf-db-table-language-tbl']);
+
+                // Same as the primary table: never describe a name that is not a real table
+                $table = $toolCreatorSrv->tableExists($formData['tcf-db-table-language-tbl'])
+                    ? $toolCreatorSrv->describeTable($formData['tcf-db-table-language-tbl'])
+                    : [];
 
                 $hasPrimaryKeyIdAI = false;
                 $hasPrimaryKey = false;
@@ -806,11 +823,13 @@ class ToolCreatorController extends MelisAbstractActionController
 
         // Describe query to get the details of the Database table
         $tableName = $this->params()->fromPost('tableName', $this->params()->fromRoute('tableName'));
-        if ($tableName){
-            /**
-             * @var MelisToolCreatorService $toolCreatorSrv
-             */
-            $toolCreatorSrv = $this->getServiceManager()->get('MelisToolCreatorService');
+        /**
+         * @var MelisToolCreatorService $toolCreatorSrv
+         */
+        $toolCreatorSrv = $this->getServiceManager()->get('MelisToolCreatorService');
+
+        // The name comes straight from the request: describe it only if it is a real table
+        if ($tableName && $toolCreatorSrv->tableExists($tableName)){
             $tables = $toolCreatorSrv->describeTable($tableName);
 
             $hasPrimaryKey = false;
@@ -837,6 +856,167 @@ class ToolCreatorController extends MelisAbstractActionController
     }
 
     /**
+     * Creates a new database table from the "Create table" modal of the Database step.
+     *
+     * Security: identifiers are regex-whitelisted and the DDL type fragment comes only
+     * from the `create_table_types` config map (DDL cannot take bound parameters).
+     * The generic route reaches this action, so the class-wide MELIS_KEY guard applies.
+     *
+     * @return JsonModel {success, errors{field: message}, tableName}
+     */
+    public function createDbTableAction()
+    {
+        $translator = $this->getServiceManager()->get('translator');
+        $request = $this->getRequest();
+        $post = $request->getPost()->toArray();
+
+        $errors = [];
+        $identifierPattern = '/^[a-z][a-z0-9_]{0,63}$/';
+
+        $tableName = trim($post['tcf-create-tbl-name'] ?? '');
+        if (!preg_match($identifierPattern, $tableName)) {
+            $errors['tcf-create-tbl-name'] = $translator->translate('tr_melistoolcreator_create_tbl_err_name');
+        }
+
+        // Uniqueness check against the live schema (not the file cache, which may be stale)
+        $adapter = $this->getServiceManager()->get(\Laminas\Db\Adapter\Adapter::class);
+        if (empty($errors)) {
+            $metadata = new Metadata($adapter);
+            foreach ($metadata->getTableNames() as $existing) {
+                if (strtolower($existing) === $tableName) {
+                    $errors['tcf-create-tbl-name'] = $translator->translate('tr_melistoolcreator_create_tbl_err_exists');
+                    break;
+                }
+            }
+        }
+
+        $config = $this->getServiceManager()->get('config');
+        $typesMap = $config['plugins']['melistoolcreator']['datas']['create_table_types'] ?? [];
+        $autoMap = $config['plugins']['melistoolcreator']['datas']['create_table_auto_values'] ?? [];
+
+        $colNames = $post['tcf-create-tbl-col-name'] ?? [];
+        $colTypes = $post['tcf-create-tbl-col-type'] ?? [];
+        $colLengths = $post['tcf-create-tbl-col-length'] ?? [];
+        $colNotNull = $post['tcf-create-tbl-col-notnull'] ?? [];
+        $colDefaults = $post['tcf-create-tbl-col-default'] ?? [];
+        $colAuto = $post['tcf-create-tbl-col-auto'] ?? [];
+
+        $columnsDdl = [];
+        $seen = [];
+        $seenAuto = [];
+        foreach ((array) $colNames as $idx => $colName) {
+            $colName = trim($colName);
+            // Skip rows the user left untouched
+            if ($colName === '' && trim($colAuto[$idx] ?? '') === '') {
+                continue;
+            }
+
+            // `id` is created by the wizard itself as the auto-increment primary key
+            if ($colName === 'id') {
+                $errors['tcf-create-tbl-col-name'] = $translator->translate('tr_melistoolcreator_create_tbl_err_col_id');
+                continue;
+            }
+            if (!preg_match($identifierPattern, $colName)) {
+                $errors['tcf-create-tbl-col-name'] = $translator->translate('tr_melistoolcreator_create_tbl_err_col_name');
+                continue;
+            }
+            if (in_array($colName, $seen)) {
+                $errors['tcf-create-tbl-col-name'] = $translator->translate('tr_melistoolcreator_create_tbl_err_col_dup');
+                continue;
+            }
+            $seen[] = $colName;
+
+            /**
+             * System-filled column: the DDL is fixed by its kind, and the kind is kept
+             * in the column COMMENT so later steps and the generator recognize it later
+             * (the wizard may well be run in another session than the one that created
+             * the table). Type/length/null/default of the row are ignored on purpose.
+             */
+            $auto = $colAuto[$idx] ?? '';
+            if ($auto !== '') {
+                if (!isset($autoMap[$auto])) {
+                    $errors['tcf-create-tbl-col-auto'] = $translator->translate('tr_melistoolcreator_create_tbl_err_col_auto');
+                    continue;
+                }
+                if (in_array($auto, $seenAuto)) {
+                    $errors['tcf-create-tbl-col-auto'] = $translator->translate('tr_melistoolcreator_create_tbl_err_col_auto_dup');
+                    continue;
+                }
+                $seenAuto[] = $auto;
+                $columnsDdl[] = '`' . $colName . '` ' . $autoMap[$auto]['ddl']
+                    . ' COMMENT ' . $adapter->getPlatform()->quoteTrustedValue('melis:auto=' . $auto);
+                continue;
+            }
+
+            $type = $colTypes[$idx] ?? '';
+            if (!isset($typesMap[$type])) {
+                $errors['tcf-create-tbl-col-type'] = $translator->translate('tr_melistoolcreator_create_tbl_err_col_type');
+                continue;
+            }
+
+            $typeDdl = $typesMap[$type];
+            if (strpos($typeDdl, '%d') !== false) {
+                $length = (int) ($colLengths[$idx] ?? 0);
+                if ($length < 1 || $length > 5000) {
+                    $length = 255;
+                }
+                $typeDdl = sprintf($typeDdl, $length);
+            }
+
+            $colDdl = '`' . $colName . '` ' . $typeDdl;
+            $colDdl .= !empty($colNotNull[$idx]) ? ' NOT NULL' : ' NULL';
+
+            $default = trim($colDefaults[$idx] ?? '');
+            if ($default !== '') {
+                // DDL cannot take bound parameters: quote through the platform
+                $colDdl .= ' DEFAULT ' . $adapter->getPlatform()->quoteTrustedValue($default);
+            }
+
+            $columnsDdl[] = $colDdl;
+        }
+
+        if (empty($columnsDdl) && empty($errors)) {
+            $errors['tcf-create-tbl-col-name'] = $translator->translate('tr_melistoolcreator_create_tbl_err_no_col');
+        }
+
+        if (!empty($errors)) {
+            return new JsonModel(['success' => false, 'errors' => $errors]);
+        }
+
+        $sql = 'CREATE TABLE `' . $tableName . '` ('
+            . '`id` INT UNSIGNED NOT NULL AUTO_INCREMENT, '
+            . implode(', ', $columnsDdl)
+            . ', PRIMARY KEY (`id`)'
+            . ') ENGINE=InnoDB DEFAULT CHARSET=utf8mb4';
+
+        try {
+            $adapter->query($sql, \Laminas\Db\Adapter\Adapter::QUERY_MODE_EXECUTE);
+        } catch (\Exception $e) {
+            /**
+             * The raw database message is kept server-side: it describes the schema and
+             * the engine, and it quotes back the values that were submitted. The client
+             * only gets a reference to find the entry in the log.
+             */
+            $ref = \MelisCore\Support\MelisErrorReference::log($e, 'MelisToolCreator::createDbTable');
+
+            return new JsonModel([
+                'success' => false,
+                'errors' => [
+                    'tcf-create-tbl-name' => sprintf(
+                        $translator->translate('tr_melistoolcreator_create_tbl_err_db'),
+                        $ref
+                    ),
+                ],
+            ]);
+        }
+
+        // Refresh the table list cache so the new table shows up in the step
+        $this->getDBTablesCached(true);
+
+        return new JsonModel(['success' => true, 'tableName' => $tableName]);
+    }
+
+    /**
      * This method manage the Fourth step of the tool creator
      * This method manage the Database table column that will display on the
      * Table list of the Tool
@@ -857,6 +1037,9 @@ class ToolCreatorController extends MelisAbstractActionController
          */
         $toolCreatorSrv = $this->getServiceManager()->get('MelisToolCreatorService');
         $viewStp->priTblCols = $toolCreatorSrv->describeTable($tcfDbTbl);
+
+        // System-filled columns: used to preselect a sensible "display" (see the view)
+        $viewStp->autoCols = $toolCreatorSrv->getAutoColumns($tcfDbTbl);
 
         if (!empty($container['melis-toolcreator']['step3']['tcf-db-table-has-language'])){
 
@@ -981,7 +1164,7 @@ class ToolCreatorController extends MelisAbstractActionController
         $toolCreatorSrv = $this->getServiceManager()->get('MelisToolCreatorService');
         $tableCols = $toolCreatorSrv->describeTable($tcfDbTbl);
 
-        $viewStp->tableCols = $this->tblColsFields($tableCols);
+        $viewStp->tableCols = $this->tblColsFields($tableCols, false, $toolCreatorSrv->getAutoColumns($tcfDbTbl));
 
         if (!empty($container['melis-toolcreator']['step3']['tcf-db-table-has-language'])){
 
@@ -1003,7 +1186,7 @@ class ToolCreatorController extends MelisAbstractActionController
         return $viewStp;
     }
 
-    private function tblColsFields($tableCols, $langTbl = false)
+    private function tblColsFields($tableCols, $langTbl = false, $autoCols = [])
     {
         // Tool creator session container
         $container = new Container('melistoolcreator');
@@ -1035,6 +1218,18 @@ class ToolCreatorController extends MelisAbstractActionController
             // input states
             $tableCols[$key]['editableIsChecked'] = false;
             $tableCols[$key]['requiredIsChecked'] = false;
+
+            /**
+             * System-filled column (creation/update date or user): never offered as a
+             * form field, its value is set by the database or by the generated service.
+             */
+            if (isset($autoCols[$val['Field']])){
+                $tableCols[$key]['editable'] = 'AUTO';
+                $tableCols[$key]['required'] = 'AUTO';
+                $tableCols[$key]['autoValue'] = $autoCols[$val['Field']];
+                $tableCols[$key]['fieldType'] = null;
+                continue;
+            }
 
             if ($val['Key'] == 'PRI' && $val['Extra'] == 'auto_increment'){
                 $tableCols[$key]['editable'] = 'AUTO_INCREMENT';//sprintf($iconTag, implode(' ', [$editableIcon, $checkedIcon]));

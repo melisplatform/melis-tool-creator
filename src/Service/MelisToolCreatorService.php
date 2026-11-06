@@ -78,6 +78,10 @@ class MelisToolCreatorService  extends MelisGeneralService
         // Generating sub dir and files of the module
         $this->generateModuleSubDirsAndFiles($moduleDirs, $moduleDir);
 
+        // React brick layer (UI mode = react): additive, legacy output untouched
+        if ($this->isReactTool())
+            $this->generateModuleReact($moduleDir);
+
         // Send event
         $this->sendEvent('melis_tool_creator_generate_tool_end', $this->tcSteps);
 
@@ -110,6 +114,11 @@ class MelisToolCreatorService  extends MelisGeneralService
 
             if ($this->isFrameworkTool())
                 $config .= PHP_EOL . "\t\t\t". 'include __DIR__ . \'/config/app.framework.php\',';
+
+            if ($this->isReactTool()){
+                $config .= PHP_EOL . "\t\t\t". 'include __DIR__ . \'/config/react-api.php\',';
+                $config .= PHP_EOL . "\t\t\t". 'include __DIR__ . \'/config/react.capabilities.php\',';
+            }
         }
 
         $moduleFile = $this->sp('#TCMODULE', $code, $moduleFile);
@@ -761,10 +770,12 @@ class MelisToolCreatorService  extends MelisGeneralService
         $tblColDisplay = '';
         $tblColDisplayFilters = [];
         foreach ($this->tcSteps['step4']['tcf-db-table-cols'] As $key => $col){
-            if (is_bool(strpos($col, 'tclangtblcol_')) && $this->tcSteps['step4']['tcf-db-table-col-display'][$key] != 'raw_view'){
+            $colDisplay = $this->tcSteps['step4']['tcf-db-table-col-display'][$key];
+
+            if (is_bool(strpos($col, 'tclangtblcol_')) && $colDisplay != 'raw_view'){
                 $tblColDisplayFilters[] = $this->sp(
                     ['#TCCOLUMN', '#TCCOLDISPLAY'],
-                    [$col, $this->tcSteps['step4']['tcf-db-table-col-display'][$key]],
+                    [$col, $colDisplay],
                     $this->fgc('/Code/tbl-col-display-filter')
                 );
             }
@@ -1244,7 +1255,234 @@ class MelisToolCreatorService  extends MelisGeneralService
             $fileContent = str_replace('#SERVICESECTIONLANG', '', $fileContent);
         }
 
+        /**
+         * Columns whose value is stamped by the application on save (creation/update
+         * user). The date columns of the same feature need no code: the database fills
+         * them through their DEFAULT / ON UPDATE CURRENT_TIMESTAMP.
+         */
+        $autoValues = '';
+        $autoFields = [];
+        $autoCols = $this->isDbTool() ? $this->getAutoColumns($this->tcSteps['step3']['tcf-db-table']) : [];
+        foreach ($autoCols As $col => $kind) {
+            if ($kind === 'created_by')
+                // Only stamped on insert, so an edit never rewrites the creator
+                $autoFields[] = "\t\t\tif (is_null(\$arrayParameters['id']))" . PHP_EOL
+                    . "\t\t\t\t\$arrayParameters['data']['" . $col . "'] = \$tcUserId;";
+            elseif ($kind === 'edited_by')
+                $autoFields[] = "\t\t\t\$arrayParameters['data']['" . $col . "'] = \$tcUserId;";
+        }
+
+        if (!empty($autoFields)) {
+            $autoValues = $this->sp('#TCAUTOVALUESFIELDS', implode(PHP_EOL, $autoFields), $this->fgc('/Code/auto-values'));
+        }
+
+        $fileContent = $this->sp('#TCAUTOVALUES', $autoValues, $fileContent);
+
         $this->generateFile($this->moduleName().'Service.php', $servicePath, $fileContent);
+    }
+
+    /**
+     * Generates the React brick layer of the module (UI mode = react):
+     * config/react-api.php, config/react.capabilities.php, the JSON CRUD
+     * controller, and public/ui-react/{brick.manifest.json, brick.js}.
+     * Additive only — every legacy file generated before stays untouched.
+     *
+     * @param string $moduleDir - root directory of the generated module
+     */
+    private function generateModuleReact($moduleDir)
+    {
+        $moduleName = $this->moduleName();
+
+        // ── Configs ──────────────────────────────────────────────────────────
+        $this->generateFile('react-api.php', $moduleDir.'/config', $this->fgc('/React/react-api.php'));
+        $this->generateFile('react.capabilities.php', $moduleDir.'/config', $this->fgc('/React/react.capabilities.php'));
+
+        // ── Field definitions from the wizard data ──────────────────────────
+        $pk = $this->hasPrimaryKey();
+        $pkField = !empty($pk) ? $pk['Field'] : 'id';
+
+        $allFields = $this->getTableColumns($this->tcSteps['step3']['tcf-db-table']);
+        $priTable = $this->describeTable($this->tcSteps['step3']['tcf-db-table']);
+
+        // Primary-table columns only: language columns stay editable in the legacy tool (v1)
+        $isLangCol = function ($col) {
+            return strpos($col, 'tclangtblcol_') !== false;
+        };
+
+        // Labels chosen at step 6 (texts), keyed [locale][pri_tbl][col]
+        $step6 = $this->tcSteps['step6'] ?? [];
+        $labelFor = function ($col) use ($step6) {
+            $labels = [];
+            foreach (['en' => 'en_EN', 'fr' => 'fr_FR'] as $short => $locale) {
+                if (!empty($step6[$locale]['pri_tbl'][$col]))
+                    $labels[$short] = $step6[$locale]['pri_tbl'][$col];
+            }
+            return !empty($labels) ? $labels : ['en' => $col];
+        };
+
+        /**
+         * List columns (step 4), each carrying the "display" chosen there. The brick
+         * renders dot_color and char_length_limit itself (presentation only); admin_name
+         * needs the user table, so it is resolved by the API controller instead.
+         */
+        $listCols = [];
+        $adminNameCols = [];
+        foreach ($this->tcSteps['step4']['tcf-db-table-cols'] as $key => $col) {
+            if ($isLangCol($col))
+                continue;
+
+            $display = $this->tcSteps['step4']['tcf-db-table-col-display'][$key] ?? 'raw_view';
+            $listCols[] = ['name' => $col, 'label' => $labelFor($col), 'display' => $display];
+
+            if ($display === 'admin_name')
+                $adminNameCols[] = $col;
+        }
+
+        // Searchable fields: same columns as the legacy list
+        $searchFields = array_map(function ($c) { return $c['name']; }, $listCols);
+        if (empty($searchFields))
+            $searchFields = [$pkField];
+
+        // Form fields (step 5): editable columns of the primary table, PK excluded
+        $inputMap = [
+            'MelisText' => 'text',
+            'Textarea' => 'textarea',
+            'MelisCoreTinyMCE' => 'textarea',
+            'Switch' => 'switch',
+            'DatePicker' => 'date',
+            'DateTimePicker' => 'datetime',
+            'Select' => 'select',
+        ];
+
+        $formFields = [];
+        foreach ($this->tcSteps['step5']['tcf-db-table-col-editable'] as $key => $col) {
+            if ($isLangCol($col) || $col == $pkField)
+                continue;
+
+            $legacyType = $this->tcSteps['step5']['tcf-db-table-col-type'][$key] ?? 'MelisText';
+            $input = $inputMap[$legacyType] ?? 'text';
+
+            $field = [
+                'name' => $col,
+                'label' => $labelFor($col),
+                'input' => $input,
+                'required' => in_array($col, $this->tcSteps['step5']['tcf-db-table-col-required'] ?? []),
+            ];
+
+            // Select options come from the column's enum definition, like the legacy form
+            if ($input === 'select') {
+                $options = [];
+                foreach ($priTable as $dCol) {
+                    if ($dCol['Field'] == $col) {
+                        preg_match('#\((.*?)\)#', $dCol['Type'], $match);
+                        if (!empty($match[1]))
+                            $options = array_map(function ($v) {
+                                return trim($v, " '\"");
+                            }, explode(',', $match[1]));
+                    }
+                }
+                $field['options'] = $options;
+            }
+
+            $formFields[] = $field;
+        }
+
+        // Tool title/description per language (step 2), with cross-locale fallback
+        $titles = ['en' => $moduleName, 'fr' => $moduleName];
+        $descs = ['en' => '', 'fr' => ''];
+        foreach (['en' => 'en_EN', 'fr' => 'fr_FR'] as $short => $locale) {
+            if (!empty($this->tcSteps['step2'][$locale]['tcf-title']))
+                $titles[$short] = $this->tcSteps['step2'][$locale]['tcf-title'];
+            if (!empty($this->tcSteps['step2'][$locale]['tcf-desc']))
+                $descs[$short] = $this->tcSteps['step2'][$locale]['tcf-desc'];
+        }
+        if ($titles['en'] === $moduleName && $titles['fr'] !== $moduleName) $titles['en'] = $titles['fr'];
+        if ($titles['fr'] === $moduleName && $titles['en'] !== $moduleName) $titles['fr'] = $titles['en'];
+        if (empty($descs['en'])) $descs['en'] = $descs['fr'];
+        if (empty($descs['fr'])) $descs['fr'] = $descs['en'];
+
+        // KPI tile #2: first boolean-ish column of the primary table (tinyint(1)/bit/switch input)
+        $statField = null;
+        foreach ($formFields as $f) {
+            if ($f['input'] === 'switch') {
+                $statField = $f['name'];
+                break;
+            }
+        }
+        if ($statField === null) {
+            foreach ($priTable as $dCol) {
+                if (preg_match('/^(tinyint\(1\)|bit)/i', $dCol['Type']) && $dCol['Field'] != $pkField) {
+                    $statField = $dCol['Field'];
+                    break;
+                }
+            }
+        }
+
+        $jsonFlags = JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES;
+
+        /**
+         * Write surface of the API: the fields declared editable in step 5, minus the
+         * columns the system fills itself. Anything else must stay read-only, otherwise
+         * a client could rewrite a row's creator or a field the tool never shows.
+         */
+        $systemCols = $this->getAutoColumns($this->tcSteps['step3']['tcf-db-table']);
+        $editableFields = [];
+        foreach ($formFields as $field) {
+            if (!isset($systemCols[$field['name']]))
+                $editableFields[] = $field['name'];
+        }
+
+        // ── JSON CRUD controller ─────────────────────────────────────────────
+        $ctrl = $this->fgc('/React/ReactApiController');
+        $ctrl = $this->sp('#TCPK', addslashes($pkField), $ctrl);
+        $ctrl = $this->sp('#TCREACTSEARCHABLES', json_encode(array_values($searchFields), $jsonFlags), $ctrl);
+        $ctrl = $this->sp('#TCREACTFIELDNAMES', json_encode(array_values($allFields), $jsonFlags), $ctrl);
+        $ctrl = $this->sp('#TCREACTEDITABLEFIELDS', json_encode($editableFields, $jsonFlags), $ctrl);
+        $ctrl = $this->sp('#TCREACTSTATFIELD', $statField === null ? 'null' : "'".addslashes($statField)."'", $ctrl);
+        $ctrl = $this->sp('#TCREACTADMINCOLS', json_encode(array_values($adminNameCols), $jsonFlags), $ctrl);
+        $this->generateFile($moduleName.'ReactApiController.php', $moduleDir.'/src/'.$moduleName.'/Controller', $ctrl);
+
+        // ── Brick (manifest + no-build JS) ───────────────────────────────────
+        $uiReactDir = $moduleDir.'/public/ui-react';
+        if (!is_dir($uiReactDir))
+            mkdir($uiReactDir, 0755, true);
+
+        /**
+         * The brick follows the "Edition type" chosen in step 1: an overlay for
+         * "modal", a record route shown as a sub-tab of the tool for "tab". Only the
+         * routed layout needs the sub-tab handling, hence the manifest flags.
+         */
+        $reactLayout = ($this->getToolEditType() == 'tab') ? 'tab' : 'modal';
+        $manifest = $this->sp('#TCREACTSUBTABS', ($reactLayout === 'tab') ? 'true' : 'false', $this->fgc('/React/brick.manifest.json'));
+        $this->generateFile('brick.manifest.json', $uiReactDir, $manifest);
+
+        /**
+         * Free text of the wizard (title, description) written as a JS literal.
+         *
+         * json_encode produces the quotes AND the escaping, which addcslashes could not
+         * do: the step 2 description is a textarea, so a plain line break — something a
+         * user types without any bad intent — used to end up raw inside a single-quoted
+         * literal and make brick.js unparsable. The bricks of all modules are served as
+         * ONE concatenated bundle whose try/catch only covers runtime errors, so a single
+         * malformed brick took down every React tool of the back-office.
+         * Unicode is deliberately escaped here (no JSON_UNESCAPED_UNICODE), because
+         * U+2028/U+2029 are valid in JSON but terminate a JavaScript string literal.
+         */
+        $js = function ($str) {
+            return json_encode((string) $str, JSON_UNESCAPED_SLASHES);
+        };
+
+        $brick = $this->fgc('/React/brick.js');
+        $brick = $this->sp('#TCREACTLAYOUT', $reactLayout, $brick);
+        $brick = $this->sp('#TCPK', $pkField, $brick);
+        $brick = $this->sp('#TCREACTLISTCOLS', json_encode($listCols, $jsonFlags), $brick);
+        $brick = $this->sp('#TCREACTFORMFIELDS', json_encode($formFields, $jsonFlags), $brick);
+        $brick = $this->sp('#TCREACTSTATFIELD', json_encode($statField, $jsonFlags), $brick);
+        $brick = $this->sp('#TCTITLEEN', $js($titles['en']), $brick);
+        $brick = $this->sp('#TCTITLEFR', $js($titles['fr']), $brick);
+        $brick = $this->sp('#TCDESCEN', $js($descs['en']), $brick);
+        $brick = $this->sp('#TCDESCFR', $js($descs['fr']), $brick);
+        $this->generateFile('brick.js', $uiReactDir, $brick);
     }
 
     /**
@@ -1297,6 +1535,17 @@ class MelisToolCreatorService  extends MelisGeneralService
     private function isBlankTool()
     {
         return $this->tcSteps['step1']['tcf-tool-type'] == 'blank' ? true : false;
+    }
+
+    /**
+     * React UI mode is an option of DB tools only. Null-safe: sessions started
+     * before this field existed behave as legacy.
+     */
+    private function isReactTool()
+    {
+        return $this->isDbTool()
+            && !$this->isFrameworkTool()
+            && (($this->tcSteps['step1']['tcf-ui-mode'] ?? 'legacy') === 'react');
     }
 
     private function getToolEditType()
@@ -1363,12 +1612,94 @@ class MelisToolCreatorService  extends MelisGeneralService
         return $tblCols;
     }
 
+    /**
+     * Returns the columns of a table whose value is set by the system, as
+     * [column name => kind] (created_on, edited_on, created_by, edited_by).
+     *
+     * Two sources, so tables not created by the wizard still work:
+     *  - the `melis:auto=<kind>` marker written in the column COMMENT by the
+     *    "Create table" modal (the only way to recognize the user columns);
+     *  - a CURRENT_TIMESTAMP default, which identifies the date columns of any
+     *    pre-existing table.
+     *
+     * @param string $table
+     * @return array
+     */
+    public function getAutoColumns($table)
+    {
+        $autoCols = [];
+
+        $adapter = $this->getServiceManager()->get('Laminas\Db\Adapter\Adapter');
+        $platform = $adapter->getPlatform();
+        $columns = $adapter->query(
+            'SHOW FULL COLUMNS FROM ' . $platform->quoteIdentifier($table),
+            Adapter::QUERY_MODE_EXECUTE
+        )->toArray();
+
+        $config = $this->getServiceManager()->get('config');
+        $autoMap = $config['plugins']['melistoolcreator']['datas']['create_table_auto_values'] ?? [];
+
+        foreach ($columns As $col) {
+            // Explicit marker set when the column was created by the wizard
+            if (!empty($col['Comment']) && preg_match('/melis:auto=([a-z_]+)/', $col['Comment'], $match)) {
+                if (isset($autoMap[$match[1]])) {
+                    $autoCols[$col['Field']] = $match[1];
+                    continue;
+                }
+            }
+
+            // Fallback for tables created outside the wizard: timestamp defaults
+            $default = (string) ($col['Default'] ?? '');
+            $extra = strtolower((string) ($col['Extra'] ?? ''));
+            if (stripos($default, 'CURRENT_TIMESTAMP') !== false) {
+                $autoCols[$col['Field']] = (strpos($extra, 'on update current_timestamp') !== false)
+                    ? 'edited_on'
+                    : 'created_on';
+            }
+        }
+
+        return $autoCols;
+    }
+
+    /**
+     * DESCRIBE of a table.
+     *
+     * The name is quoted as an identifier: it comes from the wizard steps, i.e. from
+     * a request, and DESCRIBE accepts no bound parameter. Without quoting, anything
+     * appended to the name was handed to MySQL as SQL.
+     *
+     * @param string $table
+     * @return array
+     */
     public function describeTable($table)
     {
         $adapter = $this->getServiceManager()->get('Laminas\Db\Adapter\Adapter');
-        $tableAdapter = $adapter->query('DESCRIBE '.$table, Adapter::QUERY_MODE_EXECUTE);
+        $tableAdapter = $adapter->query(
+            'DESCRIBE '.$adapter->getPlatform()->quoteIdentifier($table),
+            Adapter::QUERY_MODE_EXECUTE
+        );
 
         return $tableAdapter->toArray();
+    }
+
+    /**
+     * Is this the name of a table that really exists?
+     *
+     * Used by the steps before describing a table, so only a table of the schema can
+     * be reached — the step forms otherwise accept any name posted by the browser.
+     *
+     * @param string $table
+     * @return bool
+     */
+    public function tableExists($table)
+    {
+        if (!is_string($table) || $table === '')
+            return false;
+
+        $adapter = $this->getServiceManager()->get('Laminas\Db\Adapter\Adapter');
+        $metadata = new Metadata($adapter);
+
+        return in_array($table, $metadata->getTableNames(), true);
     }
 
     /**

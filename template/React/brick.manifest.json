@@ -1,0 +1,10 @@
+{
+  "id": "moduletpl",
+  "route": "/moduletpl",
+  "label": "ModuleTpl",
+  "forwardKey": "ModuleTpl/List",
+  "melisKey": "moduletpl_tool",
+  "entry": "brick.js",
+  "subTabs": #TCREACTSUBTABS,
+  "persistent": #TCREACTSUBTABS
+}
