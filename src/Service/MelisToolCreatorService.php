@@ -118,6 +118,7 @@ class MelisToolCreatorService  extends MelisGeneralService
             if ($this->isReactTool()){
                 $config .= PHP_EOL . "\t\t\t". 'include __DIR__ . \'/config/react-api.php\',';
                 $config .= PHP_EOL . "\t\t\t". 'include __DIR__ . \'/config/react.capabilities.php\',';
+                $config .= PHP_EOL . "\t\t\t". 'include __DIR__ . \'/config/data-import.php\',';
             }
         }
 
@@ -1482,7 +1483,72 @@ class MelisToolCreatorService  extends MelisGeneralService
         $brick = $this->sp('#TCTITLEFR', $js($titles['fr']), $brick);
         $brick = $this->sp('#TCDESCEN', $js($descs['en']), $brick);
         $brick = $this->sp('#TCDESCFR', $js($descs['fr']), $brick);
+        // Generic import modal (DataImport), precompiled to ES2019 by import-modal.build.mjs.
+        // Code, not user text: injected as is.
+        $brick = $this->sp('#TCREACTIMPORTMODAL', $this->fgc('/React/import-modal.js'), $brick);
         $this->generateFile('brick.js', $uiReactDir, $brick);
+
+        // ── Import (DataImport registry entry) ───────────────────────────────
+        $this->generateModuleReactImport($moduleDir, $pkField, $formFields, $systemCols);
+    }
+
+    /**
+     * Writes config/data-import.php, which registers the tool with the DataImport module so
+     * the brick's Import button works with no further wiring. Field labels, select options
+     * and SQL types are discovered by DataImport itself from the generated form and table;
+     * this entry only carries what it cannot guess.
+     *
+     * @param string $moduleDir
+     * @param string $pkField
+     * @param array $formFields - React form fields (step 5, language columns and PK excluded)
+     * @param array $systemCols - auto columns of the table, keyed by column (getAutoColumns)
+     */
+    private function generateModuleReactImport($moduleDir, $pkField, array $formFields, array $systemCols)
+    {
+        $required = [];
+        $fields = [];
+        foreach ($formFields as $field) {
+            if (isset($systemCols[$field['name']]))
+                continue;
+
+            if (!empty($field['required']))
+                $required[] = $field['name'];
+
+            if ($field['input'] === 'switch')
+                $fields[$field['name']] = [
+                    'column' => $field['name'],
+                    'bool' => [
+                        '1' => ['1', 'oui', 'yes', 'true', 'vrai', 'actif', 'active', 'o', 'x'],
+                        '0' => ['0', 'non', 'no', 'false', 'faux', 'inactif', 'inactive', 'n'],
+                    ],
+                ];
+        }
+
+        // Short-array PHP literal, lists on one line, nested maps indented under the key
+        $export = function ($value, $depth = 4) use (&$export) {
+            if (!is_array($value))
+                return var_export($value, true);
+            if (empty($value))
+                return '[]';
+            if (array_keys($value) === range(0, count($value) - 1))
+                return '[' . implode(', ', array_map(function ($v) use ($export, $depth) {
+                    return $export($v, $depth);
+                }, $value)) . ']';
+            $pad = str_repeat('    ', $depth + 1);
+            $out = '[' . PHP_EOL;
+            foreach ($value as $k => $v)
+                $out .= $pad . var_export($k, true) . ' => ' . $export($v, $depth + 1) . ',' . PHP_EOL;
+            return $out . str_repeat('    ', $depth) . ']';
+        };
+
+        $config = $this->fgc('/React/data-import');
+        $config = $this->sp('#TCIMPORTTABLE', $export((string) $this->tcSteps['step3']['tcf-db-table']), $config);
+        $config = $this->sp('#TCIMPORTPK', $export((string) $pkField), $config);
+        $config = $this->sp('#TCIMPORTEXCLUDE', $export(array_values(array_map('strval', array_keys($systemCols)))), $config);
+        $config = $this->sp('#TCIMPORTREQUIRED', $export($required), $config);
+        $config = $this->sp('#TCIMPORTMATCHKEYS', $export([(string) $pkField]), $config);
+        $config = $this->sp('#TCIMPORTFIELDS', $export($fields), $config);
+        $this->generateFile('data-import.php', $moduleDir.'/config', $config);
     }
 
     /**

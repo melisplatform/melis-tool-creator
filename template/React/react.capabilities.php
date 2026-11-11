@@ -8,6 +8,6 @@
 
 return [
     'melisReactToolCapabilities' => [
-        'moduletpl_tool' => ['list', 'create', 'edit', 'delete'],
+        'moduletpl_tool' => ['list', 'create', 'edit', 'delete', 'import'],
     ],
 ];

@@ -69,7 +69,24 @@ class ModuleTplReactApiController extends MelisAbstractActionController
             'items' => array_map(fn ($r) => $this->formatRow((array) $r), $rows),
             'total' => $total,
             'stats' => $this->stats($table, $search, $total),
+            'importEnabled' => $this->importEnabled(),
         ]]);
+    }
+
+    /**
+     * The Import button is backed by the DataImport module (generic CSV/Excel import,
+     * registry entry in config/data-import.php). Without it the endpoint does not exist,
+     * so the brick hides the button.
+     */
+    private function importEnabled(): bool
+    {
+        try {
+            $sm = $this->getServiceManager();
+            return isset($sm->get('ModuleManager')->getLoadedModules()['DataImport'])
+                && isset($sm->get('config')['data_import']['tools'][self::MELIS_KEY]);
+        } catch (\Throwable) {
+            return false;
+        }
     }
 
     // ─── /melis/react-api/moduletpl/:id ──────────────────────────────────────
