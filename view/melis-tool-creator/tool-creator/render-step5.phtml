@@ -11,6 +11,14 @@
             <p><?php echo $this->translate('tr_melistoolcreator_add_update_form_desc') ?></p>
         </div>
 
+        <?php if ($this->noEditableCol){ ?>
+            <div class="col-sm-12">
+                <div class="alert alert-danger">
+                    <p><?php echo $this->translate('tr_melistoolcreator_err_no_editable_col') ?></p>
+                </div>
+            </div>
+        <?php } ?>
+
         <div class="col-sm-12">
             <?php if ($this->langTblCols) { ?>
                 <h4><?php echo $this->translate('tr_melistoolcreator_pri_tbl_cols') ?></h4>

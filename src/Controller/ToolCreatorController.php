@@ -1145,6 +1145,14 @@ class ToolCreatorController extends MelisAbstractActionController
                 // adding a variable to viewmodel to flag an error
                 $viewStp->hasError = true;
                 $viewStp->skipErrModal = true;
+            }elseif (!$this->hasFormField($formData['step-form'], $container['melis-toolcreator'])){
+                /**
+                 * No column left for the add / update form: the tool would open an empty
+                 * form. The step is not saved, so it comes back with its default ticks.
+                 */
+                $viewStp->hasError = true;
+                $viewStp->skipErrModal = true;
+                $viewStp->noEditableCol = true;
             }else{
                 $container['melis-toolcreator']['step5'] = $formData['step-form'];
             }
@@ -1184,6 +1192,54 @@ class ToolCreatorController extends MelisAbstractActionController
         $viewStp->inputTypes = $config['plugins']['melistoolcreator']['datas']['input_types'];
 
         return $viewStp;
+    }
+
+    /**
+     * Does the step 5 selection leave at least one field in the add / update form?
+     *
+     * The primary key and the system-filled columns (creation / update date and user) are
+     * always posted or never typed, so they do not count. Language-table columns count for
+     * the legacy interface only (the React form edits the main table), without that table's
+     * own key and its two foreign keys.
+     *
+     * @param array $step5 posted step 5 data
+     * @param array $steps wizard session (steps 1 to 4)
+     * @return bool
+     */
+    private function hasFormField($step5, $steps)
+    {
+        $editable = (array) ($step5['tcf-db-table-col-editable'] ?? []);
+
+        /** @var MelisToolCreatorService $toolCreatorSrv */
+        $toolCreatorSrv = $this->getServiceManager()->get('MelisToolCreatorService');
+        $table = $steps['step3']['tcf-db-table'];
+
+        $skip = array_keys($toolCreatorSrv->getAutoColumns($table));
+        $pk = $toolCreatorSrv->getTablePK($table);
+        if (!empty($pk['Field']))
+            $skip[] = $pk['Field'];
+
+        $isReact = (($steps['step1']['tcf-ui-mode'] ?? 'legacy') === 'react');
+        $langSkip = [];
+        if (!empty($steps['step3']['tcf-db-table-has-language'])){
+            $langPk = $toolCreatorSrv->getTablePK($steps['step3']['tcf-db-table-language-tbl']);
+            $langSkip = array_filter([
+                $langPk['Field'] ?? null,
+                $steps['step3']['tcf-db-table-language-pri-fk'] ?? null,
+                $steps['step3']['tcf-db-table-language-lang-fk'] ?? null,
+            ]);
+        }
+
+        foreach ($editable As $col){
+            if (strpos((string) $col, 'tclangtblcol_') === 0){
+                if (!$isReact && !in_array(substr($col, strlen('tclangtblcol_')), $langSkip))
+                    return true;
+            }elseif (!in_array($col, $skip)){
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private function tblColsFields($tableCols, $langTbl = false, $autoCols = [])
@@ -1246,6 +1302,17 @@ class ToolCreatorController extends MelisAbstractActionController
                 $tableCols[$key]['editable'] = sprintf($iconTag, implode(' ', [$editableIcon, $unCheckedIcon, $activeCheckIcon]));
                 $tableCols[$key]['required'] = sprintf($iconTag, implode(' ', [$requiredIcon, $unCheckedIcon, $activeCheckIcon]));
                 $tableCols[$key]['isChecked'] = false;
+
+                /**
+                 * First visit of the step (nothing saved yet): an ordinary column starts
+                 * editable. Left unticked, a table whose columns all accept NULL (id + name)
+                 * produced a tool whose form had no field at all. "Required" stays the
+                 * user's choice. Once the step has been saved, the saved choices rule.
+                 */
+                if (empty($container['melis-toolcreator']['step5'])){
+                    $tableCols[$key]['editable'] = sprintf($iconTag, implode(' ', [$editableIcon, $checkedIcon, $checkedColorIcon, $activeCheckIcon]));
+                    $tableCols[$key]['editableIsChecked'] = true;
+                }
 
                 if (!empty($container['melis-toolcreator']['step5'])){
                     // Checking editable column checkbox

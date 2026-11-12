@@ -150,6 +150,7 @@ return [
     'tr_melistoolcreator_err_long_250' => 'Value is too long, it should be less than 250 characters',
     'tr_melistoolcreator_err_no_selected_db' => 'Please select a table before proceeding to the next step',
     'tr_melistoolcreator_err_no_selected_col' => 'Please select at least one table column to proceed to the next step',
+    'tr_melistoolcreator_err_no_editable_col' => 'Please tick "Editable" for at least one column: with none, the tool\'s add / update form would be empty',
     'tr_melistoolcreator_err_module_exist' => '"%s" already exists, please try another one',
     'tr_melistoolcreator_err_select_pri_key_tbl' => 'In the secondary table select the foreign key to the main table',
     'tr_melistoolcreator_err_select_lang_key_tbl' => 'In the secondary table select the foreign key to the language table',
