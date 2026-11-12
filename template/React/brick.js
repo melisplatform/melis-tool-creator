@@ -122,8 +122,8 @@
     h('circle', { cx: 12, cy: 12, r: 10 }), h('path', { d: 'M2 12h20' }), h('path', { d: 'M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z' })); };
   var IconLink = function () { return h('svg', { width: 18, height: 18, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 2, strokeLinecap: 'round', strokeLinejoin: 'round' },
     h('path', { d: 'M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71' }), h('path', { d: 'M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71' })); };
-  var IconExport = function () { return svgIcon(['M12 3v12', 'M7 10l5 5 5-5', 'M4 21h16']); };
-  var IconImport = function () { return svgIcon(['M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4', 'M7 9l5-5 5 5', 'M12 4v12']); };
+  var IconExport = function () { return svgIcon(['M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4', 'M7 9l5-5 5 5', 'M12 4v12']); };
+  var IconImport = function () { return svgIcon(['M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4', 'M7 10l5 5 5-5', 'M12 15V3']); };
   var IconGrip = function () {
     return h('svg', { width: 13, height: 13, viewBox: '0 0 24 24', fill: 'currentColor', style: { flexShrink: 0, color: 'var(--color-muted-foreground)' } },
       [[9, 6], [15, 6], [9, 12], [15, 12], [9, 18], [15, 18]].map(function (c, i) {
@@ -988,14 +988,14 @@
               })
             : null
         ),
-        data.importEnabled && can('import') ? h('button', {
-          type: 'button', style: Object.assign({}, btnGhost, { height: 36 }),
-          onClick: function () { setShowImport(true); },
-        }, h(IconImport), t('import')) : null,
         h('button', {
           type: 'button', style: Object.assign({}, btnGhost, { height: 36 }),
           onClick: function () { setShowExport(true); },
-        }, h(IconExport), t('export'))
+        }, h(IconExport), t('export')),
+        data.importEnabled && can('import') ? h('button', {
+          type: 'button', style: Object.assign({}, btnGhost, { height: 36 }),
+          onClick: function () { setShowImport(true); },
+        }, h(IconImport), t('import')) : null
       ),
       data.error ? h('div', { style: Object.assign({}, card, { borderColor: '#fca5a5', background: '#fef2f2', color: '#b91c1c', padding: '8px 12px', fontSize: 13 }) }, data.error) : null,
       h('div', { style: Object.assign({}, card, { overflow: 'hidden' }) },
