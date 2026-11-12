@@ -998,7 +998,9 @@
         }, h(IconImport), t('import')) : null
       ),
       data.error ? h('div', { style: Object.assign({}, card, { borderColor: '#fca5a5', background: '#fef2f2', color: '#b91c1c', padding: '8px 12px', fontSize: 13 }) }, data.error) : null,
-      h('div', { style: Object.assign({}, card, { overflow: 'hidden' }) },
+      // flexShrink 0: the page is a 100%-high flex column, so an overflow:hidden child would
+      // otherwise shrink to the viewport and clip the rows instead of letting the page scroll.
+      h('div', { style: Object.assign({}, card, { overflow: 'hidden', flexShrink: 0 }) },
         h('table', { style: { width: '100%', borderCollapse: 'collapse', minWidth: 480 } },
           h('thead', { style: { background: 'var(--color-muted,rgba(0,0,0,.03))' } },
             h('tr', null,
