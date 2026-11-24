@@ -578,9 +578,8 @@ class MelisToolCreatorService  extends MelisGeneralService
     {
         if ($this->isIframeTool()) {
             $iframeCtrl = $this->fgc('/Controller/IndexController.php');
-            // Sécurité : l'URL est injectée dans un littéral PHP entre apostrophes du fichier généré
-            // ($view->url = '#TCIFRAMEURL';). Sans échappement, une valeur contenant « ' » permet une
-            // INJECTION DE CODE PHP dans le contrôleur généré (RCE). addcslashes neutralise \ et '.
+            // L'URL est écrite dans un littéral PHP entre apostrophes du fichier généré
+            // ($view->url = '#TCIFRAMEURL';) : addcslashes échappe \ et '.
             $safeIframeUrl = addcslashes((string) $this->tcSteps['step1']['tcf-tool-iframe-url'], "\\'");
             $iframeCtrl = $this->sp('#TCIFRAMEURL', $safeIframeUrl, $iframeCtrl);
             $this->generateFile('IndexController.php', $targetDir, $iframeCtrl);
@@ -1105,9 +1104,8 @@ class MelisToolCreatorService  extends MelisGeneralService
         foreach ($translations As $locale => $texts){
             $strTranslations = '';
             foreach ($texts As $key => $text){
-                // Escape BOTH backslash and single-quote so the value cannot break out of the
-                // generated single-quoted PHP literal (was `'`->`\'` only, which left `\` unescaped
-                // → `\\'` breakout → PHP code injection / RCE when the language file is included).
+                // Escape BOTH backslash and single-quote: the value is written into a single-quoted
+                // PHP literal of the generated language file.
                 $text = addcslashes((string) $text, "\\'");
                 $key = $this->sp('-', '_', $key);
                 $key = $this->sp('tcf_', '', $key);
